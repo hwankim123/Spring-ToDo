@@ -3,7 +3,7 @@ package HwanKim.SpringToDo.domain;
 import lombok.Getter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,14 +14,14 @@ public class Todo {
     @Column(name = "todo_id")
     Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "todo")
+    @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL)
     private List<TodoTask> todoTasks = new ArrayList<>();
 
-    private LocalDateTime todoDate;
+    private LocalDate todoDate;
 
     @Enumerated(EnumType.STRING)
     private TodoStatus status; // 오늘의 할일 상태 [READY, RUNNING, FINISH]

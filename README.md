@@ -48,6 +48,6 @@ Spring Boot와 JPA를 활용한 To-Do Page
 > > * desc : String(Text)
 > ### 3.5. 엔티티 간 연관관계
 > > * Member와 Todo는 1:N 단방향 연관관계
-> > * Todo와 Task는 N:N 연관관계. 이를 TodoTask로 풀어냄
+> > * Todo와 Task는 N:M 연관관계. 이를 TodoTask로 풀어냄
 > > * Todo와 TodoTask는 1:N 양방향 연관관계
 > > * TodoTask와 Task는 N:1 단방향 연관관계
