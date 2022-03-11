@@ -18,4 +18,13 @@ public class Member {
 
     String username;
     String password;
+
+    protected Member(){
+    }
+
+    public Member(String name, String username, String password){
+        this.name = name;
+        this.username = username;
+        this.password = password;
+    }
 }
