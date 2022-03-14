@@ -48,8 +48,8 @@ public class MemberService {
      */
     public Long login(String username, String password){
         List<Member> findMembers = memberRepository.findByUsername(username);
-        if(!findMembers.isEmpty()){
-            throw new IllegalArgumentException("아이디 및 비밀번호가 틀립니다.");
+        if(findMembers.isEmpty()){
+            throw new IllegalArgumentException("아이디가 틀립니다.");
         }
         if(findMembers.get(0).getPassword() != password){
             throw new IllegalArgumentException("비밀번호가 틀립니다.");
