@@ -103,4 +103,22 @@ class MemberServiceTest {
             memberService.login("XXX_Wrong_Username", findMember.getPassword());
         });
     }
+
+    @Test
+    public void 비밀번호_불일치_로그인_예외() throws Exception{
+        //given
+        Member member = new Member("김환", "hwankim123", "cjsak123!");
+        System.out.println("===singUp===");
+        Long newMemberId = memberService.signUp(member);
+        System.out.println("============");
+
+        //when
+        Member findMember = memberRepository.findById(newMemberId);
+        System.out.println("findMember.getId() = " + findMember.getId());
+
+        //then
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            memberService.login(findMember.getUsername(), "XXX_Wrong_Password");
+        });
+    }
 }

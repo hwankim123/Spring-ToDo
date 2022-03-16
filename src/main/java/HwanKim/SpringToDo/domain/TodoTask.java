@@ -22,7 +22,7 @@ public class TodoTask {
     private Todo todo;
 
     private Duration taskDuration;
-
     @Column(columnDefinition = "TEXT")
     private String desc;
+
 }

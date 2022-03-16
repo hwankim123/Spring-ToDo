@@ -2,10 +2,7 @@ package HwanKim.SpringToDo.domain;
 
 import lombok.Getter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -15,8 +12,11 @@ public class Task {
     @Column(name = "task_id")
     Long id;
 
-    String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
+    String name;
     @Column(columnDefinition = "TEXT")
     String desc;
 }

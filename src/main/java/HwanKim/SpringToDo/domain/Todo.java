@@ -14,7 +14,7 @@ public class Todo {
     @Column(name = "todo_id")
     Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
@@ -22,7 +22,6 @@ public class Todo {
     private List<TodoTask> todoTasks = new ArrayList<>();
 
     private LocalDate todoDate;
-
     @Enumerated(EnumType.STRING)
     private TodoStatus status; // 오늘의 할일 상태 [READY, RUNNING, FINISH]
 }

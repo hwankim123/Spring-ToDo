@@ -12,8 +12,9 @@ Spring Boot와 JPA를 활용한 To-Do Page
 > > * 회원 가입
 > > * 로그인
 > ### 2.2. 할일(Task) 등록 기능
-> > * 할일 등록
-> > * 할일 수정
+* 할일 등록
+* 할일 검색(전체 검색, 이름 검색)
+* 할일 수정
 > ### 2.3. 오늘의 할일(Todo) 기능
 > > * 오늘의 할일 작성
 > > * 오늘의 할일 수정
@@ -27,7 +28,7 @@ Spring Boot와 JPA를 활용한 To-Do Page
 > ### 3.1. Member
 > > * id : Long
 > > * name : String
-> > * username : String
+> > * username(unique) : String
 > > * password : String
 > ### 3.2. Todo
 > > * id : Long
