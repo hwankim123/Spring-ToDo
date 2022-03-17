@@ -18,8 +18,10 @@ public class TaskRepository {
      */
     public void save(Task task){
         if(task.getId() == null){
+            System.out.println("persist task");
             em.persist(task);
         } else{
+            System.out.println("merge task");
             em.merge(task);
         }
     }
@@ -29,7 +31,7 @@ public class TaskRepository {
     }
 
     public List<Task> findByMemberId(Long memberId){
-        return em.createQuery("select t from Task t where t.member.id = :memberId", Task.class)
+        return em.createQuery("select t from Task t inner join Member m on m.id = :memberId", Task.class)
                 .setParameter("memberId", memberId)
                 .getResultList();
     }
@@ -46,9 +48,13 @@ public class TaskRepository {
     }
 
     public List<Task> findByNameInMember(String name, Long memberId){
-        return em.createQuery("select t from Task t where t.member.id = :memberId and t.name = :name", Task.class)
+        return em.createQuery("select t from Task t inner join Member m on m.id = :memberId where t.name = :name", Task.class)
                 .setParameter("memberId", memberId)
                 .setParameter("name", name)
                 .getResultList();
+    }
+
+    public void remove(Task task){
+        em.remove(task);
     }
 }

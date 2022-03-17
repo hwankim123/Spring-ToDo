@@ -19,4 +19,16 @@ public class Task {
     String name;
     @Column(columnDefinition = "TEXT")
     String desc;
+
+    protected Task(){}
+
+    public Task(String name, String desc){
+        this.name = name;
+        this.desc = desc;
+    }
+
+    public void upload(String name, String desc){
+        this.name = name;
+        this.desc = desc;
+    }
 }

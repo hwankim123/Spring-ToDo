@@ -23,10 +23,11 @@ public class TaskService {
      * memberId, name, desc
      * name은 member별로 unique
      */
-    public void saveTask(Long memberId, Task task){
+    public Long saveTask(Long memberId, Task task){
         Member member = memberRepository.findById(memberId);
         validateName(member.getId(), task.getName());
         taskRepository.save(task);
+        return task.getId();
     }
 
     // Member별로 생성한 Task의 중복 name validate
@@ -38,14 +39,33 @@ public class TaskService {
     }
 
     /**
-     * Task 검색
+     * Task 전체 검색
      */
+    public List<Task> findAll(Long memberId){
+        return taskRepository.findByMemberId(memberId);
+    }
+
+    /**
+     * Task 이름 검색
+     */
+
+    public List<Task> findOne(Long memberId, String name){
+        return taskRepository.findByNameInMember(name, memberId);
+    }
 
     /**
      * Task 수정
      */
+    public Task update(Task task, String name, String desc){
+        task.upload(name, desc);
+        return task;
+    }
 
     /**
      * Task 삭제
      */
+    public void delete(Task task){
+        taskRepository.remove(task);
+    }
+
 }
