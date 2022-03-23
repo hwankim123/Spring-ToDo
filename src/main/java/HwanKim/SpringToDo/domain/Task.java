@@ -28,7 +28,11 @@ public class Task {
     }
 
     public void upload(String name, String desc){
-        this.name = name;
-        this.desc = desc;
+        if(name != null){
+            this.name = name;
+        }
+        if(desc != null){
+            this.desc = desc;
+        }
     }
 }

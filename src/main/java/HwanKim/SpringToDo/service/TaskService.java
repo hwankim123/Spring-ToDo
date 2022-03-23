@@ -56,9 +56,11 @@ public class TaskService {
     /**
      * Task 수정
      */
-    public Task update(Task task, String name, String desc){
+    public void update(Long memberId, Task task, String name, String desc){
+        if(name != null){
+            validateName(memberId, name);
+        }
         task.upload(name, desc);
-        return task;
     }
 
     /**

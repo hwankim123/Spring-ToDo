@@ -82,8 +82,84 @@ class TaskServiceTest {
     }
 
     //find One
+    @Test
+    public void 이름_Task조회(){
+        //given
+        Member member = new Member("김환", "hwankim123", "cjsak123");
+        Long memberId = memberService.signUp(member);
 
+        Task task1 = new Task("task1", "task1입니다.");
+        Long task1Id = taskService.saveTask(memberId, task1);
+        Task task2 = new Task("task2", "task2입니다.");
+        Long task2Id = taskService.saveTask(memberId, task2);
+        Task task3 = new Task("task3", "task3입니다.");
+        Long task3Id = taskService.saveTask(memberId, task3);
+
+        //when
+        List<Task> findTasks = taskService.findOne(memberId, "task1");
+
+        //then
+        assertThat(findTasks.size()).isEqualTo(1);
+        assertThat(findTasks.get(0).getId()).isEqualTo(task1.getId());
+
+    }
     // update
+    @Test
+    public void 수정(){
+        //given
+        Member member = new Member("김환", "hwankim123", "cjsak123");
+        Long memberId = memberService.signUp(member);
+
+        Task task1 = new Task("task1", "task1입니다.");
+        Long task1Id = taskService.saveTask(memberId, task1);
+
+        Task updateData = new Task("task22", "task22입니다.task22입니다.");
+
+        //when
+        taskService.update(memberId, task1, updateData.getName(), null);
+
+        //then
+        assertThat(task1.getName()).isEqualTo(updateData.getName());
+        assertThat(task1.getDesc()).isNotEqualTo(updateData.getDesc());
+    }
+
+    //update - 중복 이름 예외
+    @Test
+    public void 중복_이름_예외_수정(){
+        //given
+        Member member = new Member("김환", "hwankim123", "cjsak123");
+        Long memberId = memberService.signUp(member);
+
+        Task task1 = new Task("task1", "task1입니다.");
+        Long task1Id = taskService.saveTask(memberId, task1);
+        Task task2 = new Task("task2", "task2입니다.");
+        Long task2Id = taskService.saveTask(memberId, task2);
+
+        //when
+
+        Task updateData = new Task("task2", "task333입니다.task333입니다.");
+
+        //then
+        assertThrows(IllegalArgumentException.class, () -> {
+            taskService.update(memberId, task1, updateData.getName(), null);
+        });
+    }
 
     // delete
+    @Test
+    public void 삭제(){
+        //given
+        Member member = new Member("김환", "hwankim123", "cjsak123");
+        Long memberId = memberService.signUp(member);
+
+        Task task1 = new Task("task1", "task1입니다.");
+        Long task1Id = taskService.saveTask(memberId, task1);
+
+        //when
+        taskService.delete(task1);
+        List<Task> tasks = taskService.findAll(memberId);
+
+        //then
+        assertThat(tasks.size()).isEqualTo(0);
+    }
 }
