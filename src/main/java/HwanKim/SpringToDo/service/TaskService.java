@@ -60,7 +60,7 @@ public class TaskService {
         if(name != null){
             validateName(memberId, name);
         }
-        task.upload(name, desc);
+        task.update(name, desc);
     }
 
     /**

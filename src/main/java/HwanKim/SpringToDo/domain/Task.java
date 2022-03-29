@@ -27,7 +27,7 @@ public class Task {
         this.desc = desc;
     }
 
-    public void upload(String name, String desc){
+    public void update(String name, String desc){
         if(name != null){
             this.name = name;
         }

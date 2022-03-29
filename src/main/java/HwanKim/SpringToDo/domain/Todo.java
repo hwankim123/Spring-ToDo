@@ -3,7 +3,9 @@ package HwanKim.SpringToDo.domain;
 import lombok.Getter;
 
 import javax.persistence.*;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,9 +23,12 @@ public class Todo {
     @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL)
     private List<TodoTask> todoTasks = new ArrayList<>();
 
-    private LocalDate todoDate;
     @Enumerated(EnumType.STRING)
-    private TodoStatus status; // 오늘의 할일 상태 [READY, RUNNING, FINISH]
+    private TodoStatus status; // 오늘의 할일 상태 [READY, RUNNING, PAUSE, FINISH]
+    private Duration totalDuration;
+    private LocalDateTime startTime;
+    private LocalDateTime restartTime;
+    private LocalDateTime finishTime;
 
     //===연관관계 메서드===//
     public void addTodoTask(TodoTask todoTask){
@@ -31,7 +36,7 @@ public class Todo {
         todoTask.setTodo(this);
     }
 
-    public static Todo create(Member member, TodoTask... todoTasks ){
+    public static Todo create(Member member, List<TodoTask> todoTasks ){
         Todo todo = new Todo();
         todo.setMember(member);
         for(TodoTask todoTask : todoTasks){
@@ -47,5 +52,20 @@ public class Todo {
 
     private void setMember(Member member) {
         this.member = member;
+    }
+
+    //==비즈니스 로직==//
+    public void start(){
+        this.setStatus(TodoStatus.RUNNING);
+        if(this.startTime == null){
+            this.startTime = LocalDateTime.now();
+        } else{
+            this.restartTime = LocalDateTime.now();
+        }
+    }
+
+    public void pause(){
+        this.setStatus(TodoStatus.PAUSE);
+
     }
 }

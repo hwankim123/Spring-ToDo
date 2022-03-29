@@ -19,7 +19,7 @@ public class TodoRepository {
         em.persist(todo);
     }
 
-    public Todo findOne(Long todoId){
+    public Todo findById(Long todoId){
         return em.find(Todo.class, todoId);
     }
 

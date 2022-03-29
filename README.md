@@ -34,8 +34,10 @@ Spring Boot와 JPA를 활용한 To-Do Page
 > > * id : Long
 > > * member : Member
 > > * todoTasks : List<TodoTask>
-> > * todoDate : Date
 > > * status : TodoStatus(enum)
+> > * totalDuration : Duration
+> > * startTime : LocalDateTime
+> > * finishTime : LocalDateTime
 > ### 3.3. TodoTask
 > > * id : Long
 > > * task : Task
