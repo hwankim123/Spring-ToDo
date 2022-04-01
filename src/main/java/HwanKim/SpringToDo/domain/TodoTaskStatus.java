@@ -1,5 +1,5 @@
 package HwanKim.SpringToDo.domain;
 
-public enum TodoStatus {
+public enum TodoTaskStatus {
     READY, RUNNING, PAUSE, FINISH
 }

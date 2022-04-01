@@ -24,7 +24,7 @@ public class Todo {
     private List<TodoTask> todoTasks = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    private TodoStatus status; // 오늘의 할일 상태 [READY, RUNNING, PAUSE, FINISH]
+    private TodoTaskStatus status; // 오늘의 할일 상태 [READY, RUNNING, PAUSE, FINISH]
     private Duration totalDuration;
     private LocalDateTime startTime;
     private LocalDateTime restartTime;
@@ -42,30 +42,15 @@ public class Todo {
         for(TodoTask todoTask : todoTasks){
             todo.addTodoTask(todoTask);
         }
-        todo.setStatus(TodoStatus.READY);
+        todo.setStatus(TodoTaskStatus.READY);
         return todo;
     }
 
-    private void setStatus(TodoStatus todoStatus) {
+    private void setStatus(TodoTaskStatus todoStatus) {
         this.status = todoStatus;
     }
 
     private void setMember(Member member) {
         this.member = member;
-    }
-
-    //==비즈니스 로직==//
-    public void start(){
-        this.setStatus(TodoStatus.RUNNING);
-        if(this.startTime == null){
-            this.startTime = LocalDateTime.now();
-        } else{
-            this.restartTime = LocalDateTime.now();
-        }
-    }
-
-    public void pause(){
-        this.setStatus(TodoStatus.PAUSE);
-
     }
 }
