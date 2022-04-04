@@ -78,6 +78,9 @@ class TaskServiceTest {
         List<Task> tasks = taskService.findAll(memberId);
 
         //then
+        for(Task task : tasks) {
+            System.out.println("tasks = " + task);
+        }
         assertThat(tasks.size()).isEqualTo(3);
     }
 

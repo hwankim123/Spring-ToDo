@@ -48,7 +48,7 @@ public class TaskRepository {
     }
 
     public List<Task> findByNameInMember(String name, Long memberId){
-        return em.createQuery("select t from Task t inner join Member m on m.id = :memberId where t.name = :name", Task.class)
+        return em.createQuery("select t from Task t where t.member.id = :memberId and t.name = :name", Task.class)
                 .setParameter("memberId", memberId)
                 .setParameter("name", name)
                 .getResultList();
