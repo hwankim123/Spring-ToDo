@@ -40,11 +40,10 @@ class TodoServiceTest {
         List<Long> taskIdList1 = setTaskId123(memberId1);
         List<Long> taskIdList2 = setTaskId12(memberId2);
         List<Long> taskIdList3 = setTaskId23(memberId3);
-
         //when
-        todoService.saveTodo(memberId1, taskIdList1);
-        todoService.saveTodo(memberId2, taskIdList2);
-        todoService.saveTodo(memberId3, taskIdList3);
+        todoService.saveTodo(memberId1, taskIdList1, setDescList("백준 1문제", "Spring 프로젝트 개발", "캡스톤"));
+        todoService.saveTodo(memberId2, taskIdList2, setDescList("백준 1문제", "Spring 프로젝트 개발"));
+        todoService.saveTodo(memberId3, taskIdList3, setDescList("Spring 프로젝트 개발", "캡스톤"));
 
         //then
         List<Todo> todoList1 = todoRepository.findAllByMemberId(memberId1);
@@ -76,6 +75,14 @@ class TodoServiceTest {
         }
     }
 
+    private List<String> setDescList(String ...descs) {
+        List<String> descList = new ArrayList<>();
+        for(String desc : descs){
+            descList.add(desc);
+        }
+        return descList;
+    }
+
     @Test
     public void todo_조회_예외(){
         //given
@@ -83,7 +90,7 @@ class TodoServiceTest {
         List<Long> taskIdList = setTaskId123(memberId);
 
         //when
-        Long todoId = todoService.saveTodo(memberId, taskIdList);
+        Long todoId = todoService.saveTodo(memberId, taskIdList, setDescList("백준 1문제", "Spring 프로젝트 개발", "캡스톤"));
         TodoSearch todoSearch = new TodoSearch();
         
         // 이 셋중에 테스트하고싶은걸 주석처리

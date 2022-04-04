@@ -36,10 +36,11 @@ public class TodoTask {
     }
 
     //===생성 메서드===//
-    public static TodoTask createTodoTask(Task task, TodoTaskStatus status){
+    public static TodoTask createTodoTask(Task task, TodoTaskStatus status, String desc){
         TodoTask todoTask = new TodoTask();
         todoTask.setTask(task);
         todoTask.setStatus(status);
+        todoTask.setDesc(desc);
         return todoTask;
     }
 
@@ -53,6 +54,10 @@ public class TodoTask {
 
     private void setStatus(TodoTaskStatus status){
         this.status = status;
+    }
+
+    private void setDesc(String desc) {
+        this.desc = desc;
     }
 
     //==비즈니스 로직==//

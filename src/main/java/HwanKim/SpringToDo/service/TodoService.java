@@ -20,12 +20,12 @@ public class TodoService {
     private final TaskRepository taskRepository;
     private final TodoTaskRepository todoTaskRepository;
 
-    public Long saveTodo(Long memberId, List<Long> taskIdList){
+    public Long saveTodo(Long memberId, List<Long> taskIdList, List<String> descList){
         Member member = memberRepository.findById(memberId);
         List<TodoTask> todoTasks = new ArrayList<>();
         for(int idx = 0; idx < taskIdList.size(); idx++){
             Task task = taskRepository.findById(taskIdList.get(idx));
-            todoTasks.add(TodoTask.createTodoTask(task, TodoTaskStatus.READY));
+            todoTasks.add(TodoTask.createTodoTask(task, TodoTaskStatus.READY, descList.get(idx)));
         }
 
         Todo todo = Todo.create(member, todoTasks);
