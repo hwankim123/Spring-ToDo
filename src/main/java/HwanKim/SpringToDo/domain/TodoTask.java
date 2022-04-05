@@ -5,6 +5,7 @@ import lombok.Getter;
 import javax.persistence.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -41,6 +42,7 @@ public class TodoTask {
         todoTask.setTask(task);
         todoTask.setStatus(status);
         todoTask.setDesc(desc);
+        todoTask.setTaskDuration(Duration.between(LocalTime.of(1, 1, 1), LocalTime.of(1, 1, 1)));
         return todoTask;
     }
 
@@ -67,6 +69,12 @@ public class TodoTask {
         } else if(this.getStatus() == TodoTaskStatus.PAUSE){
             this.restartTime = LocalDateTime.now();
         }
+
+        if(this.todo.getStartCnt() == 0){
+            this.todo.startTodo(this.startTime);
+        } else{
+            this.todo.plusStartCnt();
+        }
         this.setStatus(TodoTaskStatus.RUNNING);
     }
 
@@ -86,7 +94,13 @@ public class TodoTask {
         } else{
             calculateDuration(this.restartTime);
         }
+        this.finishTime = LocalDateTime.now();
 
+        if(this.todo.getFinishCnt() == this.todo.getTodoTasks().size() - 1){
+            this.todo.finishTodo(this.finishTime);
+        } else{
+            this.todo.plusFinishCnt();
+        }
         this.setStatus(TodoTaskStatus.FINISH);
     }
 

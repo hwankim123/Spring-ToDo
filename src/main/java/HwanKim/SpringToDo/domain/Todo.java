@@ -25,10 +25,10 @@ public class Todo {
 
     @Enumerated(EnumType.STRING)
     private TodoTaskStatus status; // 오늘의 할일 상태 [READY, RUNNING, PAUSE, FINISH]
-    private Duration totalDuration;
     private LocalDateTime startTime;
-    private LocalDateTime restartTime;
     private LocalDateTime finishTime;
+    private int startCnt;
+    private int finishCnt;
 
     //===연관관계 메서드===//
     public void addTodoTask(TodoTask todoTask){
@@ -36,14 +36,34 @@ public class Todo {
         todoTask.setTodo(this);
     }
 
-    public static Todo create(Member member, List<TodoTask> todoTasks ){
+    public static Todo create(Member member, List<TodoTask> todoTasks){
         Todo todo = new Todo();
         todo.setMember(member);
         for(TodoTask todoTask : todoTasks){
             todo.addTodoTask(todoTask);
         }
         todo.setStatus(TodoTaskStatus.READY);
+        todo.setStartCnt(0);
+        todo.setFinishCnt(0);
         return todo;
+    }
+
+    public void startTodo(LocalDateTime startTime) {
+        plusStartCnt();
+        this.setStartTime(startTime);
+    }
+
+    public void plusStartCnt() {
+        this.setStartCnt(this.getStartCnt() + 1);
+    }
+
+    public void finishTodo(LocalDateTime finishTime) {
+        plusFinishCnt();
+        this.setFinishTime(finishTime);
+    }
+
+    public void plusFinishCnt() {
+        this.setFinishCnt(this.getFinishCnt() + 1);
     }
 
     private void setStatus(TodoTaskStatus todoStatus) {
@@ -53,4 +73,21 @@ public class Todo {
     private void setMember(Member member) {
         this.member = member;
     }
+
+    private void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    private void setFinishTime(LocalDateTime finishTime) {
+        this.finishTime = finishTime;
+    }
+
+    private void setStartCnt(int startCnt) {
+        this.startCnt = startCnt;
+    }
+
+    private void setFinishCnt(int finishCnt) {
+        this.finishCnt = finishCnt;
+    }
+
 }
