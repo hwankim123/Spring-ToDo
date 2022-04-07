@@ -31,11 +31,6 @@ public class TodoTask {
     @Column(columnDefinition = "TEXT")
     private String desc;
 
-    // 연관관계 메서드를 위한 setter
-    public void setTodo(Todo todo) {
-        this.todo = todo;
-    }
-
     //===생성 메서드===//
     public static TodoTask createTodoTask(Task task, TodoTaskStatus status, String desc){
         TodoTask todoTask = new TodoTask();
@@ -44,22 +39,6 @@ public class TodoTask {
         todoTask.setDesc(desc);
         todoTask.setTaskDuration(Duration.between(LocalTime.of(1, 1, 1), LocalTime.of(1, 1, 1)));
         return todoTask;
-    }
-
-    private void setTaskDuration(Duration taskDuration) {
-        this.taskDuration = taskDuration;
-    }
-
-    private void setTask(Task task) {
-        this.task = task;
-    }
-
-    private void setStatus(TodoTaskStatus status){
-        this.status = status;
-    }
-
-    private void setDesc(String desc) {
-        this.desc = desc;
     }
 
     //==비즈니스 로직==//
@@ -109,4 +88,24 @@ public class TodoTask {
         this.setTaskDuration(this.taskDuration.plusSeconds(duration));
     }
 
+    //===Setter===//
+    public void setTodo(Todo todo) {
+        this.todo = todo;
+    }
+
+    private void setTaskDuration(Duration taskDuration) {
+        this.taskDuration = taskDuration;
+    }
+
+    private void setTask(Task task) {
+        this.task = task;
+    }
+
+    private void setStatus(TodoTaskStatus status){
+        this.status = status;
+    }
+
+    private void setDesc(String desc) {
+        this.desc = desc;
+    }
 }

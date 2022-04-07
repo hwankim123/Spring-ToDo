@@ -36,6 +36,7 @@ public class Todo {
         todoTask.setTodo(this);
     }
 
+    //===생성 메서드===//
     public static Todo create(Member member, List<TodoTask> todoTasks){
         Todo todo = new Todo();
         todo.setMember(member);
@@ -48,6 +49,7 @@ public class Todo {
         return todo;
     }
 
+    //===비즈니스 로직===//
     public void startTodo(LocalDateTime startTime) {
         plusStartCnt();
         this.setStartTime(startTime);
@@ -66,6 +68,7 @@ public class Todo {
         this.setFinishCnt(this.getFinishCnt() + 1);
     }
 
+    //=== Setter ===//
     private void setStatus(TodoTaskStatus todoStatus) {
         this.status = todoStatus;
     }
