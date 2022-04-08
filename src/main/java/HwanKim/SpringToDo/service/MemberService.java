@@ -1,6 +1,8 @@
 package HwanKim.SpringToDo.service;
 
 import HwanKim.SpringToDo.domain.Member;
+import HwanKim.SpringToDo.exception.WrongPasswordException;
+import HwanKim.SpringToDo.exception.WrongUsernameException;
 import HwanKim.SpringToDo.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +34,14 @@ public class MemberService {
     private void validateUsername(Member member){
         List<Member> findMembers = memberRepository.findByUsername(member.getUsername());
         if(!findMembers.isEmpty()){
-            throw new IllegalArgumentException("이미 존재하는 회원입니다.");
+            throw new WrongUsernameException("이미 존재하는 회원입니다.");
         }
     }
 
     // 비밀번호 검증 - 최소 6자리
     private void validatePassword(Member member){
         if(member.getPassword().length() < 6){
-            throw new IllegalArgumentException("비밀번호는 최소 6자리입니다.");
+            throw new WrongPasswordException("비밀번호는 최소 6자리입니다.");
         }
     }
 
@@ -49,10 +51,10 @@ public class MemberService {
     public Long login(String username, String password){
         List<Member> findMembers = memberRepository.findByUsername(username);
         if(findMembers.isEmpty()){
-            throw new IllegalArgumentException("아이디가 틀립니다.");
+            throw new WrongUsernameException("아이디가 틀립니다.");
         }
         if(findMembers.get(0).getPassword() != password){
-            throw new IllegalArgumentException("비밀번호가 틀립니다.");
+            throw new WrongPasswordException("비밀번호가 틀립니다.");
         }
         return findMembers.get(0).getId();
     }

@@ -1,11 +1,16 @@
 package HwanKim.SpringToDo.controller;
 
 import HwanKim.SpringToDo.domain.Member;
+import HwanKim.SpringToDo.exception.WrongPasswordException;
+import HwanKim.SpringToDo.exception.WrongUsernameException;
 import HwanKim.SpringToDo.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.WrongClassException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -29,11 +34,45 @@ public class MemberController {
     public String create(@Valid MemberForm memberForm, BindingResult result){
 
         if(result.hasErrors()){
+            System.out.println(result.getAllErrors().toString());
             return "member/createMemberForm";
         }
         Member member = new Member(memberForm.getName(), memberForm.getUsername(), memberForm.getPassword());
 
-        memberService.signUp(member);
+        try{
+            memberService.signUp(member);
+        } catch(WrongUsernameException e){
+            result.addError(new FieldError("memberForm", "username", e.getMessage()));
+            return "member/createMemberForm";
+        } catch(WrongPasswordException e){
+            result.addError(new FieldError("memberForm", "password", e.getMessage()));
+            return "member/createMemberForm";
+        }
+        return "redirect:/";
+    }
+
+    @GetMapping("/member/login")
+    public String loginForm(Model model){
+        model.addAttribute("loginForm", new LoginForm());
+        return "member/loginForm";
+    }
+
+    @PostMapping("/member/login")
+    public String login(@Valid LoginForm loginForm, BindingResult result){
+
+        if(result.hasErrors()){
+            return "member/loginForm";
+        }
+
+        try{
+            memberService.login(loginForm.getUsername(), loginForm.getPassword());
+        } catch(WrongUsernameException e){
+            result.addError(new FieldError("loginForm", "username", e.getMessage()));
+            return "member/loginForm";
+        } catch(WrongPasswordException e){
+            result.addError(new FieldError("loginForm", "password", e.getMessage()));
+            return "member/loginForm";
+        }
         return "redirect:/";
     }
 }
