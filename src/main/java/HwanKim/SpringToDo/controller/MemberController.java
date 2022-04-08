@@ -57,6 +57,8 @@ public class MemberController {
         return "member/loginForm";
     }
 
+    // Todo : Session 처리 -> 로그인 유지 필요
+    // https://devkingdom.tistory.com/9
     @PostMapping("/member/login")
     public String login(@Valid LoginForm loginForm, BindingResult result){
 

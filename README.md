@@ -11,10 +11,11 @@ Spring Boot와 JPA를 활용한 To-Do Page
 > ### 2.1. 회원 기능
 > > * 회원 가입
 > > * 로그인
+> > * 마이페이지
 > ### 2.2. 할일(Task) 등록 기능
-* 할일 등록
-* 할일 검색(전체 검색, 이름 검색)
-* 할일 수정
+> > * 할일 등록
+> > * 할일 검색(전체 검색, 이름 검색)
+> > * 할일 수정
 > ### 2.3. 오늘의 할일(Todo) 기능
 > > * 오늘의 할일 작성
 > > * 오늘의 할일 수정
@@ -34,17 +35,21 @@ Spring Boot와 JPA를 활용한 To-Do Page
 > > * id : Long
 > > * member : Member
 > > * todoTasks : List<TodoTask>
-> > * status : TodoStatus(enum)
-> > * totalDuration : Duration
+> > * status : TodoTaskStatus(Enum)
 > > * startTime : LocalDateTime
 > > * finishTime : LocalDateTime
+> > * startCnt : Int
+> > * finishCnt : Int
 > ### 3.3. TodoTask
 > > * id : Long
 > > * task : Task
 > > * todo : Todo
+> > * status : TodoTaskStatus(Enum)
 > > * taskDuration : Duration
+> > * startTime : LocalDateTime
+> > * restartTime : LocalDateTime
+> > * finishTime : LocalDateTime
 > > * desc : String(Text)
-> > * 할일 진행률
 > ### 3.4. Task
 > > * id : Long
 > > * name : String
