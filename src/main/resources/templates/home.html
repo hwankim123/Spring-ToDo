@@ -16,7 +16,8 @@
         <p class="lead">회원 기능</p>
         <p>
             <a class="btn btn-lg btn-secondary" href="/member/new">회원 가입</a>
-            <a class="btn btn-lg btn-secondary" href="/member/login">로그인</a>
+            <a th:if="${loginId == null}"class="btn btn-lg btn-secondary" href="/member/login">로그인</a>
+            <a th:unless="${loginId == null}"class="btn btn-lg btn-secondary" href="/member/login">로그아웃</a>
             <a class="btn btn-lg btn-secondary" href="/mypage">마이 페이지</a>
         </p>
         <p class="lead">상품 기능</p>

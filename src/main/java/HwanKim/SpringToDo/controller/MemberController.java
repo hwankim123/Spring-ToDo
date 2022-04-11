@@ -5,15 +5,15 @@ import HwanKim.SpringToDo.exception.WrongPasswordException;
 import HwanKim.SpringToDo.exception.WrongUsernameException;
 import HwanKim.SpringToDo.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.WrongClassException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 @Controller
@@ -33,12 +33,13 @@ public class MemberController {
     @PostMapping("/member/new")
     public String create(@Valid MemberForm memberForm, BindingResult result){
 
+        // View 계층에서의 validation
         if(result.hasErrors()){
-            System.out.println(result.getAllErrors().toString());
             return "member/createMemberForm";
         }
         Member member = new Member(memberForm.getName(), memberForm.getUsername(), memberForm.getPassword());
 
+        // Service 계층에서의 validation
         try{
             memberService.signUp(member);
         } catch(WrongUsernameException e){
@@ -58,16 +59,17 @@ public class MemberController {
     }
 
     // Todo : Session 처리 -> 로그인 유지 필요
-    // https://devkingdom.tistory.com/9
     @PostMapping("/member/login")
-    public String login(@Valid LoginForm loginForm, BindingResult result){
+    public String login(@Valid LoginForm loginForm, BindingResult result, HttpServletRequest request){
 
         if(result.hasErrors()){
             return "member/loginForm";
         }
 
+        Long loginId;
         try{
-            memberService.login(loginForm.getUsername(), loginForm.getPassword());
+            System.out.println(loginForm.getPassword());
+            loginId = memberService.login(loginForm.getUsername(), loginForm.getPassword());
         } catch(WrongUsernameException e){
             result.addError(new FieldError("loginForm", "username", e.getMessage()));
             return "member/loginForm";
@@ -75,6 +77,18 @@ public class MemberController {
             result.addError(new FieldError("loginForm", "password", e.getMessage()));
             return "member/loginForm";
         }
+
+        HttpSession session = request.getSession();
+        session.setAttribute("id", loginId);
+
+        return "redirect:/";
+    }
+
+    @GetMapping("/member/logout")
+    public String logout(HttpServletRequest request){
+        HttpSession session = request.getSession();
+        session.invalidate();
+
         return "redirect:/";
     }
 }

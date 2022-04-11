@@ -1,6 +1,8 @@
 package HwanKim.SpringToDo.service;
 
 import HwanKim.SpringToDo.domain.Member;
+import HwanKim.SpringToDo.exception.WrongPasswordException;
+import HwanKim.SpringToDo.exception.WrongUsernameException;
 import HwanKim.SpringToDo.repository.MemberRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -43,7 +45,7 @@ class MemberServiceTest {
         Long signUpId1 = memberService.signUp(member1);
         try{
             Long signUpId2 = memberService.signUp(member2);
-        } catch(IllegalArgumentException e){
+        } catch(WrongUsernameException e){
             return;
         }
 
@@ -59,7 +61,7 @@ class MemberServiceTest {
         //when
         try{
             Long findMember = memberService.signUp(member);
-        } catch(IllegalArgumentException e){
+        } catch(WrongPasswordException e){
             return;
         }
 
