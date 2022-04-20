@@ -1,5 +1,6 @@
 package HwanKim.SpringToDo.controller;
 
+import HwanKim.SpringToDo.session.SessionStrings;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -17,7 +18,10 @@ public class HomeController {
     public String home(Model model, HttpServletRequest request){
         log.info("home controller");
         HttpSession session = request.getSession();
-        model.addAttribute("loginId", session.getAttribute("loginId"));
+        log.info("session.loginId : " + session.getAttribute(SessionStrings.SESSION_ID));
+        log.info("session.loginName : " + session.getAttribute(SessionStrings.SESSION_NAME));
+        model.addAttribute("loginId", session.getAttribute(SessionStrings.SESSION_ID));
+        model.addAttribute("loginName", session.getAttribute(SessionStrings.SESSION_NAME));
         return "home";
     }
 }

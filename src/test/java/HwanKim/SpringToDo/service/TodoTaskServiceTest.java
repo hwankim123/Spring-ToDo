@@ -1,5 +1,6 @@
 package HwanKim.SpringToDo.service;
 
+import HwanKim.SpringToDo.controller.MemberDTO;
 import HwanKim.SpringToDo.domain.*;
 import HwanKim.SpringToDo.repository.TodoRepository;
 import org.assertj.core.api.Assertions;
@@ -89,7 +90,8 @@ public class TodoTaskServiceTest {
 
     private void prepareTest(){
         member = new Member("김환", "hwankim123", "cjsak123");
-        Long memberId = memberService.signUp(member);
+        MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
+        Long memberId = memberService.signUp(memberDTO);
 
         Task task1 = new Task("백준", "백준 1문제");
 //        Task task2 = new Task("클컴 과제", "클컴 과제");

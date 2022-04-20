@@ -1,5 +1,6 @@
 package HwanKim.SpringToDo.service;
 
+import HwanKim.SpringToDo.controller.MemberDTO;
 import HwanKim.SpringToDo.domain.Member;
 import HwanKim.SpringToDo.domain.Task;
 import HwanKim.SpringToDo.domain.Todo;
@@ -106,7 +107,8 @@ class TodoServiceTest {
 
     private Long setMemberId(String name, String username, String password){
         Member member = new Member(name, username, password);
-        return memberService.signUp(member);
+        MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
+        return memberService.signUp(memberDTO);
     }
 
     private List<Long> setTaskId123(Long memberId){

@@ -4,6 +4,7 @@ import HwanKim.SpringToDo.domain.Member;
 import HwanKim.SpringToDo.exception.WrongPasswordException;
 import HwanKim.SpringToDo.exception.WrongUsernameException;
 import HwanKim.SpringToDo.service.MemberService;
+import HwanKim.SpringToDo.session.SessionStrings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,11 +38,11 @@ public class MemberController {
         if(result.hasErrors()){
             return "member/createMemberForm";
         }
-        Member member = new Member(memberForm.getName(), memberForm.getUsername(), memberForm.getPassword());
+        MemberDTO memberDTO = new MemberDTO(null, memberForm.getName(), memberForm.getUsername(), memberForm.getPassword());
 
         // Service 계층에서의 validation
         try{
-            memberService.signUp(member);
+            memberService.signUp(memberDTO);
         } catch(WrongUsernameException e){
             result.addError(new FieldError("memberForm", "username", e.getMessage()));
             return "member/createMemberForm";
@@ -58,7 +59,6 @@ public class MemberController {
         return "member/loginForm";
     }
 
-    // Todo : Session 처리 -> 로그인 유지 필요
     @PostMapping("/member/login")
     public String login(@Valid LoginForm loginForm, BindingResult result, HttpServletRequest request){
 
@@ -66,10 +66,10 @@ public class MemberController {
             return "member/loginForm";
         }
 
-        Long loginId;
+        MemberDTO loginMemberDTO;
         try{
             System.out.println(loginForm.getPassword());
-            loginId = memberService.login(loginForm.getUsername(), loginForm.getPassword());
+            loginMemberDTO = memberService.login(loginForm.getUsername(), loginForm.getPassword());
         } catch(WrongUsernameException e){
             result.addError(new FieldError("loginForm", "username", e.getMessage()));
             return "member/loginForm";
@@ -79,7 +79,9 @@ public class MemberController {
         }
 
         HttpSession session = request.getSession();
-        session.setAttribute("id", loginId);
+        session.setAttribute(SessionStrings.SESSION_ID, loginMemberDTO.getId());
+        session.setAttribute(SessionStrings.SESSION_NAME, loginMemberDTO.getName());
+        session.setAttribute(SessionStrings.SESSION_USERNAME, loginMemberDTO.getUsername());
 
         return "redirect:/";
     }
@@ -90,5 +92,18 @@ public class MemberController {
         session.invalidate();
 
         return "redirect:/";
+    }
+
+    @GetMapping("/member/mypage")
+    public String mypage(Model model, HttpServletRequest request){
+        HttpSession session = request.getSession();
+        if(session.getId() == null) {
+            model.addAttribute("sessionInvalid", true);
+        } else{
+            model.addAttribute("sessionInvalid", false);
+            model.addAttribute("name", session.getAttribute(SessionStrings.SESSION_NAME));
+            model.addAttribute("username", session.getAttribute(SessionStrings.SESSION_USERNAME));
+        }
+        return "member/mypage";
     }
 }

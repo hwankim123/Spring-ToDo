@@ -1,5 +1,6 @@
 package HwanKim.SpringToDo.service;
 
+import HwanKim.SpringToDo.controller.MemberDTO;
 import HwanKim.SpringToDo.domain.Member;
 import HwanKim.SpringToDo.domain.Task;
 import HwanKim.SpringToDo.repository.MemberRepository;
@@ -31,7 +32,8 @@ class TaskServiceTest {
     public void Task저장() throws Exception{
         //given
         Member member = new Member("김환", "hwankim123", "cjsak123!");
-        Long memberId = memberService.signUp(member);
+        MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
+        Long memberId = memberService.signUp(memberDTO);
 
         Task task = new Task("백준", "DP");
 
@@ -47,7 +49,8 @@ class TaskServiceTest {
     public void 중복_이름_예외_Task저장(){
         //given
         Member member = new Member("김환", "hwankim123", "cjsak123!");
-        Long memberId = memberService.signUp(member);
+        MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
+        Long memberId = memberService.signUp(memberDTO);
 
         Task task1 = new Task("백준", "DP");
         Long task1_id = taskService.saveTask(memberId, task1);
@@ -65,7 +68,8 @@ class TaskServiceTest {
     public void 전체_Task조회() throws Exception{
         //given
         Member member = new Member("김환", "hwankim123", "cjsak123!");
-        Long memberId = memberService.signUp(member);
+        MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
+        Long memberId = memberService.signUp(memberDTO);
 
         Task task1 = new Task("백준1", "DP");
         Long task1_id = taskService.saveTask(memberId, task1);
@@ -89,7 +93,8 @@ class TaskServiceTest {
     public void 이름_Task조회(){
         //given
         Member member = new Member("김환", "hwankim123", "cjsak123");
-        Long memberId = memberService.signUp(member);
+        MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
+        Long memberId = memberService.signUp(memberDTO);
 
         Task task1 = new Task("task1", "task1입니다.");
         Long task1Id = taskService.saveTask(memberId, task1);
@@ -111,7 +116,8 @@ class TaskServiceTest {
     public void 수정(){
         //given
         Member member = new Member("김환", "hwankim123", "cjsak123");
-        Long memberId = memberService.signUp(member);
+        MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
+        Long memberId = memberService.signUp(memberDTO);
 
         Task task1 = new Task("task1", "task1입니다.");
         Long task1Id = taskService.saveTask(memberId, task1);
@@ -131,7 +137,8 @@ class TaskServiceTest {
     public void 중복_이름_예외_수정(){
         //given
         Member member = new Member("김환", "hwankim123", "cjsak123");
-        Long memberId = memberService.signUp(member);
+        MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
+        Long memberId = memberService.signUp(memberDTO);
 
         Task task1 = new Task("task1", "task1입니다.");
         Long task1Id = taskService.saveTask(memberId, task1);
@@ -153,7 +160,8 @@ class TaskServiceTest {
     public void 삭제(){
         //given
         Member member = new Member("김환", "hwankim123", "cjsak123");
-        Long memberId = memberService.signUp(member);
+        MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
+        Long memberId = memberService.signUp(memberDTO);
 
         Task task1 = new Task("task1", "task1입니다.");
         Long task1Id = taskService.saveTask(memberId, task1);

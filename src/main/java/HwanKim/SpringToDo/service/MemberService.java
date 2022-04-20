@@ -1,11 +1,11 @@
 package HwanKim.SpringToDo.service;
 
+import HwanKim.SpringToDo.controller.MemberDTO;
 import HwanKim.SpringToDo.domain.Member;
 import HwanKim.SpringToDo.exception.WrongPasswordException;
 import HwanKim.SpringToDo.exception.WrongUsernameException;
 import HwanKim.SpringToDo.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +23,8 @@ public class MemberService {
      * 중복 username 검증
      * 비밀번호는 최소 6자리
      */
-    public Long signUp(Member member){
+    public Long signUp(MemberDTO memberDTO){
+        Member member = new Member(memberDTO.getName(), memberDTO.getUsername(), memberDTO.getPassword());
         validateUsername(member);
         validatePassword(member);
         memberRepository.save(member);
@@ -48,15 +49,20 @@ public class MemberService {
     /**
      * 로그인
      */
-    public Long login(String username, String password){
+    public MemberDTO login(String username, String password){
         List<Member> findMembers = memberRepository.findByUsername(username);
         if(findMembers.isEmpty()){
             throw new WrongUsernameException("아이디가 틀립니다.");
         }
-        if(findMembers.get(0).getPassword() != password){
+        if(!findMembers.get(0).getPassword().equals(password)){
             throw new WrongPasswordException("비밀번호가 틀립니다.");
         }
-        return findMembers.get(0).getId();
+        return new MemberDTO(
+                findMembers.get(0).getId(),
+                findMembers.get(0).getName(),
+                findMembers.get(0).getUsername(),
+                findMembers.get(0).getPassword()
+        );
     }
 
     /**
