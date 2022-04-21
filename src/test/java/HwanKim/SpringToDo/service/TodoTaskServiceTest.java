@@ -1,7 +1,8 @@
 package HwanKim.SpringToDo.service;
 
-import HwanKim.SpringToDo.controller.MemberDTO;
+import HwanKim.SpringToDo.DTO.MemberDTO;
 import HwanKim.SpringToDo.domain.*;
+import HwanKim.SpringToDo.repository.TaskRepository;
 import HwanKim.SpringToDo.repository.TodoRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,8 @@ public class TodoTaskServiceTest {
     private TaskService taskService;
     @Autowired
     private TodoService todoService;
+    @Autowired
+    private TaskRepository taskRepository;
     @Autowired
     private TodoTaskService todoTaskService;
     @Autowired
@@ -93,11 +96,12 @@ public class TodoTaskServiceTest {
         MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
         Long memberId = memberService.signUp(memberDTO);
 
-        Task task1 = new Task("백준", "백준 1문제");
 //        Task task2 = new Task("클컴 과제", "클컴 과제");
 //        Task task3 = new Task("캡디 면담", "면담 하고 면담확인서 제출");
         List<String> descList = new ArrayList<>();
-        taskIdList.add(taskService.saveTask(memberId, task1));
+        Long task1Id = taskService.saveTask(memberId, "백준", "백준 1문제");
+        Task task1 = taskRepository.findById(task1Id);
+        taskIdList.add(task1Id);
         descList.add(task1.getDesc());
 //        taskIdList.add(taskService.saveTask(memberId, task2));
 //        descList.add(task2.getDesc());

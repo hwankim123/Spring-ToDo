@@ -1,6 +1,6 @@
 package HwanKim.SpringToDo.service;
 
-import HwanKim.SpringToDo.controller.MemberDTO;
+import HwanKim.SpringToDo.DTO.MemberDTO;
 import HwanKim.SpringToDo.domain.Member;
 import HwanKim.SpringToDo.domain.Task;
 import HwanKim.SpringToDo.domain.Todo;
@@ -112,12 +112,9 @@ class TodoServiceTest {
     }
 
     private List<Long> setTaskId123(Long memberId){
-        Task task1 = new Task("task1", "task1입니다");
-        Task task2 = new Task("task2", "task2입니다");
-        Task task3 = new Task("task3", "task3입니다");
-        Long task1Id = taskService.saveTask(memberId, task1);
-        Long task2Id = taskService.saveTask(memberId, task2);
-        Long task3Id = taskService.saveTask(memberId, task3);
+        Long task1Id = taskService.saveTask(memberId, "task1", "task1입니다");
+        Long task2Id = taskService.saveTask(memberId, "task2", "task2입니다");
+        Long task3Id = taskService.saveTask(memberId, "task3", "task3입니다");
 
         List<Long> taskIdList = new ArrayList<>();
         taskIdList.add(task1Id);
@@ -127,10 +124,8 @@ class TodoServiceTest {
     }
 
     private List<Long> setTaskId23(Long memberId) {
-        Task task2 = new Task("task2", "task2입니다");
-        Task task3 = new Task("task3", "task3입니다");
-        Long task2Id = taskService.saveTask(memberId, task2);
-        Long task3Id = taskService.saveTask(memberId, task3);
+        Long task2Id = taskService.saveTask(memberId, "task2", "task2입니다");
+        Long task3Id = taskService.saveTask(memberId, "task3", "task3입니다");
 
         List<Long> taskIdList = new ArrayList<>();
         taskIdList.add(task2Id);
@@ -139,10 +134,8 @@ class TodoServiceTest {
     }
 
     private List<Long> setTaskId12(Long memberId) {
-        Task task1 = new Task("task1", "task1입니다");
-        Task task2 = new Task("task2", "task2입니다");
-        Long task1Id = taskService.saveTask(memberId, task1);
-        Long task2Id = taskService.saveTask(memberId, task2);
+        Long task1Id = taskService.saveTask(memberId, "task1", "task1입니다");
+        Long task2Id = taskService.saveTask(memberId, "task2", "task2입니다");
 
         List<Long> taskIdList = new ArrayList<>();
         taskIdList.add(task1Id);

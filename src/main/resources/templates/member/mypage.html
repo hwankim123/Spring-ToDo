@@ -5,26 +5,20 @@
 <div class="container">
 
 
-    <div th:replace="fragments/bodyHeader :: bodyHeader" />
-
-    <script type="text/javascript" th:if="${sessionInvalid == true}">
-        alert("로그인이 필요한 서비스입니다.");
-    </script>
-    <div th:if="${sessionInvalid == false}">
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>이름</th>
-                <th>아이디</th>
-            </tr>
-            </thead>
-            <tbody>
-                <td th:text="${name}"></td>
-                <td th:text="${username}"></td>
-            </tbody>
-        </table>
-    </div>
-    <div th:replace="fragments/footer :: footer" />
-</div> <!-- /container -->
+<div th:replace="fragments/bodyHeader :: bodyHeader" />
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>이름</th>
+            <th>아이디</th>
+        </tr>
+        </thead>
+        <tbody>
+            <td th:text="${name}"></td>
+            <td th:text="${username}"></td>
+        </tbody>
+    </table>
+</div>
+<div th:replace="fragments/footer :: footer" />
 </body>
 </html>

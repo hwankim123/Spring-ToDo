@@ -2,10 +2,9 @@ package HwanKim.SpringToDo.domain;
 
 import lombok.Getter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -14,10 +13,9 @@ public class Member {
     @Column(name = "member_id")
     Long id;
 
-    String name;
-
-    String username;
-    String password;
+    private String name;
+    private String username;
+    private String password;
 
     protected Member(){
     }

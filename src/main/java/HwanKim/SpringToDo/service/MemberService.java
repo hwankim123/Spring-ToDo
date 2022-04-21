@@ -1,6 +1,6 @@
 package HwanKim.SpringToDo.service;
 
-import HwanKim.SpringToDo.controller.MemberDTO;
+import HwanKim.SpringToDo.DTO.MemberDTO;
 import HwanKim.SpringToDo.domain.Member;
 import HwanKim.SpringToDo.exception.WrongPasswordException;
 import HwanKim.SpringToDo.exception.WrongUsernameException;

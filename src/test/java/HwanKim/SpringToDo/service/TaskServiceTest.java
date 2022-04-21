@@ -1,15 +1,13 @@
 package HwanKim.SpringToDo.service;
 
-import HwanKim.SpringToDo.controller.MemberDTO;
+import HwanKim.SpringToDo.DTO.MemberDTO;
 import HwanKim.SpringToDo.domain.Member;
 import HwanKim.SpringToDo.domain.Task;
-import HwanKim.SpringToDo.repository.MemberRepository;
+import HwanKim.SpringToDo.exception.TaskNameDuplicateException;
 import HwanKim.SpringToDo.repository.TaskRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -35,11 +33,9 @@ class TaskServiceTest {
         MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
         Long memberId = memberService.signUp(memberDTO);
 
-        Task task = new Task("백준", "DP");
-
         //when
-        Long taskId = taskService.saveTask(memberId, task);
-
+        Long taskId = taskService.saveTask(memberId, "백준", "DP");
+        Task task = taskRepository.findById(taskId);
         //then
         System.out.println("taskId = " + taskId + " task.getId() = " + task.getId());
         assertThat(taskId).isEqualTo(task.getId());
@@ -52,15 +48,15 @@ class TaskServiceTest {
         MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
         Long memberId = memberService.signUp(memberDTO);
 
-        Task task1 = new Task("백준", "DP");
-        Long task1_id = taskService.saveTask(memberId, task1);
 
         //when
-        Task task2 = new Task("백준", "오잉");
+        Long task1_id = taskService.saveTask(memberId, "백준", "DP");
+        Task foundTask1 = taskRepository.findById(task1_id);
+        System.out.println("foundTask1 = " + foundTask1.getMember().getName());
 
         //then
-        assertThrows(IllegalArgumentException.class, () -> {
-            taskService.saveTask(memberId, task2);
+        assertThrows(TaskNameDuplicateException.class, () -> {
+            taskService.saveTask(memberId, "백준", "오잉");
         });
     }
 
@@ -71,12 +67,9 @@ class TaskServiceTest {
         MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
         Long memberId = memberService.signUp(memberDTO);
 
-        Task task1 = new Task("백준1", "DP");
-        Long task1_id = taskService.saveTask(memberId, task1);
-        Task task2 = new Task("백준2", "DP");
-        Long task2_id = taskService.saveTask(memberId, task2);
-        Task task3 = new Task("백준3", "DP");
-        Long task3_id = taskService.saveTask(memberId, task3);
+        Long task1_id = taskService.saveTask(memberId, "백준1", "DP");
+        Long task2_id = taskService.saveTask(memberId, "백준2", "DP");
+        Long task3_id = taskService.saveTask(memberId, "백준3", "DP");
 
         //when
         List<Task> tasks = taskService.findAll(memberId);
@@ -96,12 +89,10 @@ class TaskServiceTest {
         MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
         Long memberId = memberService.signUp(memberDTO);
 
-        Task task1 = new Task("task1", "task1입니다.");
-        Long task1Id = taskService.saveTask(memberId, task1);
-        Task task2 = new Task("task2", "task2입니다.");
-        Long task2Id = taskService.saveTask(memberId, task2);
-        Task task3 = new Task("task3", "task3입니다.");
-        Long task3Id = taskService.saveTask(memberId, task3);
+        Long task1Id = taskService.saveTask(memberId, "task1", "task1입니다.");
+        Long task2Id = taskService.saveTask(memberId, "task2", "task2입니다.");
+        Long task3Id = taskService.saveTask(memberId, "task3", "task3입니다.");
+        Task task1 = taskRepository.findById(task1Id);
 
         //when
         List<Task> findTasks = taskService.findOne(memberId, "task1");
@@ -119,10 +110,10 @@ class TaskServiceTest {
         MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
         Long memberId = memberService.signUp(memberDTO);
 
-        Task task1 = new Task("task1", "task1입니다.");
-        Long task1Id = taskService.saveTask(memberId, task1);
+        Long task1Id = taskService.saveTask(memberId, "task1", "task1입니다.");
+        Task task1 = taskRepository.findById(task1Id);
 
-        Task updateData = new Task("task22", "task22입니다.task22입니다.");
+        Task updateData = Task.create(member, "task22", "task22입니다.task22입니다.");
 
         //when
         taskService.update(memberId, task1, updateData.getName(), null);
@@ -140,17 +131,16 @@ class TaskServiceTest {
         MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
         Long memberId = memberService.signUp(memberDTO);
 
-        Task task1 = new Task("task1", "task1입니다.");
-        Long task1Id = taskService.saveTask(memberId, task1);
-        Task task2 = new Task("task2", "task2입니다.");
-        Long task2Id = taskService.saveTask(memberId, task2);
+        Long task1Id = taskService.saveTask(memberId, "task1", "task1입니다.");
+        Task task1 = taskRepository.findById(task1Id);
+        Long task2Id = taskService.saveTask(memberId, "task2", "task2입니다.");
 
         //when
 
-        Task updateData = new Task("task2", "task333입니다.task333입니다.");
+        Task updateData = Task.create(member, "task2", "task333입니다.task333입니다.");
 
         //then
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(TaskNameDuplicateException.class, () -> {
             taskService.update(memberId, task1, updateData.getName(), null);
         });
     }
@@ -163,9 +153,8 @@ class TaskServiceTest {
         MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
         Long memberId = memberService.signUp(memberDTO);
 
-        Task task1 = new Task("task1", "task1입니다.");
-        Long task1Id = taskService.saveTask(memberId, task1);
-
+        Long task1Id = taskService.saveTask(memberId, "task1", "task1입니다.");
+        Task task1 = taskRepository.findById(task1Id);
         //when
         taskService.delete(task1);
         List<Task> tasks = taskService.findAll(memberId);

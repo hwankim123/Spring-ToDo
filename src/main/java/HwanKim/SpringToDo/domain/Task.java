@@ -22,8 +22,22 @@ public class Task {
 
     protected Task(){}
 
-    public Task(String name, String desc){
+    //===생성 메서드===//
+    public static Task create(Member member, String name, String desc){
+        Task task = new Task();
+        task.setMember(member);
+        task.setName(name);
+        task.setDesc(desc);
+        return task;
+    }
+
+    private void setMember(Member member){
+        this.member = member;
+    }
+    private void setName(String name){
         this.name = name;
+    }
+    private void setDesc(String desc){
         this.desc = desc;
     }
 

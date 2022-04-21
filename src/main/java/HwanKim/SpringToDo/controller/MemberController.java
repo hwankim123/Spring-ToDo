@@ -1,6 +1,6 @@
 package HwanKim.SpringToDo.controller;
 
-import HwanKim.SpringToDo.domain.Member;
+import HwanKim.SpringToDo.DTO.MemberDTO;
 import HwanKim.SpringToDo.exception.WrongPasswordException;
 import HwanKim.SpringToDo.exception.WrongUsernameException;
 import HwanKim.SpringToDo.service.MemberService;
@@ -97,13 +97,13 @@ public class MemberController {
     @GetMapping("/member/mypage")
     public String mypage(Model model, HttpServletRequest request){
         HttpSession session = request.getSession();
-        if(session.getId() == null) {
+        if(session.getAttribute(SessionStrings.SESSION_ID) == null) {
             model.addAttribute("sessionInvalid", true);
+            return "home";
         } else{
-            model.addAttribute("sessionInvalid", false);
             model.addAttribute("name", session.getAttribute(SessionStrings.SESSION_NAME));
             model.addAttribute("username", session.getAttribute(SessionStrings.SESSION_USERNAME));
+            return "member/mypage";
         }
-        return "member/mypage";
     }
 }

@@ -10,7 +10,9 @@
 <div class="container">
 
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
-
+    <script type="text/javascript" th:if="${sessionInvalid}">
+        alert("로그인이 필요한 서비스입니다.");
+    </script>
     <div class="jumbotron">
         <h1 th:if="${loginId == null}">Spring Todo</h1>
         <h1 th:unless="${loginId == null}" th:text="${'Spring Todo - '+loginName + '님 안녕하세요!'}">Spring Todo - "이름"님 안녕하세요!</h1>
@@ -21,15 +23,15 @@
             <a th:unless="${loginId == null}"class="btn btn-lg btn-secondary" href="/member/logout">로그아웃</a>
             <a class="btn btn-lg btn-secondary" href="/member/mypage">마이 페이지</a>
         </p>
-        <p class="lead">상품 기능</p>
+        <p class="lead">작업 관리</p>
         <p>
-            <a class="btn btn-lg btn-dark" href="/items/new">상품 등록</a>
-            <a class="btn btn-lg btn-dark" href="/items">상품 목록</a>
+            <a class="btn btn-lg btn-dark" href="/tasks/new">작업 등록</a>
+            <a class="btn btn-lg btn-dark" href="/tasks">작업 목록</a>
         </p>
-        <p class="lead">주문 기능</p>
+        <p class="lead">오늘의 할일</p>
         <p>
-            <a class="btn btn-lg btn-info" href="/order">상품 주문</a>
-            <a class="btn btn-lg btn-info" href="/orders">주문 내역</a>
+            <a class="btn btn-lg btn-info" href="/todo/new">오늘의 할일</a>
+            <a class="btn btn-lg btn-info" href="/todo">달력 보기</a>
         </p>
     </div>
 
