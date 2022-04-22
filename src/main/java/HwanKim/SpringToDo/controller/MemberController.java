@@ -1,9 +1,11 @@
 package HwanKim.SpringToDo.controller;
 
 import HwanKim.SpringToDo.DTO.MemberDTO;
+import HwanKim.SpringToDo.exception.SessionInvalidException;
 import HwanKim.SpringToDo.exception.WrongPasswordException;
 import HwanKim.SpringToDo.exception.WrongUsernameException;
 import HwanKim.SpringToDo.service.MemberService;
+import HwanKim.SpringToDo.session.SessionModules;
 import HwanKim.SpringToDo.session.SessionStrings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -68,7 +71,6 @@ public class MemberController {
 
         MemberDTO loginMemberDTO;
         try{
-            System.out.println(loginForm.getPassword());
             loginMemberDTO = memberService.login(loginForm.getUsername(), loginForm.getPassword());
         } catch(WrongUsernameException e){
             result.addError(new FieldError("loginForm", "username", e.getMessage()));
@@ -97,13 +99,14 @@ public class MemberController {
     @GetMapping("/member/mypage")
     public String mypage(Model model, HttpServletRequest request){
         HttpSession session = request.getSession();
-        if(session.getAttribute(SessionStrings.SESSION_ID) == null) {
-            model.addAttribute("sessionInvalid", true);
+        try{
+            SessionModules.checkSession(session);
+        } catch(SessionInvalidException e){
+            model.addAttribute(e.getMessage(), true);
             return "home";
-        } else{
-            model.addAttribute("name", session.getAttribute(SessionStrings.SESSION_NAME));
-            model.addAttribute("username", session.getAttribute(SessionStrings.SESSION_USERNAME));
-            return "member/mypage";
         }
+        model.addAttribute("name", session.getAttribute(SessionStrings.SESSION_NAME));
+        model.addAttribute("username", session.getAttribute(SessionStrings.SESSION_USERNAME));
+        return "member/mypage";
     }
 }

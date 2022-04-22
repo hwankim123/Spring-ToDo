@@ -1,5 +1,6 @@
 package HwanKim.SpringToDo.service;
 
+import HwanKim.SpringToDo.DTO.TaskDTO;
 import HwanKim.SpringToDo.domain.Member;
 import HwanKim.SpringToDo.domain.Task;
 import HwanKim.SpringToDo.exception.TaskNameDuplicateException;
@@ -21,13 +22,12 @@ public class TaskService {
 
     /**
      * Task 저장
-     * memberId, name, desc
-     * name은 member별로 unique
+     * task의 name은 member별로 unique
      */
-    public Long saveTask(Long memberId, String name, String desc){
-        Member member = memberRepository.findById(memberId);
-        validateName(member.getId(), name);
-        Task task = Task.create(member, name, desc);
+    public Long saveTask(TaskDTO taskDTO){
+        Member member = taskDTO.getMember();
+        validateName(member.getId(), taskDTO.getName());
+        Task task = Task.create(member, taskDTO.getName(), taskDTO.getName());
         taskRepository.save(task);
         return task.getId();
     }
@@ -37,7 +37,7 @@ public class TaskService {
         List<Task> tasks = taskRepository.findByNameInMember(name, memberId);
         System.out.println(tasks.size());
         if(tasks.size() != 0){
-            throw new TaskNameDuplicateException("한 Member의 작업 목록에 같은 이름이 중복될 수 없습니다.");
+            throw new TaskNameDuplicateException("작업 이름이 이미 존재합니다.");
         }
     }
 

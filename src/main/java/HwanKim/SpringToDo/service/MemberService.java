@@ -66,7 +66,7 @@ public class MemberService {
     }
 
     /**
-     * 마이페이지 - 정보 조회
+     * 사용자 조회(마이페이지)
      */
     @Transactional(readOnly = true)
     public Member findMember(Long memberId){

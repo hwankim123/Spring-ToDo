@@ -1,6 +1,7 @@
 package HwanKim.SpringToDo.service;
 
 import HwanKim.SpringToDo.DTO.MemberDTO;
+import HwanKim.SpringToDo.DTO.TaskDTO;
 import HwanKim.SpringToDo.domain.Member;
 import HwanKim.SpringToDo.domain.Task;
 import HwanKim.SpringToDo.domain.Todo;
@@ -35,12 +36,15 @@ class TodoServiceTest {
     @Test
     public void todo_저장_조회() throws Exception{
         //given
-        Long memberId1 = setMemberId("김환", "hwankim123", "aefewfws");
-        Long memberId2 = setMemberId("김환123", "hwankim123123", "aefewfws");
-        Long memberId3 = setMemberId("김환324", "hwankim342123", "aefewfws");
-        List<Long> taskIdList1 = setTaskId123(memberId1);
-        List<Long> taskIdList2 = setTaskId12(memberId2);
-        List<Long> taskIdList3 = setTaskId23(memberId3);
+        Member member1 = setMember("김환", "hwankim123", "aefewfws");
+        Member member2 = setMember("김환123", "hwankim123123", "aefewfws");
+        Member member3 = setMember("김환324", "hwankim342123", "aefewfws");
+        Long memberId1 = member1.getId();
+        Long memberId2 = member2.getId();
+        Long memberId3 = member3.getId();
+        List<Long> taskIdList1 = setTaskId123(member1);
+        List<Long> taskIdList2 = setTaskId12(member2);
+        List<Long> taskIdList3 = setTaskId23(member3);
         //when
         todoService.saveTodo(memberId1, taskIdList1, setDescList("백준 1문제", "Spring 프로젝트 개발", "캡스톤"));
         todoService.saveTodo(memberId2, taskIdList2, setDescList("백준 1문제", "Spring 프로젝트 개발"));
@@ -87,8 +91,9 @@ class TodoServiceTest {
     @Test
     public void todo_조회_예외(){
         //given
-        Long memberId = setMemberId("김환", "hwankim123", "aefewfws");
-        List<Long> taskIdList = setTaskId123(memberId);
+        Member member = setMember("김환", "hwankim123", "aefewfws");
+        Long memberId = member.getId();
+        List<Long> taskIdList = setTaskId123(member);
 
         //when
         Long todoId = todoService.saveTodo(memberId, taskIdList, setDescList("백준 1문제", "Spring 프로젝트 개발", "캡스톤"));
@@ -105,16 +110,20 @@ class TodoServiceTest {
         });
     }
 
-    private Long setMemberId(String name, String username, String password){
+    private Member setMember(String name, String username, String password){
         Member member = new Member(name, username, password);
         MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
-        return memberService.signUp(memberDTO);
+        memberService.signUp(memberDTO);
+        return member;
     }
 
-    private List<Long> setTaskId123(Long memberId){
-        Long task1Id = taskService.saveTask(memberId, "task1", "task1입니다");
-        Long task2Id = taskService.saveTask(memberId, "task2", "task2입니다");
-        Long task3Id = taskService.saveTask(memberId, "task3", "task3입니다");
+    private List<Long> setTaskId123(Member member){
+        TaskDTO taskDTO1 = new TaskDTO(member, "task1", "task1입니다");
+        TaskDTO taskDTO2 = new TaskDTO(member, "task2", "task2입니다");
+        TaskDTO taskDTO3 = new TaskDTO(member, "task3", "task3입니다");
+        Long task1Id = taskService.saveTask(taskDTO1);
+        Long task2Id = taskService.saveTask(taskDTO2);
+        Long task3Id = taskService.saveTask(taskDTO3);
 
         List<Long> taskIdList = new ArrayList<>();
         taskIdList.add(task1Id);
@@ -123,9 +132,11 @@ class TodoServiceTest {
         return taskIdList;
     }
 
-    private List<Long> setTaskId23(Long memberId) {
-        Long task2Id = taskService.saveTask(memberId, "task2", "task2입니다");
-        Long task3Id = taskService.saveTask(memberId, "task3", "task3입니다");
+    private List<Long> setTaskId23(Member member) {
+        TaskDTO taskDTO2 = new TaskDTO(member, "task2", "task2입니다");
+        TaskDTO taskDTO3 = new TaskDTO(member, "task3", "task3입니다");
+        Long task2Id = taskService.saveTask(taskDTO2);
+        Long task3Id = taskService.saveTask(taskDTO3);
 
         List<Long> taskIdList = new ArrayList<>();
         taskIdList.add(task2Id);
@@ -133,9 +144,11 @@ class TodoServiceTest {
         return taskIdList;
     }
 
-    private List<Long> setTaskId12(Long memberId) {
-        Long task1Id = taskService.saveTask(memberId, "task1", "task1입니다");
-        Long task2Id = taskService.saveTask(memberId, "task2", "task2입니다");
+    private List<Long> setTaskId12(Member member) {
+        TaskDTO taskDTO1 = new TaskDTO(member, "task1", "task1입니다");
+        TaskDTO taskDTO2 = new TaskDTO(member, "task2", "task2입니다");
+        Long task1Id = taskService.saveTask(taskDTO1);
+        Long task2Id = taskService.saveTask(taskDTO2);
 
         List<Long> taskIdList = new ArrayList<>();
         taskIdList.add(task1Id);

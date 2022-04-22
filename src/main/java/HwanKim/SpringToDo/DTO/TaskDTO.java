@@ -18,4 +18,10 @@ public class TaskDTO {
         this.name = task.getName();
         this.desc = task.getDesc();
     }
+
+    public TaskDTO(Member member, String name, String desc){
+        this.member = member;
+        this.name = name;
+        this.desc = desc;
+    }
 }

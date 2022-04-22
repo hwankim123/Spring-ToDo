@@ -18,8 +18,6 @@ public class HomeController {
     public String home(Model model, HttpServletRequest request){
         log.info("home controller");
         HttpSession session = request.getSession();
-        log.info("session.loginId : " + session.getAttribute(SessionStrings.SESSION_ID));
-        log.info("session.loginName : " + session.getAttribute(SessionStrings.SESSION_NAME));
         model.addAttribute("loginId", session.getAttribute(SessionStrings.SESSION_ID));
         model.addAttribute("loginName", session.getAttribute(SessionStrings.SESSION_NAME));
         return "home";
