@@ -80,10 +80,10 @@ class TaskServiceTest {
         Long task3_id = taskService.saveTask(taskDTO3);
 
         //when
-        List<Task> tasks = taskService.findAll(memberId);
+        List<TaskDTO> tasks = taskService.findAll(memberId);
 
         //then
-        for(Task task : tasks) {
+        for(TaskDTO task : tasks) {
             System.out.println("tasks = " + task);
         }
         assertThat(tasks.size()).isEqualTo(3);
@@ -106,11 +106,10 @@ class TaskServiceTest {
         Task task1 = taskRepository.findById(task1Id);
 
         //when
-        List<Task> findTasks = taskService.findOne(memberId, "task1");
+        TaskDTO findTasks = taskService.findOneByName(memberId, "task1");
 
         //then
-        assertThat(findTasks.size()).isEqualTo(1);
-        assertThat(findTasks.get(0).getId()).isEqualTo(task1.getId());
+        assertThat(findTasks.getId()).isEqualTo(task1.getId());
 
     }
     // update
@@ -128,7 +127,7 @@ class TaskServiceTest {
         Task updateData = Task.create(member, "task22", "task22입니다.task22입니다.");
 
         //when
-        taskService.update(memberId, task1, updateData.getName(), null);
+        taskService.update(memberId, new TaskDTO(updateData));
 
         //then
         assertThat(task1.getName()).isEqualTo(updateData.getName());
@@ -155,7 +154,7 @@ class TaskServiceTest {
 
         //then
         assertThrows(TaskNameDuplicateException.class, () -> {
-            taskService.update(memberId, task1, updateData.getName(), null);
+            taskService.update(memberId, new TaskDTO(updateData));
         });
     }
 
@@ -172,7 +171,7 @@ class TaskServiceTest {
         Task task1 = taskRepository.findById(task1Id);
         //when
         taskService.delete(task1);
-        List<Task> tasks = taskService.findAll(memberId);
+        List<TaskDTO> tasks = taskService.findAll(memberId);
 
         //then
         assertThat(tasks.size()).isEqualTo(0);

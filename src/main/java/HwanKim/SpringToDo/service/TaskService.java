@@ -1,6 +1,7 @@
 package HwanKim.SpringToDo.service;
 
 import HwanKim.SpringToDo.DTO.TaskDTO;
+import HwanKim.SpringToDo.controller.TaskForm;
 import HwanKim.SpringToDo.domain.Member;
 import HwanKim.SpringToDo.domain.Task;
 import HwanKim.SpringToDo.exception.TaskNameDuplicateException;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -44,26 +46,43 @@ public class TaskService {
     /**
      * Task 전체 검색
      */
-    public List<Task> findAll(Long memberId){
-        return taskRepository.findByMemberId(memberId);
+    public List<TaskDTO> findAll(Long memberId){
+        List<Task> tasks = taskRepository.findByMemberId(memberId);
+        List<TaskDTO> taskDTOs = new ArrayList<>();
+        for(Task t : tasks){
+            taskDTOs.add(new TaskDTO(t));
+        }
+        return taskDTOs;
     }
 
     /**
      * Task 이름 검색
      */
 
-    public List<Task> findOne(Long memberId, String name){
-        return taskRepository.findByNameInMember(name, memberId);
+    public TaskDTO findOneByName(Long memberId, String name){
+
+        List<Task> tasks = taskRepository.findByNameInMember(name, memberId);
+        List<TaskDTO> taskDTOs = new ArrayList<>();
+        for(Task t : tasks){
+            taskDTOs.add(new TaskDTO(t));
+        }
+        return taskDTOs.get(0);
+    }
+
+    public TaskDTO findOneById(Long taskId){
+
+        Task task = taskRepository.findById(taskId);
+        return new TaskDTO(task);
     }
 
     /**
      * Task 수정
      */
-    public void update(Long memberId, Task task, String name, String desc){
-        if(name != null){
-            validateName(memberId, name);
-        }
-        task.update(name, desc);
+    public void update(Long memberId, TaskDTO taskDTO){
+        validateName(memberId, taskDTO.getName());
+
+        Task task = taskRepository.findById(taskDTO.getId());
+        task.update(taskDTO.getName(), taskDTO.getDesc());
     }
 
     /**

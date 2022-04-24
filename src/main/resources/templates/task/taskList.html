@@ -4,6 +4,8 @@
 <body>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+    <h1>작업 목록</h1>
+
     <div>
         <table class="table table-striped">
             <thead>
@@ -16,28 +18,28 @@
             </thead>
             <tbody>
             <tr th:each="task : ${tasks}">
-                <td th:text="${item.id}"></td>
-                <td th:text="${item.member.name}"></td>
-                <td th:text="${item.orderItems[0].item.name}"></td>
-                <td th:text="${item.orderItems[0].orderPrice}"></td>
-                <td th:text="${item.orderItems[0].count}"></td>
-                <td th:text="${item.status}"></td>
-                <td th:text="${item.orderDate}"></td>
+                <td th:text="${task.id}"></td>
+                <td th:text="${task.name}"></td>
+                <td th:text="${task.desc}"></td>
                 <td>
-                    <a th:if="${item.status.name() == 'ORDER'}" href="#" th:href="'javascript:cancel('+${item.id}+')'" class="btn btn-danger">CANCEL</a>
+                    <a class="btn btn-sm btn-outline-secondary" href="#"
+                       th:href="'javascript:update('+${task.id}+', `'+${task.name}+'`, `'+${task.desc}+'`)'">수정</a>
+                    <a class="btn btn-sm btn-outline-danger" href="/tasks/delete">삭제</a>
                 </td>
             </tr>
             </tbody>
         </table>
+        <a class="btn btn-lg btn-secondary" href="/tasks/new">작업 추가</a>
     </div>
     <div th:replace="fragments/footer :: footer"/>
 </div> <!-- /container -->
 </body>
 <script>
-    function cancel(id) {
+    function update(id, name, desc) {
         let form = document.createElement("form");
-        form.setAttribute("method", "post");
-        form.setAttribute("action", "/orders/" + id + "/cancel");
+        form.setAttribute("method", "get");
+        form.setAttribute("action", "/tasks/" + id + "/update");
+
         document.body.appendChild(form);
         form.submit();
     }

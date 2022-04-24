@@ -5,6 +5,7 @@ import HwanKim.SpringToDo.domain.Member;
 import HwanKim.SpringToDo.domain.Task;
 import HwanKim.SpringToDo.exception.SessionInvalidException;
 import HwanKim.SpringToDo.exception.TaskNameDuplicateException;
+import HwanKim.SpringToDo.repository.TaskRepository;
 import HwanKim.SpringToDo.service.MemberService;
 import HwanKim.SpringToDo.service.TaskService;
 import HwanKim.SpringToDo.session.SessionModules;
@@ -15,8 +16,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 
+import javax.naming.Binding;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -28,9 +32,10 @@ public class TaskController {
 
     private final MemberService memberService;
     private final TaskService taskService;
+    private final TaskRepository taskRepository;
 
     @GetMapping("/tasks")
-    public String getTasks(Model model, HttpServletRequest request){
+    public String getAll(Model model, HttpServletRequest request){
         HttpSession session = request.getSession();
         try{
             SessionModules.checkSession(session);
@@ -39,18 +44,26 @@ public class TaskController {
             return "home";
         }
         Long loginId = ((Long) session.getAttribute(SessionStrings.SESSION_ID));
-        List<Task> tasks = taskService.findAll(loginId);
+        List<TaskDTO> tasks = taskService.findAll(loginId);
         model.addAttribute("tasks", tasks);
         return "/task/taskList";
     }
 
     @GetMapping("/tasks/new")
-    public String newTaskForm(Model model){
+    public String newTaskForm(Model model, HttpServletRequest request){
+        HttpSession session = request.getSession();
+        try{
+            SessionModules.checkSession(session);
+        } catch(SessionInvalidException e){
+            model.addAttribute(e.getMessage(), true);
+            return "home";
+        }
         model.addAttribute("taskForm", new TaskForm());
         return "task/newTaskForm";
     }
+
     @PostMapping("/tasks/new")
-    public String createTask(Model model, @Valid TaskForm taskForm, BindingResult result, HttpServletRequest request){
+    public String create(Model model, @Valid TaskForm taskForm, BindingResult result, HttpServletRequest request){
         HttpSession session = request.getSession();
         try{
             SessionModules.checkSession(session);
@@ -73,6 +86,52 @@ public class TaskController {
             return "task/newTaskForm";
         }
 
+        model.addAttribute("taskForm", new TaskForm());
+        return "redirect:/tasks";
+    }
+
+    @GetMapping("/tasks/{taskId}/update")
+    public String updateTaskForm(@PathVariable("taskId") Long taskId, Model model, HttpServletRequest request){
+        HttpSession session = request.getSession();
+
+        try{
+            SessionModules.checkSession(session);
+        } catch(SessionInvalidException e){
+            model.addAttribute(e.getMessage(), true);
+            return "home";
+        }
+
+        TaskDTO task = taskService.findOneById(taskId);
+
+        model.addAttribute("taskForm", task);
+        return "task/updateTaskForm";
+    }
+
+    @PostMapping("/tasks/update")
+    public String update(Model model, @Valid TaskForm taskForm, BindingResult result, HttpServletRequest request){
+        HttpSession session = request.getSession();
+
+        try{
+            SessionModules.checkSession(session);
+        } catch(SessionInvalidException e){
+            model.addAttribute(e.getMessage(), true);
+            return "home";
+        }
+
+        TaskDTO task = taskService.findOneById(taskForm.getId());
+        if(result.hasErrors()){
+
+            model.addAttribute("taskForm", task);
+            return "task/updateTaskForm";
+        }
+
+        Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
+        try{
+            taskService.update(loginId, task);
+        } catch(TaskNameDuplicateException e){
+            result.addError(new FieldError("taskForm", "name", e.getMessage()));
+            return "task/newTaskForm";
+        }
         return "redirect:/tasks";
     }
 }

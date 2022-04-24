@@ -42,11 +42,7 @@ public class Task {
     }
 
     public void update(String name, String desc){
-        if(name != null){
-            this.name = name;
-        }
-        if(desc != null){
-            this.desc = desc;
-        }
+        this.name = name;
+        this.desc = desc;
     }
 }

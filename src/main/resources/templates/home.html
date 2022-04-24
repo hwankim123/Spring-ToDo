@@ -10,6 +10,7 @@
 <div class="container">
 
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
+
     <script type="text/javascript" th:if="${sessionInvalid}">
         alert("로그인이 필요한 서비스입니다.");
     </script>
