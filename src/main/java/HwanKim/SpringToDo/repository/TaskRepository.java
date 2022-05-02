@@ -18,7 +18,6 @@ public class TaskRepository {
      */
     public void save(Task task){
         if(task.getId() == null){
-            System.out.println("persist task");
             em.persist(task);
         } else{
             System.out.println("merge task");
@@ -36,11 +35,6 @@ public class TaskRepository {
                 .getResultList();
     }
 
-
-    /**
-     * find by name
-     * ToDo: name에 Unique 제약 조건을 달지 안달지에 따라 return type 수정 필요
-     */
     public List<Task> findByName(String name){
         return em.createQuery("select t from Task t where t.name = :name", Task.class)
                 .setParameter("name", name)

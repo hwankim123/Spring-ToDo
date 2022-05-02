@@ -13,6 +13,13 @@ public class MemberDTO {
     private String username;
     private String password;
 
+    public MemberDTO(String name, String username, String password){
+        this.id = id;
+        this.name = name;
+        this.username = username;
+        this.password = password;
+    }
+
     public MemberDTO(Long id, String name, String username, String password){
         this.id = id;
         this.name = name;

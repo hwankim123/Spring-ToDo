@@ -24,4 +24,11 @@ public class TaskDTO {
         this.name = name;
         this.desc = desc;
     }
+
+    public TaskDTO(Long id, Member member, String name, String desc){
+        this.id = id;
+        this.member = member;
+        this.name = name;
+        this.desc = desc;
+    }
 }

@@ -5,6 +5,7 @@ import HwanKim.SpringToDo.DTO.TaskDTO;
 import HwanKim.SpringToDo.domain.Member;
 import HwanKim.SpringToDo.domain.Task;
 import HwanKim.SpringToDo.exception.TaskNameDuplicateException;
+import HwanKim.SpringToDo.repository.MemberRepository;
 import HwanKim.SpringToDo.repository.TaskRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ class TaskServiceTest {
 
     @Autowired
     MemberService memberService;
+    @Autowired
+    MemberRepository memberRepository;
     @Autowired
     TaskRepository taskRepository;
     @Autowired
@@ -47,20 +50,19 @@ class TaskServiceTest {
     @Test
     public void 중복_이름_예외_Task저장(){
         //given
-        Member member = new Member("김환", "hwankim123", "cjsak123!");
-        MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
+        MemberDTO memberDTO = new MemberDTO("김환", "hwankim123", "cjsak123!");
         Long memberId = memberService.signUp(memberDTO);
 
 
         //when
-        TaskDTO taskDTO = new TaskDTO(member, "백준", "DP");
+        TaskDTO taskDTO = new TaskDTO(memberRepository.findById(memberId), "백준", "DP");
         Long task1_id = taskService.saveTask(taskDTO);
         Task foundTask1 = taskRepository.findById(task1_id);
         System.out.println("foundTask1 = " + foundTask1.getMember().getName());
 
         //then
         assertThrows(TaskNameDuplicateException.class, () -> {
-            TaskDTO taskDTO2 = new TaskDTO(member, "백준", "오잉");
+            TaskDTO taskDTO2 = new TaskDTO(memberRepository.findById(memberId), "백준", "오잉");
             taskService.saveTask(taskDTO2);
         });
     }
@@ -68,10 +70,10 @@ class TaskServiceTest {
     @Test
     public void 전체_Task조회() throws Exception{
         //given
-        Member member = new Member("김환", "hwankim123", "cjsak123!");
-        MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
+        MemberDTO memberDTO = new MemberDTO("김환", "hwankim123", "cjsak123!");
         Long memberId = memberService.signUp(memberDTO);
 
+        Member member = memberRepository.findById(memberId);
         TaskDTO taskDTO1 = new TaskDTO(member, "백준1", "DP");
         TaskDTO taskDTO2 = new TaskDTO(member, "백준2", "DP");
         TaskDTO taskDTO3 = new TaskDTO(member, "백준3", "DP");
@@ -93,10 +95,11 @@ class TaskServiceTest {
     @Test
     public void 이름_Task조회(){
         //given
-        Member member = new Member("김환", "hwankim123", "cjsak123");
-        MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
+        MemberDTO memberDTO = new MemberDTO("김환", "hwankim123", "cjsak123");
         Long memberId = memberService.signUp(memberDTO);
 
+        Member member = memberRepository.findById(memberId);
+        System.out.println("member.getName() = " + member.getName());
         TaskDTO taskDTO1 = new TaskDTO(member, "백준1", "DP");
         TaskDTO taskDTO2 = new TaskDTO(member, "백준2", "DP");
         TaskDTO taskDTO3 = new TaskDTO(member, "백준3", "DP");
@@ -104,68 +107,68 @@ class TaskServiceTest {
         Long task2Id = taskService.saveTask(taskDTO2);
         Long task3Id = taskService.saveTask(taskDTO3);
         Task task1 = taskRepository.findById(task1Id);
+        System.out.println("task1.getId() = " + task1.getId());
 
         //when
-        TaskDTO findTasks = taskService.findOneByName(memberId, "task1");
+        TaskDTO findTasks = taskService.findOneByName(memberId, "백준1");
 
         //then
         assertThat(findTasks.getId()).isEqualTo(task1.getId());
 
     }
-    // update
-    @Test
-    public void 수정(){
-        //given
-        Member member = new Member("김환", "hwankim123", "cjsak123");
-        MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
-        Long memberId = memberService.signUp(memberDTO);
 
-        TaskDTO taskDTO = new TaskDTO(member, "task1", "task1입니다.");
-        Long task1Id = taskService.saveTask(taskDTO);
-        Task task1 = taskRepository.findById(task1Id);
-
-        Task updateData = Task.create(member, "task22", "task22입니다.task22입니다.");
-
-        //when
-        taskService.update(memberId, new TaskDTO(updateData));
-
-        //then
-        assertThat(task1.getName()).isEqualTo(updateData.getName());
-        assertThat(task1.getDesc()).isNotEqualTo(updateData.getDesc());
-    }
-
-    //update - 중복 이름 예외
+    //update - 중복 이름 예외(수정하고자 하는 task가 다른 task의 이름과 겹칠 때) : 예외
     @Test
     public void 중복_이름_예외_수정(){
         //given
-        Member member = new Member("김환", "hwankim123", "cjsak123");
-        MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
+        MemberDTO memberDTO = new MemberDTO("김환", "hwankim123", "cjsak123");
         Long memberId = memberService.signUp(memberDTO);
 
+        Member member = memberRepository.findById(memberId);
         TaskDTO taskDTO1 = new TaskDTO(member, "task1", "task1입니다.");
         TaskDTO taskDTO2 = new TaskDTO(member, "task2", "task2입니다.");
         Long task1Id = taskService.saveTask(taskDTO1);
-        Task task1 = taskRepository.findById(task1Id);
         Long task2Id = taskService.saveTask(taskDTO2);
 
         //when
-
-        Task updateData = Task.create(member, "task2", "task333입니다.task333입니다.");
+        TaskDTO updatedTaskDTO = new TaskDTO(task1Id, member, "task2", "task2로 바꿔볼까?");
 
         //then
         assertThrows(TaskNameDuplicateException.class, () -> {
-            taskService.update(memberId, new TaskDTO(updateData));
+            taskService.update(memberId, updatedTaskDTO, "task1");
         });
+    }
+
+    @Test
+    public void 이름_수정_안할때_정상_수정(){
+        //given
+        MemberDTO memberDTO = new MemberDTO("김환", "hwankim123", "cjsak123");
+        Long memberId = memberService.signUp(memberDTO);
+
+        Member member = memberRepository.findById(memberId);
+        TaskDTO taskDTO1 = new TaskDTO(member, "task1", "task1입니다.");
+        TaskDTO taskDTO2 = new TaskDTO(member, "task2", "task2입니다.");
+        Long task1Id = taskService.saveTask(taskDTO1);
+        Long task2Id = taskService.saveTask(taskDTO2);
+
+        //when
+        TaskDTO updatedTaskDTO = new TaskDTO(task1Id, member, "task1", "이름은 그대로 냅둬볼까?");
+        taskService.update(memberId, updatedTaskDTO, "task1");
+
+        //then
+        assertThat(task1Id).isEqualTo(taskRepository.findByName(updatedTaskDTO.getName()).get(0).getId());
+        assertThat(taskDTO1.getName()).isEqualTo(updatedTaskDTO.getName());
+        assertThat(taskDTO1.getDesc()).isNotEqualTo(updatedTaskDTO.getDesc());
     }
 
     // delete
     @Test
     public void 삭제(){
         //given
-        Member member = new Member("김환", "hwankim123", "cjsak123");
-        MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
+        MemberDTO memberDTO = new MemberDTO("김환", "hwankim123", "cjsak123");
         Long memberId = memberService.signUp(memberDTO);
 
+        Member member = memberRepository.findById(memberId);
         TaskDTO taskDTO = new TaskDTO(member, "task1", "task1입니다.");
         Long task1Id = taskService.saveTask(taskDTO);
         Task task1 = taskRepository.findById(task1Id);

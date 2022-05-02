@@ -118,19 +118,24 @@ public class TaskController {
             return "home";
         }
 
-        TaskDTO task = taskService.findOneById(taskForm.getId());
+        TaskDTO taskBeforeUpdated = taskService.findOneById(taskForm.getId());
         if(result.hasErrors()){
 
-            model.addAttribute("taskForm", task);
+            model.addAttribute("taskForm", taskForm);
             return "task/updateTaskForm";
         }
 
         Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
         try{
-            taskService.update(loginId, task);
+            TaskDTO updatedTask = new TaskDTO(
+                    taskBeforeUpdated.getId(),
+                    taskBeforeUpdated.getMember(),
+                    taskForm.getName(),
+                    taskForm.getDesc());
+            taskService.update(loginId, updatedTask, taskBeforeUpdated.getName());
         } catch(TaskNameDuplicateException e){
             result.addError(new FieldError("taskForm", "name", e.getMessage()));
-            return "task/newTaskForm";
+            return "task/updateTaskForm";
         }
         return "redirect:/tasks";
     }
