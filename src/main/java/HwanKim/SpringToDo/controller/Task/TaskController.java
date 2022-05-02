@@ -102,6 +102,7 @@ public class TaskController {
         return "task/updateTaskForm";
     }
 
+    // ToDo : url 가운데에 {id} 끼워넣기. html도 수정.
     @PostMapping("/tasks/update")
     public String update(Model model, @Valid TaskForm taskForm, BindingResult result, HttpServletRequest request){
         HttpSession session = request.getSession();
