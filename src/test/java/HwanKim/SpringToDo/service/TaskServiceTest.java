@@ -171,9 +171,8 @@ class TaskServiceTest {
         Member member = memberRepository.findById(memberId);
         TaskDTO taskDTO = new TaskDTO(member, "task1", "task1입니다.");
         Long task1Id = taskService.saveTask(taskDTO);
-        Task task1 = taskRepository.findById(task1Id);
         //when
-        taskService.delete(task1);
+        taskService.delete(task1Id);
         List<TaskDTO> tasks = taskService.findAll(memberId);
 
         //then

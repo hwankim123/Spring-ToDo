@@ -20,19 +20,19 @@
         <p class="lead">회원 기능</p>
         <p>
             <a class="btn btn-lg btn-secondary" href="/member/new">회원 가입</a>
-            <a th:if="${loginId == null}"class="btn btn-lg btn-secondary" href="/member/login">로그인</a>
-            <a th:unless="${loginId == null}"class="btn btn-lg btn-secondary" href="/member/logout">로그아웃</a>
-            <a class="btn btn-lg btn-secondary" href="/member/mypage">마이 페이지</a>
+            <a th:if="${loginId == null}" class="btn btn-lg btn-secondary" href="/member/login">로그인</a>
+            <a th:unless="${loginId == null}" class="btn btn-lg btn-secondary" href="/member/logout">로그아웃</a>
+            <a th:if="${loginId != null}" class="btn btn-lg btn-secondary" href="/member/mypage">마이 페이지</a>
         </p>
-        <p class="lead">작업 관리</p>
+        <p th:if="${loginId != null}" class="lead">작업 관리</p>
         <p>
-            <a class="btn btn-lg btn-dark" href="/tasks/new">작업 등록</a>
-            <a class="btn btn-lg btn-dark" href="/tasks">작업 목록</a>
+            <a th:if="${loginId != null}" class="btn btn-lg btn-dark" href="/tasks/new">작업 등록</a>
+            <a th:if="${loginId != null}" class="btn btn-lg btn-dark" href="/tasks">작업 목록</a>
         </p>
-        <p class="lead">오늘의 할일</p>
+        <p th:if="${loginId != null}" class="lead">오늘의 할일</p>
         <p>
-            <a class="btn btn-lg btn-info" href="/todo/new">오늘의 할일</a>
-            <a class="btn btn-lg btn-info" href="/todo">달력 보기</a>
+            <a th:if="${loginId != null}" class="btn btn-lg btn-info" href="/todo/new">오늘의 할일</a>
+            <a th:if="${loginId != null}" class="btn btn-lg btn-info" href="/todo">달력 보기</a>
         </p>
     </div>
 

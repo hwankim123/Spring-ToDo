@@ -1,4 +1,4 @@
-package HwanKim.SpringToDo.controller;
+package HwanKim.SpringToDo.controller.Task;
 
 import lombok.Getter;
 import lombok.Setter;

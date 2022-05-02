@@ -1,8 +1,7 @@
-package HwanKim.SpringToDo.controller;
+package HwanKim.SpringToDo.controller.Task;
 
 import HwanKim.SpringToDo.DTO.TaskDTO;
 import HwanKim.SpringToDo.domain.Member;
-import HwanKim.SpringToDo.domain.Task;
 import HwanKim.SpringToDo.exception.SessionInvalidException;
 import HwanKim.SpringToDo.exception.TaskNameDuplicateException;
 import HwanKim.SpringToDo.repository.TaskRepository;
@@ -15,12 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.*;
 
-import javax.naming.Binding;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -137,6 +132,21 @@ public class TaskController {
             result.addError(new FieldError("taskForm", "name", e.getMessage()));
             return "task/updateTaskForm";
         }
+        return "redirect:/tasks";
+    }
+
+    @DeleteMapping("/tasks/{taskId}/delete")
+    public String delete(@PathVariable("taskId") Long taskId, Model model, HttpServletRequest request){
+        HttpSession session = request.getSession();
+
+        try{
+            SessionModules.checkSession(session);
+        } catch(SessionInvalidException e){
+            model.addAttribute(e.getMessage(), true);
+            return "home";
+        }
+
+        taskService.delete(taskId);
         return "redirect:/tasks";
     }
 }

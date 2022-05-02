@@ -1,7 +1,6 @@
 package HwanKim.SpringToDo.service;
 
 import HwanKim.SpringToDo.DTO.TaskDTO;
-import HwanKim.SpringToDo.controller.TaskForm;
 import HwanKim.SpringToDo.domain.Member;
 import HwanKim.SpringToDo.domain.Task;
 import HwanKim.SpringToDo.exception.TaskNameDuplicateException;
@@ -90,7 +89,8 @@ public class TaskService {
     /**
      * Task 삭제
      */
-    public void delete(Task task){
+    public void delete(Long taskId){
+        Task task = taskRepository.findById(taskId);
         taskRepository.remove(task);
     }
 

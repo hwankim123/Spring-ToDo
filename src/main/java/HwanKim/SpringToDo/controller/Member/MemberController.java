@@ -1,4 +1,4 @@
-package HwanKim.SpringToDo.controller;
+package HwanKim.SpringToDo.controller.Member;
 
 import HwanKim.SpringToDo.DTO.MemberDTO;
 import HwanKim.SpringToDo.exception.SessionInvalidException;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
