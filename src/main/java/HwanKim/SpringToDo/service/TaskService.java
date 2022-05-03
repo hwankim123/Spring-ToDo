@@ -4,6 +4,7 @@ import HwanKim.SpringToDo.DTO.TaskDTO;
 import HwanKim.SpringToDo.domain.Member;
 import HwanKim.SpringToDo.domain.Task;
 import HwanKim.SpringToDo.exception.TaskNameDuplicateException;
+import HwanKim.SpringToDo.exception.WrongDataAccessException;
 import HwanKim.SpringToDo.repository.MemberRepository;
 import HwanKim.SpringToDo.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
@@ -94,4 +95,12 @@ public class TaskService {
         taskRepository.remove(task);
     }
 
+    public void checkAuth(Long memberId, Long taskId) {
+        List<Task> tasks = taskRepository.findByMemberId(memberId);
+        for(Task task : tasks){
+            if(taskId.equals(task.getId())){
+                throw new WrongDataAccessException("수정 권한이 없는 작업에 대한 수정 요청입니다.");
+            }
+        }
+    }
 }

@@ -101,7 +101,7 @@ public class MemberController {
         try{
             SessionModules.checkSession(session);
         } catch(SessionInvalidException e){
-            model.addAttribute(e.getMessage(), true);
+            model.addAttribute("sessionInvalid", e.getMessage());
             return "home";
         }
         model.addAttribute("name", session.getAttribute(SessionStrings.SESSION_NAME));

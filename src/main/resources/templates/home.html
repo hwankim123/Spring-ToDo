@@ -11,8 +11,23 @@
 
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
 
-    <script type="text/javascript" th:if="${sessionInvalid}">
-        alert("로그인이 필요한 서비스입니다.");
+<!--    <script type="text/javascript" th:if="${sessionInvalid}">-->
+<!--        alert("로그인이 필요한 서비스입니다.");-->
+<!--    </script>-->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        if([[${sessionInvalid}]] != null){
+            var message = [[${sessionInvalid}]];
+            alert(message);
+        }
+
+        if([[${wrongDataAccess}]] != null){
+            var message = [[${wrongDataAccess}]];
+            alert(message);
+        }
+
+        /*]]>*/
     </script>
     <div class="jumbotron">
         <h1 th:if="${loginId == null}">Spring Todo</h1>
