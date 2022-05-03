@@ -1,61 +1,33 @@
 # Spring-ToDo
-Spring Boot와 JPA를 활용한 To-Do Page
+간단한 일정&스케쥴 관리 서비스
 
 
 ## 1. 프로젝트 계획 의도
-> Spring Boot 개발환경과 JPA 사용에 익숙해지기 위해 간단한 To-Do Page 개발을 기획함.
-> To-Do Page를 구성하는 필수 요소들을 가지고 완성된 어플리케이션을 만든 후
-> 실무라면 고려해야할 것들과 추가 기능들을 추가하는 식으로 유지보수 할 예정.
+> Spring Boot 개발환경과 JPA 사용에 익숙해지기 위해 간단한 To-Do Page 개발
+> To-Do Page를 구성하는 필수 요소들을 가지고 완성된 서비스 구현
+> 실제 운영되는 서비스라면 고려해야할 것들과 추가 기능들을 손보는 식으로 유지보수
 
 ## 2. 요구사항
 > ### 2.1. 회원 기능
-> > * 회원 가입
-> > * 로그인
+> > * 회원 가입, 로그인
 > > * 마이페이지
-> ### 2.2. 할일(Task) 등록 기능
-> > * 할일 등록
-> > * 할일 검색(전체 검색, 이름 검색)
-> > * 할일 수정
-> ### 2.3. 오늘의 할일(Todo) 기능
-> > * 오늘의 할일 작성
-> > * 오늘의 할일 수정
-> > * 오늘의 할일 진행
+> ### 2.2. 작업(Task) 등록 기능
+> > * 작업 등록, 수정, 삭제, 검색(전체 검색, 이름 검색)
+> ### 2.3. 할일(Todo) 기능
+> > * 할일 작성, 수정 진행
 > ### 2.4. 추가 기능(구현 예정)
-> > * 요일별 Todo 조회
-> > * 할일 진행률
-> > * 할일 수정률
+> > * 캘린더 기능 : 특정 요일의 Todo 조회 및 일정 조회
+> > * 일정 등록, 수정, 삭제 기능
 
-## 3. 엔티티 분석
-> ### 3.1. Member
-> > * id : Long
-> > * name : String
-> > * username(unique) : String
-> > * password : String
-> ### 3.2. Todo
-> > * id : Long
-> > * member : Member
-> > * todoTasks : List<TodoTask>
-> > * status : TodoTaskStatus(Enum)
-> > * startTime : LocalDateTime
-> > * finishTime : LocalDateTime
-> > * startCnt : Int
-> > * finishCnt : Int
-> ### 3.3. TodoTask
-> > * id : Long
-> > * task : Task
-> > * todo : Todo
-> > * status : TodoTaskStatus(Enum)
-> > * taskDuration : Duration
-> > * startTime : LocalDateTime
-> > * restartTime : LocalDateTime
-> > * finishTime : LocalDateTime
-> > * desc : String(Text)
-> ### 3.4. Task
-> > * id : Long
-> > * name : String
-> > * desc : String(Text)
-> ### 3.5. 엔티티 간 연관관계
-> > * Member와 Todo는 1:N 단방향 연관관계
-> > * Todo와 Task는 N:M 연관관계. 이를 TodoTask로 풀어냄
-> > * Todo와 TodoTask는 1:N 양방향 연관관계
-> > * TodoTask와 Task는 N:1 단방향 연관관계
+## 3. 주요 로직
+> 회원 가입 & 로그인
+>> 예외처리
+
+> 작업(Task)관련 CURD
+>> 예외처리
+
+> 할일(Todo)관련 CURD
+
+## 4. 사용한 DB 및 (배포 -> 예정)
+
+## 5. 후기
