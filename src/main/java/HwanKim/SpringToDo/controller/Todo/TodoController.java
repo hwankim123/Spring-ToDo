@@ -1,7 +1,8 @@
 package HwanKim.SpringToDo.controller.Todo;
 
 import HwanKim.SpringToDo.exception.SessionInvalidException;
-import HwanKim.SpringToDo.session.SessionModules;
+import HwanKim.SpringToDo.auth.AuthModules;
+import HwanKim.SpringToDo.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,11 +15,14 @@ import javax.servlet.http.HttpSession;
 @RequiredArgsConstructor
 public class TodoController {
 
+    private final TodoService todoService;
+    private final AuthModules authModules;
+
     @GetMapping("/todo/new")
     public String newTodo(Model model, HttpServletRequest request){
         HttpSession session = request.getSession();
         try{
-            SessionModules.checkSession(session);
+            authModules.checkSession(session);
         } catch(SessionInvalidException e){
             model.addAttribute(e.getMessage(), true);
             return "home";

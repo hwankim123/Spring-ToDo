@@ -41,7 +41,7 @@ class TaskServiceTest {
         //when
         TaskDTO taskDTO = new TaskDTO(member, "백준", "DP");
         Long taskId = taskService.saveTask(taskDTO);
-        Task task = taskRepository.findById(taskId);
+        Task task = taskRepository.findById(memberId, taskId);
         //then
         System.out.println("taskId = " + taskId + " task.getId() = " + task.getId());
         assertThat(taskId).isEqualTo(task.getId());
@@ -57,7 +57,7 @@ class TaskServiceTest {
         //when
         TaskDTO taskDTO = new TaskDTO(memberRepository.findById(memberId), "백준", "DP");
         Long task1_id = taskService.saveTask(taskDTO);
-        Task foundTask1 = taskRepository.findById(task1_id);
+        Task foundTask1 = taskRepository.findById(memberId, task1_id);
         System.out.println("foundTask1 = " + foundTask1.getMember().getName());
 
         //then
@@ -106,7 +106,7 @@ class TaskServiceTest {
         Long task1Id = taskService.saveTask(taskDTO1);
         Long task2Id = taskService.saveTask(taskDTO2);
         Long task3Id = taskService.saveTask(taskDTO3);
-        Task task1 = taskRepository.findById(task1Id);
+        Task task1 = taskRepository.findById(memberId, task1Id);
         System.out.println("task1.getId() = " + task1.getId());
 
         //when
@@ -172,7 +172,7 @@ class TaskServiceTest {
         TaskDTO taskDTO = new TaskDTO(member, "task1", "task1입니다.");
         Long task1Id = taskService.saveTask(taskDTO);
         //when
-        taskService.delete(task1Id);
+        taskService.delete(memberId, task1Id);
         List<TaskDTO> tasks = taskService.findAll(memberId);
 
         //then

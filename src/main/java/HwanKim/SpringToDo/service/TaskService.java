@@ -20,13 +20,6 @@ import java.util.List;
 public class TaskService {
 
     private final TaskRepository taskRepository;
-    private final MemberRepository memberRepository;
-
-    public TaskDTO findOneById(Long taskId){
-
-        Task task = taskRepository.findById(taskId);
-        return new TaskDTO(task);
-    }
 
     /**
      * Task 전체 검색
@@ -38,6 +31,15 @@ public class TaskService {
             taskDTOs.add(new TaskDTO(t));
         }
         return taskDTOs;
+    }
+
+    /**
+     * Task id 검색
+     */
+    public TaskDTO findOneById(Long memberId, Long taskId){
+
+        Task task = taskRepository.findById(memberId, taskId);
+        return new TaskDTO(task);
     }
 
     /**
@@ -71,7 +73,7 @@ public class TaskService {
     public void update(Long memberId, TaskDTO taskDTO, String nameBeforeUpdated){
         validateName(memberId, taskDTO.getName(), nameBeforeUpdated);
 
-        Task task = taskRepository.findById(taskDTO.getId());
+        Task task = taskRepository.findById(memberId, taskDTO.getId());
         task.update(taskDTO.getName(), taskDTO.getDesc());
     }
 
@@ -90,17 +92,8 @@ public class TaskService {
     /**
      * Task 삭제
      */
-    public void delete(Long taskId){
-        Task task = taskRepository.findById(taskId);
+    public void delete(Long memberId, Long taskId){
+        Task task = taskRepository.findById(memberId, taskId);
         taskRepository.remove(task);
-    }
-
-    public void checkAuth(Long memberId, Long taskId) {
-        List<Task> tasks = taskRepository.findByMemberId(memberId);
-        for(Task task : tasks){
-            if(taskId.equals(task.getId())){
-                throw new WrongDataAccessException("수정 권한이 없는 작업에 대한 수정 요청입니다.");
-            }
-        }
     }
 }

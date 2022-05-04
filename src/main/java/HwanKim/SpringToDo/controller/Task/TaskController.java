@@ -1,15 +1,15 @@
 package HwanKim.SpringToDo.controller.Task;
 
 import HwanKim.SpringToDo.DTO.TaskDTO;
+import HwanKim.SpringToDo.auth.CRUDStatus;
 import HwanKim.SpringToDo.domain.Member;
 import HwanKim.SpringToDo.exception.SessionInvalidException;
 import HwanKim.SpringToDo.exception.TaskNameDuplicateException;
 import HwanKim.SpringToDo.exception.WrongDataAccessException;
-import HwanKim.SpringToDo.repository.TaskRepository;
 import HwanKim.SpringToDo.service.MemberService;
 import HwanKim.SpringToDo.service.TaskService;
-import HwanKim.SpringToDo.session.SessionModules;
-import HwanKim.SpringToDo.session.SessionStrings;
+import HwanKim.SpringToDo.auth.AuthModules;
+import HwanKim.SpringToDo.auth.SessionStrings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,15 +28,16 @@ public class TaskController {
 
     private final MemberService memberService;
     private final TaskService taskService;
+    private final AuthModules authModules;
 
     @GetMapping("/tasks")
     public String getAll(Model model, HttpServletRequest request){
         HttpSession session = request.getSession();
         try{
-            SessionModules.checkSession(session);
+            authModules.checkSession(session);
         } catch(SessionInvalidException e){
             model.addAttribute("sessionInvalid", e.getMessage());
-            return "home";
+            return "exceptions";
         }
         Long loginId = ((Long) session.getAttribute(SessionStrings.SESSION_ID));
         List<TaskDTO> tasks = taskService.findAll(loginId);
@@ -48,10 +49,10 @@ public class TaskController {
     public String newTaskForm(Model model, HttpServletRequest request){
         HttpSession session = request.getSession();
         try{
-            SessionModules.checkSession(session);
+            authModules.checkSession(session);
         } catch(SessionInvalidException e){
             model.addAttribute("sessionInvalid", e.getMessage());
-            return "home";
+            return "exceptions";
         }
         model.addAttribute("taskForm", new TaskForm());
         return "task/newTaskForm";
@@ -61,10 +62,10 @@ public class TaskController {
     public String create(Model model, @Valid TaskForm taskForm, BindingResult result, HttpServletRequest request){
         HttpSession session = request.getSession();
         try{
-            SessionModules.checkSession(session);
+            authModules.checkSession(session);
         } catch(SessionInvalidException e){
             model.addAttribute("sessionInvalid", e.getMessage());
-            return "home";
+            return "exceptions";
         }
 
         if(result.hasErrors()){
@@ -72,7 +73,7 @@ public class TaskController {
         }
 
         Long loginId = ((Long) session.getAttribute(SessionStrings.SESSION_ID));
-        Member member = memberService.findMember(loginId);
+        Member member = memberService.findMember(loginId); // 리팩토링 필요 : DTO를 반환하도록
         TaskDTO newTaskDTO = new TaskDTO(member, taskForm.getName(), taskForm.getDesc());
         try{
             taskService.saveTask(newTaskDTO);
@@ -84,26 +85,25 @@ public class TaskController {
         return "redirect:/tasks";
     }
 
-    // url상에 taskId가 넘어오므로, service단에서 사용자 권한 체크 필요
     @GetMapping("/tasks/{taskId}/update")
     public String updateTaskForm(@PathVariable("taskId") Long taskId, Model model, HttpServletRequest request){
         HttpSession session = request.getSession();
 
         try{
-            SessionModules.checkSession(session);
+            authModules.checkSession(session);
         } catch(SessionInvalidException e){
             model.addAttribute("sessionInvalid", e.getMessage());
-            return "home";
+            return "exceptions";
         }
+        Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
         try{
-            Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
-            taskService.checkAuth(loginId, taskId);
+            authModules.checkAuthofTask(loginId, taskId, CRUDStatus.UPDATE);
         } catch(WrongDataAccessException e){
             model.addAttribute("wrongDataAccess", e.getMessage());
-            return "home";
+            return "exceptions";
         }
 
-        TaskDTO task = taskService.findOneById(taskId);
+        TaskDTO task = taskService.findOneById(loginId, taskId);
         model.addAttribute("taskForm", task);
         return "task/updateTaskForm";
     }
@@ -114,20 +114,20 @@ public class TaskController {
         HttpSession session = request.getSession();
 
         try{
-            SessionModules.checkSession(session);
+            authModules.checkSession(session);
         } catch(SessionInvalidException e){
             model.addAttribute("sessionInvalid", e.getMessage());
-            return "home";
+            return "exceptions";
         }
         Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
         try{
-            taskService.checkAuth(loginId, taskId);
+            authModules.checkAuthofTask(loginId, taskId, CRUDStatus.UPDATE);
         } catch(WrongDataAccessException e){
             model.addAttribute("wrongDataAccess", e.getMessage());
-            return "home";
+            return "exceptions";
         }
 
-        TaskDTO taskBeforeUpdated = taskService.findOneById(taskId);
+        TaskDTO taskBeforeUpdated = taskService.findOneById(loginId, taskId);
         if(result.hasErrors()){
             model.addAttribute("taskForm", taskForm);
             return "task/updateTaskForm";
@@ -152,21 +152,21 @@ public class TaskController {
         HttpSession session = request.getSession();
 
         try{
-            SessionModules.checkSession(session);
+            authModules.checkSession(session);
         } catch(SessionInvalidException e){
             model.addAttribute("sessionInvalid", e.getMessage());
-            return "home";
+            return "exceptions";
         }
         Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
         try{
-            taskService.checkAuth(loginId, taskId);
+            authModules.checkAuthofTask(loginId, taskId, CRUDStatus.DELETE);
         } catch(WrongDataAccessException e){
             model.addAttribute("wrongDataAccess", e.getMessage());
-            return "home";
+            return "exceptions";
         }
 
 
-        taskService.delete(taskId);
+        taskService.delete(loginId, taskId);
         return "redirect:/tasks";
     }
 }

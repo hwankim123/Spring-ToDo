@@ -1,8 +1,7 @@
 package HwanKim.SpringToDo.controller;
 
-import HwanKim.SpringToDo.session.SessionStrings;
+import HwanKim.SpringToDo.auth.SessionStrings;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;

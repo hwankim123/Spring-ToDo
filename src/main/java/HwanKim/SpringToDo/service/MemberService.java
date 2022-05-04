@@ -68,6 +68,7 @@ public class MemberService {
     /**
      * 사용자 조회(마이페이지)
      */
+    // 리팩토링 필요 : return을 MemberDTO로 하도록
     @Transactional(readOnly = true)
     public Member findMember(Long memberId){
         return memberRepository.findById(memberId);

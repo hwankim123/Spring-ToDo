@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>Hello</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        if([[${wrongDataAccess}]] != null){
+            let message = [[${wrongDataAccess}]];
+            alert(message);
+            document.location.href="/";
+        }
+
+        /*]]>*/
+    </script>
+</body>
+</html>

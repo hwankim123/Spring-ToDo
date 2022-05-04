@@ -1,4 +1,4 @@
-package HwanKim.SpringToDo.session;
+package HwanKim.SpringToDo.auth;
 
 public class SessionStrings {
     public static String SESSION_ID = "loginId";

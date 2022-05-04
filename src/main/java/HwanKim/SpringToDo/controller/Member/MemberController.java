@@ -5,8 +5,8 @@ import HwanKim.SpringToDo.exception.SessionInvalidException;
 import HwanKim.SpringToDo.exception.WrongPasswordException;
 import HwanKim.SpringToDo.exception.WrongUsernameException;
 import HwanKim.SpringToDo.service.MemberService;
-import HwanKim.SpringToDo.session.SessionModules;
-import HwanKim.SpringToDo.session.SessionStrings;
+import HwanKim.SpringToDo.auth.AuthModules;
+import HwanKim.SpringToDo.auth.SessionStrings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +24,7 @@ import javax.validation.Valid;
 public class MemberController {
 
     private final MemberService memberService;
+    private final AuthModules authModules;
 
     @GetMapping("/member/new")
     public String createForm(Model model){
@@ -31,8 +32,6 @@ public class MemberController {
         return "member/createMemberForm";
     }
 
-    // memberForm에 Valid 자바 기능을 사용하기 때문에, 편리하게 valid 기능을 사용할 수 있게 된다.
-    // 이 말을 무었이냐, memberService에서 우리가 해줬던 valid 함수들의 필요성에 대해서 재점검할 필요가 있다.
     @PostMapping("/member/new")
     public String create(@Valid MemberForm memberForm, BindingResult result){
 
@@ -99,10 +98,10 @@ public class MemberController {
     public String mypage(Model model, HttpServletRequest request){
         HttpSession session = request.getSession();
         try{
-            SessionModules.checkSession(session);
+            authModules.checkSession(session);
         } catch(SessionInvalidException e){
             model.addAttribute("sessionInvalid", e.getMessage());
-            return "home";
+            return "exceptions";
         }
         model.addAttribute("name", session.getAttribute(SessionStrings.SESSION_NAME));
         model.addAttribute("username", session.getAttribute(SessionStrings.SESSION_USERNAME));

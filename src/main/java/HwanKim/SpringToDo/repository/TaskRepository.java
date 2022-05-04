@@ -13,9 +13,6 @@ public class TaskRepository {
 
     private final EntityManager em;
 
-    /**
-     * TODO: task.getId()로 신규 작업 등록과 기존 작업의 수정 작업의 id 존재 여부를 확인해볼 것
-     */
     public void save(Task task){
         if(task.getId() == null){
             em.persist(task);
@@ -25,12 +22,15 @@ public class TaskRepository {
         }
     }
 
-    public Task findById(Long id){
-        return em.find(Task.class, id);
+    public Task findById(Long memberId, Long id){
+        return em.createQuery("select t from Task t where t.member.id = :memberId and t.id = :id", Task.class)
+                .setParameter("memberId", memberId)
+                .setParameter("id", id)
+                .getSingleResult();
     }
 
     public List<Task> findByMemberId(Long memberId){
-        return em.createQuery("select t from Task t inner join Member m on m.id = :memberId", Task.class)
+        return em.createQuery("select t from Task t where t.member.id = :memberId", Task.class)
                 .setParameter("memberId", memberId)
                 .getResultList();
     }

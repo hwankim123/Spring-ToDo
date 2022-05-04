@@ -24,7 +24,7 @@ public class TodoService {
         Member member = memberRepository.findById(memberId);
         List<TodoTask> todoTasks = new ArrayList<>();
         for(int idx = 0; idx < taskIdList.size(); idx++){
-            Task task = taskRepository.findById(taskIdList.get(idx));
+            Task task = taskRepository.findById(memberId, taskIdList.get(idx));
             todoTasks.add(TodoTask.createTodoTask(task, TodoTaskStatus.READY, descList.get(idx)));
         }
 
