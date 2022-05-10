@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+<script>
+    function setSelectBtn(){
+        let taskList = document.getElementById("taskList");
+        let selectBtn = document.getElementById("selectBtn");
+        let name = taskList.options[taskList.selectedIndex].text;
+        let desc = taskList.options[taskList.selectedIndex].value;
+        selectBtn.setAttribute("onclick", "setNewInputGroup(" + "`" + name + "`, " + "`" + desc + "`)");
+    }
+
+    function setNewInputGroup(name, desc){
+        let todoTable = document.getElementById("todoTable");
+
+        let trInput = document.createElement("tr");
+        todoTable.appendChild(trInput);
+        let tdName = document.createElement("td");
+        tdName.innerHTML =
+            '<input type="text" id="inputName" class="form-control" value= ' + name + ' placeholder="작업 이름을 입력하세요">';
+
+        let tdDesc = document.createElement("td");
+        tdDesc.innerHTML =
+            '<input type="text" id="inputDesc" class="form-control" value= ' + desc + ' placeholder="작업 설명을 입력하세요">';
+
+        trInput.appendChild(tdName);
+        trInput.appendChild(tdDesc);
+    }
+
+    function newTodoTask(){
+        let todoTable = document.getElementById("todoTable");
+
+        let trInput = document.createElement("tr");
+        todoTable.appendChild(trInput);
+        let tdName = document.createElement("td");
+        tdName.innerHTML = '<input type="text" id="inputName" class="form-control" placeholder="작업 이름을 입력하세요">';
+        let tdDesc = document.createElement("td");
+        tdDesc.innerHTML = '<input type="text" id="inputDesc" class="form-control" placeholder="작업 설명을 입력하세요">';
+
+        trInput.appendChild(tdName);
+        trInput.appendChild(tdDesc);
+    }
+</script>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+    <h1>오늘의 할일 작성</h1>
+    <div class="form-group">
+        <label th:for="name">기존 작업에서 선택하기</label>
+        <select name="taskId" id="taskList" class="form-control" onchange="setSelectBtn()">
+            <option value="">작업 선택</option>
+            <option th:each="task: ${tasks}"
+                    th:id="${task.id}"
+                    th:text="${task.name}"
+                    th:value="${task.desc}" />
+        </select>
+        <button id="selectBtn">선택한 작업으로 추가</button>
+        <button id="newTodoTask" onclick="newTodoTask()">직접 추가</button>
+    </div>
+    <form role="form" id="todoForm" th:object="${todoForm}" method="post">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>작업 이름</th>
+                <th>작업 설명</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody id="todoTable">
+            </tr>
+            </tbody>
+        </table>
+        <a class="btn btn-lg btn-secondary" href="/todo/new">작성 완료</a>
+    </form>
+    <br/>
+    <div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+
+</body>
+</html>

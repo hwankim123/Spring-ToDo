@@ -102,7 +102,7 @@ public class TodoTaskServiceTest {
         List<String> descList = new ArrayList<>();
         TaskDTO taskDTO = new TaskDTO(member, "백준", "백준 1문제");
         Long task1Id = taskService.saveTask(taskDTO);
-        Task task1 = taskRepository.findById(task1Id);
+        Task task1 = taskRepository.findById(memberId, task1Id);
         taskIdList.add(task1Id);
         descList.add(task1.getDesc());
 //        taskIdList.add(taskService.saveTask(memberId, task2));
