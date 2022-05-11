@@ -18,16 +18,18 @@ public class TodoService {
     private final TodoRepository todoRepository;
     private final MemberRepository memberRepository;
     private final TaskRepository taskRepository;
-    private final TodoTaskRepository todoTaskRepository;
 
-    public Long saveTodo(Long memberId, List<Long> taskIdList, List<String> descList){
+    public Long saveTodo(Long memberId, String[] names, String[] descs){
+        // 1. find member
         Member member = memberRepository.findById(memberId);
+
+        // 2. todoTasks의 list 생성
         List<TodoTask> todoTasks = new ArrayList<>();
-        for(int idx = 0; idx < taskIdList.size(); idx++){
-            Task task = taskRepository.findById(memberId, taskIdList.get(idx));
-            todoTasks.add(TodoTask.createTodoTask(task, TodoTaskStatus.READY, descList.get(idx)));
+        for(int i = 0; i < names.length; i++){
+            todoTasks.add(TodoTask.createTodoTask(names[i], descs[i], TodoTaskStatus.READY));
         }
 
+        // 생성된 todoTasks와 member를 연결하여 todo 생성
         Todo todo = Todo.create(member, todoTasks);
         todoRepository.save(todo);
 

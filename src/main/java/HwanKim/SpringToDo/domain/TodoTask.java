@@ -14,29 +14,30 @@ public class TodoTask {
     @Id @GeneratedValue
     @Column(name = "todo_task_id")
     Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "task_id")
-    private Task task;
+//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinColumn(name = "task_id")
+//    private Task task;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "todo_id")
     private Todo todo;
 
+    @Column(columnDefinition = "TEXT")
+    private String name;
+    @Column(columnDefinition = "TEXT")
+    private String desc;
     private TodoTaskStatus status;
     private Duration taskDuration;
     private LocalDateTime startTime;
     private LocalDateTime restartTime;
     private LocalDateTime finishTime;
-    @Column(columnDefinition = "TEXT")
-    private String desc;
 
     //===생성 메서드===//
-    public static TodoTask createTodoTask(Task task, TodoTaskStatus status, String desc){
+    public static TodoTask createTodoTask(String name, String desc, TodoTaskStatus status){
         TodoTask todoTask = new TodoTask();
-        todoTask.setTask(task);
-        todoTask.setStatus(status);
+        todoTask.setName(name);
         todoTask.setDesc(desc);
+        todoTask.setStatus(status);
         todoTask.setTaskDuration(Duration.between(LocalTime.of(1, 1, 1), LocalTime.of(1, 1, 1)));
         return todoTask;
     }
@@ -97,12 +98,12 @@ public class TodoTask {
         this.taskDuration = taskDuration;
     }
 
-    private void setTask(Task task) {
-        this.task = task;
-    }
-
     private void setStatus(TodoTaskStatus status){
         this.status = status;
+    }
+
+    private void setName(String name) {
+        this.name = name;
     }
 
     private void setDesc(String desc) {

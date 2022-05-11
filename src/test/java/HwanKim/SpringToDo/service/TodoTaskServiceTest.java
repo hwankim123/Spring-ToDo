@@ -110,6 +110,9 @@ public class TodoTaskServiceTest {
 //        taskIdList.add(taskService.saveTask(memberId, task3));
 //        descList.add(task3.getDesc());
 
-        todoId = todoService.saveTodo(memberId, taskIdList, descList);
+
+        String[] names= {"백준"};
+        String[] descs= {"백준 1문제"};
+        todoId = todoService.saveTodo(memberId, names, descs);
     }
 }

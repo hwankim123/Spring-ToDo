@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 @Controller
@@ -60,7 +61,9 @@ public class TodoController {
             return "/exceptions";
         }
         Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
-
-        return "/todo";
+        String[] names = request.getParameterValues("names");
+        String[] descs = request.getParameterValues("descs");
+        todoService.saveTodo(loginId, names, descs);
+        return "/todo/todo";
     }
 }

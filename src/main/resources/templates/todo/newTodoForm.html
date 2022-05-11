@@ -18,11 +18,13 @@
         todoTable.appendChild(trInput);
         let tdName = document.createElement("td");
         tdName.innerHTML =
-            '<input type="text" id="inputName" class="form-control" value= ' + name + ' placeholder="작업 이름을 입력하세요">';
+            '<input type="text" id="inputName" class="form-control" ' +
+            'name="names" value= ' + name + ' placeholder="작업 이름을 입력하세요">';
 
         let tdDesc = document.createElement("td");
         tdDesc.innerHTML =
-            '<input type="text" id="inputDesc" class="form-control" value= ' + desc + ' placeholder="작업 설명을 입력하세요">';
+            '<input type="text" id="inputDesc" class="form-control" ' +
+            'name="descs" value= ' + desc + ' placeholder="작업 설명을 입력하세요">';
 
         trInput.appendChild(tdName);
         trInput.appendChild(tdDesc);
@@ -34,9 +36,11 @@
         let trInput = document.createElement("tr");
         todoTable.appendChild(trInput);
         let tdName = document.createElement("td");
-        tdName.innerHTML = '<input type="text" id="inputName" class="form-control" placeholder="작업 이름을 입력하세요">';
+        tdName.innerHTML = '<input type="text" id="inputName" class="form-control"' +
+            'name="names" placeholder="작업 이름을 입력하세요">';
         let tdDesc = document.createElement("td");
-        tdDesc.innerHTML = '<input type="text" id="inputDesc" class="form-control" placeholder="작업 설명을 입력하세요">';
+        tdDesc.innerHTML = '<input type="text" id="inputDesc" class="form-control" ' +
+            'name="descs" placeholder="작업 설명을 입력하세요">';
 
         trInput.appendChild(tdName);
         trInput.appendChild(tdDesc);
@@ -57,7 +61,7 @@
         <button id="selectBtn">선택한 작업으로 추가</button>
         <button id="newTodoTask" onclick="newTodoTask()">직접 추가</button>
     </div>
-    <form role="form" id="todoForm" th:object="${todoForm}" method="post">
+    <form role="form" id="todoForm" method="post">
         <table class="table table-striped">
             <thead>
             <tr>
@@ -70,7 +74,7 @@
             </tr>
             </tbody>
         </table>
-        <a class="btn btn-lg btn-secondary" href="/todo/new">작성 완료</a>
+        <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     <br/>
     <div th:replace="fragments/footer :: footer" />
