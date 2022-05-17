@@ -1,6 +1,8 @@
 package HwanKim.SpringToDo.service;
 
 import HwanKim.SpringToDo.domain.*;
+import HwanKim.SpringToDo.exception.TodoAlreadyExistException;
+import HwanKim.SpringToDo.exception.TodoTaskNameNullException;
 import HwanKim.SpringToDo.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,10 +29,30 @@ public class TodoService {
             todoTasks.add(TodoTask.createTodoTask(names[i], descs[i], TodoTaskStatus.READY));
         }
 
+        validateName(names);
+        validateTodo(memberId);
         Todo todo = Todo.create(member, todoTasks);
         todoRepository.save(todo);
 
         return todo.getId();
+    }
+
+    private void validateName(String[] names){
+        if(names.length == 0){
+            throw new TodoTaskNameNullException("작업 이름 값은 필수입니다.");
+        }
+        for(String name : names){
+            if(name.length() == 0){
+                throw new TodoTaskNameNullException("작업 이름 값은 필수입니다.");
+            }
+        }
+    }
+
+    private void validateTodo(Long memberId){
+        List<Todo> todo = todoRepository.findTodayByMemberId(memberId);
+        if(todo.size() != 0){
+            throw new TodoAlreadyExistException("오늘의 할일이 이미 존재합니다.");
+        }
     }
 
     public List<Todo> searchTodo(TodoSearch todoSearch){
@@ -51,7 +73,7 @@ public class TodoService {
     }
 
     public Todo findTodaysTodo(Long memberId) {
-        return todoRepository.findTodayByMemberId(memberId);
+        return todoRepository.findTodayByMemberId(memberId).get(0);
     }
 
     /**

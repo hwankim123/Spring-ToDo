@@ -131,7 +131,7 @@ class TodoServiceTest {
         Long todoId = todoService.saveTodo(memberId, names, descs);
 
         //then
-        Todo todaysTodo = todoRepository.findTodayByMemberId(memberId);
+        Todo todaysTodo = todoRepository.findTodayByMemberId(memberId).get(0);
         Assertions.assertThat(todaysTodo.getId()).isEqualTo(todoId);
     }
 

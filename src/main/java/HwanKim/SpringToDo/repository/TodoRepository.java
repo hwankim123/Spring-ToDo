@@ -31,13 +31,12 @@ public class TodoRepository {
                 .setParameter("memberId", memberId).getResultList();
     }
 
-    public Todo findTodayByMemberId(Long memberId){
+    public List<Todo> findTodayByMemberId(Long memberId){
         String jpql = "select t From Todo t where t.member.id = :memberId and t.createdDate = :today";
-        LocalDateTime today = LocalDateTime.now();
         return em.createQuery(jpql, Todo.class)
                 .setParameter("memberId", memberId)
                 .setParameter("today", LocalDate.now())
-                .getSingleResult();
+                .getResultList();
     }
 
     public List<Todo> findAllByDate(TodoSearch todoSearch){

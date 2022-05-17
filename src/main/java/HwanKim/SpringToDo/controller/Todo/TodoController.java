@@ -6,6 +6,8 @@ import HwanKim.SpringToDo.controller.Task.TaskForm;
 import HwanKim.SpringToDo.domain.Todo;
 import HwanKim.SpringToDo.exception.SessionInvalidException;
 import HwanKim.SpringToDo.auth.AuthModules;
+import HwanKim.SpringToDo.exception.TodoAlreadyExistException;
+import HwanKim.SpringToDo.exception.TodoTaskNameNullException;
 import HwanKim.SpringToDo.repository.TodoSearch;
 import HwanKim.SpringToDo.service.TaskService;
 import HwanKim.SpringToDo.service.TodoService;
@@ -47,9 +49,6 @@ public class TodoController {
         return "todo/newTodoForm";
     }
 
-    /**
-     * validate 적용 못하는 문제
-     */
     @PostMapping("/todo/new")
     public String create(Model model, @Valid TodoForm todoForm, HttpServletRequest request){
         HttpSession session = request.getSession();
@@ -63,7 +62,14 @@ public class TodoController {
         Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
         String[] names = todoForm.getNames();
         String[] descs = todoForm.getDescs();
-        todoService.saveTodo(loginId, names, descs);
+        try{
+            todoService.saveTodo(loginId, names, descs);
+        } catch(TodoTaskNameNullException e){
+            return "redirect:/todo/new";
+        } catch(TodoAlreadyExistException e){
+            model.addAttribute(e.getMessage(), true);
+            return "redirect:/todo/today";
+        }
         return "redirect:/todo/today";
     }
 
