@@ -42,6 +42,8 @@ public class TodoController {
         List<TaskDTO> tasks = taskService.findAll(loginId);
         model.addAttribute("tasks", tasks);
         model.addAttribute("todoForm", new TodoForm());
+        String nlString = System.getProperty("line.separator");
+        model.addAttribute("nlString", nlString);
         return "todo/newTodoForm";
     }
 
@@ -81,6 +83,8 @@ public class TodoController {
         Todo todaysTodo = todoService.findTodaysTodo(loginId);
         model.addAttribute("todaysTodo", todaysTodo);
         model.addAttribute("todoForm", new TodoForm());
+        String nlString = System.getProperty("line.separator");
+        model.addAttribute("nlString", nlString);
 
         return "todo/today";
     }

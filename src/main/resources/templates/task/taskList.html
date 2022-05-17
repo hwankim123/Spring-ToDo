@@ -20,7 +20,7 @@
             <tr th:each="task : ${tasks}">
                 <td th:text="${task.id}"></td>
                 <td th:text="${task.name}"></td>
-                <td th:text="${task.desc}"></td>
+                <td th:utext="${#strings.replace(task.desc, nlString, '&lt;br /&gt;')}"></td>
                 <td>
                     <a class="btn btn-sm btn-outline-secondary" href="#"
                        th:href="'javascript:updateTask('+${task.id}+', `'+${task.name}+'`, `'+${task.desc}+'`)'">수정</a>

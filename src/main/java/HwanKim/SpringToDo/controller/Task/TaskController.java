@@ -42,6 +42,8 @@ public class TaskController {
         Long loginId = ((Long) session.getAttribute(SessionStrings.SESSION_ID));
         List<TaskDTO> tasks = taskService.findAll(loginId);
         model.addAttribute("tasks", tasks);
+        String nlString = System.getProperty("line.separator");
+        model.addAttribute("nlString", nlString);
         return "/task/taskList";
     }
 

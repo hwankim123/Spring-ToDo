@@ -20,7 +20,7 @@
         </div>
         <div class="form-group">
             <label th:for="desc">작업 설명</label>
-            <input type="text" th:field="*{desc}" class="form-control" placeholder="작업 설명을 입력하세요">
+            <textarea th:field="*{desc}" class="form-control" id="exampleFormControlTextarea1" rows="7" placeholder="작업 설명을 입력하세요"></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
