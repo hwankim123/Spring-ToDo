@@ -46,8 +46,9 @@
         </p>
         <p th:if="${loginId != null}" class="lead">오늘의 할일</p>
         <p>
-            <a th:if="${loginId != null}" class="btn btn-lg btn-info" href="/todo/new">오늘의 할일</a>
-            <a th:if="${loginId != null}" class="btn btn-lg btn-info" href="/todo">달력 보기</a>
+            <a th:if="${loginId != null}" class="btn btn-lg btn-info" href="/todo/new">할일 작성</a>
+            <a th:if="${loginId != null}" class="btn btn-lg btn-info" href="/todo/today">오늘의 할일</a>
+            <a th:if="${loginId != null}" class="btn btn-lg btn-info" href="/todo/calendar">달력 보기</a>
         </p>
     </div>
 

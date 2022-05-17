@@ -20,16 +20,13 @@ public class TodoService {
     private final TaskRepository taskRepository;
 
     public Long saveTodo(Long memberId, String[] names, String[] descs){
-        // 1. find member
         Member member = memberRepository.findById(memberId);
 
-        // 2. todoTasks의 list 생성
         List<TodoTask> todoTasks = new ArrayList<>();
         for(int i = 0; i < names.length; i++){
             todoTasks.add(TodoTask.createTodoTask(names[i], descs[i], TodoTaskStatus.READY));
         }
 
-        // 생성된 todoTasks와 member를 연결하여 todo 생성
         Todo todo = Todo.create(member, todoTasks);
         todoRepository.save(todo);
 
@@ -51,6 +48,10 @@ public class TodoService {
         else if(todoSearch.getStartDate() != null && todoSearch.getEndDate() == null){
             throw new IllegalArgumentException("시작 날짜는 존재하지만 끝 날짜가 존재하지 않습니다.");
         }
+    }
+
+    public Todo findTodaysTodo(Long memberId) {
+        return todoRepository.findTodayByMemberId(memberId);
     }
 
     /**

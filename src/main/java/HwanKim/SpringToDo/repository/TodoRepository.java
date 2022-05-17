@@ -8,6 +8,8 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -27,6 +29,15 @@ public class TodoRepository {
     public List<Todo> findAllByMemberId(Long memberId ){
         return em.createQuery("select t From Todo t where t.member.id = :memberId")
                 .setParameter("memberId", memberId).getResultList();
+    }
+
+    public Todo findTodayByMemberId(Long memberId){
+        String jpql = "select t From Todo t where t.member.id = :memberId and t.createdDate = :today";
+        LocalDateTime today = LocalDateTime.now();
+        return em.createQuery(jpql, Todo.class)
+                .setParameter("memberId", memberId)
+                .setParameter("today", LocalDate.now())
+                .getSingleResult();
     }
 
     public List<Todo> findAllByDate(TodoSearch todoSearch){

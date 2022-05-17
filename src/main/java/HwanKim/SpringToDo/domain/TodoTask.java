@@ -14,9 +14,6 @@ public class TodoTask {
     @Id @GeneratedValue
     @Column(name = "todo_task_id")
     Long id;
-//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    @JoinColumn(name = "task_id")
-//    private Task task;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "todo_id")

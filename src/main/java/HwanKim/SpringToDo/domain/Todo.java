@@ -27,6 +27,8 @@ public class Todo {
     private TodoTaskStatus status; // 오늘의 할일 상태 [READY, RUNNING, PAUSE, FINISH]
     private LocalDateTime startTime;
     private LocalDateTime finishTime;
+    @Column(unique = true)
+    private LocalDate createdDate;
     private int startCnt;
     private int finishCnt;
 
@@ -44,6 +46,7 @@ public class Todo {
             todo.addTodoTask(todoTask);
         }
         todo.setStatus(TodoTaskStatus.READY);
+        todo.setCreatedDate(LocalDate.now());
         todo.setStartCnt(0);
         todo.setFinishCnt(0);
         return todo;
@@ -84,6 +87,8 @@ public class Todo {
     private void setFinishTime(LocalDateTime finishTime) {
         this.finishTime = finishTime;
     }
+
+    private void setCreatedDate(LocalDate createdDate) {this.createdDate = createdDate;}
 
     private void setStartCnt(int startCnt) {
         this.startCnt = startCnt;

@@ -6,6 +6,7 @@ import HwanKim.SpringToDo.domain.Member;
 import HwanKim.SpringToDo.domain.Task;
 import HwanKim.SpringToDo.domain.Todo;
 import HwanKim.SpringToDo.domain.TodoTask;
+import HwanKim.SpringToDo.repository.MemberRepository;
 import HwanKim.SpringToDo.repository.TodoRepository;
 import HwanKim.SpringToDo.repository.TodoSearch;
 import org.assertj.core.api.Assertions;
@@ -28,6 +29,8 @@ class TodoServiceTest {
     private TodoService todoService;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private MemberRepository memberRepository;
     @Autowired
     private TaskService taskService;
     @Autowired
@@ -115,11 +118,28 @@ class TodoServiceTest {
         });
     }
 
+    @Test
+    public void 오늘_생성된_todo_조회(){
+        //given
+        Member member = setMember("테스트", "test123", "aefewfws");
+        Long memberId = member.getId();
+
+        //when
+
+        String[] names= {"백준", "Spring", "캡디"};
+        String[] descs= {"백준 1문제", "Spring 프로젝트 개발", "캡스톤"};
+        Long todoId = todoService.saveTodo(memberId, names, descs);
+
+        //then
+        Todo todaysTodo = todoRepository.findTodayByMemberId(memberId);
+        Assertions.assertThat(todaysTodo.getId()).isEqualTo(todoId);
+    }
+
     private Member setMember(String name, String username, String password){
         Member member = new Member(name, username, password);
         MemberDTO memberDTO = new MemberDTO(member.getId(), member.getName(), member.getUsername(), member.getPassword());
         memberService.signUp(memberDTO);
-        return member;
+        return memberRepository.findByUsername(username).get(0);
     }
 
     private List<Long> setTaskId123(Member member){

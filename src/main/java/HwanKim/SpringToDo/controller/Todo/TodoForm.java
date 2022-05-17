@@ -1,22 +1,13 @@
 package HwanKim.SpringToDo.controller.Todo;
 
-import HwanKim.SpringToDo.DTO.TaskDTO;
-import HwanKim.SpringToDo.controller.Task.TaskForm;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import java.util.ArrayList;
-import java.util.List;
+import javax.validation.constraints.NotNull;
 
 @Getter @Setter
 public class TodoForm {
-    private List<TaskDTO> tasks = new ArrayList<>();
-
-    public void setTasks(List tasks){
-        this.tasks = tasks;
-    }
-    public void addTask(TaskDTO task){this.tasks.add(task);}
-
+    @NotNull(message="작업을 최소 한개 이상 등록해주세요.")
+    private String[] names;
+    private String[] descs;
 }
