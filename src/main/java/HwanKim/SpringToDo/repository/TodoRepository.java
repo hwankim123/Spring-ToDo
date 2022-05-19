@@ -40,7 +40,7 @@ public class TodoRepository {
     }
 
     public List<Todo> findAllByDate(TodoSearch todoSearch){
-        String jpql = "select t From Todo t where t.member.id = :memberId and t.startTime between :startDate and :endDate";
+        String jpql = "select t From Todo t where t.member.id = :memberId and t.createdDate between :startDate and :endDate";
 
         return em.createQuery(jpql, Todo.class)
                 .setParameter("memberId", todoSearch.getMemberId())

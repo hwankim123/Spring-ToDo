@@ -19,14 +19,13 @@ public class TodoService {
 
     private final TodoRepository todoRepository;
     private final MemberRepository memberRepository;
-    private final TaskRepository taskRepository;
 
     public Long saveTodo(Long memberId, String[] names, String[] descs){
         Member member = memberRepository.findById(memberId);
 
         List<TodoTask> todoTasks = new ArrayList<>();
         for(int i = 0; i < names.length; i++){
-            todoTasks.add(TodoTask.createTodoTask(names[i], descs[i], TodoTaskStatus.READY));
+            todoTasks.add(TodoTask.createTodoTask(names[i], descs[i]));
         }
 
         validateName(names);
