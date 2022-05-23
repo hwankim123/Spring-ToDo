@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,4 +81,18 @@ public class TodoService {
     /**
      * Delete Todo
      */
+    public void delete(Long memberId) {
+        List<Todo> todaysTodo = todoRepository.findTodayByMemberId(memberId);
+        todoRepository.delete(todaysTodo.get(0));
+    }
+
+    public Todo changeStatusOfTodoTask(Long todoId, Long todoTaskId, TodoTaskStatus status) {
+        Todo todo = todoRepository.findById(todoId);
+        todo.changeStatusOfTodoTask(todoTaskId, status);
+        return todoRepository.findById(todoId);
+    }
+
+    public Todo findById(Long todoId) {
+        return todoRepository.findById(todoId);
+    }
 }

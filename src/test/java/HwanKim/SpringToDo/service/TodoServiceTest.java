@@ -110,7 +110,7 @@ class TodoServiceTest {
         // 이 셋중에 테스트하고싶은걸 주석처리
         todoSearch.setMemberId(memberId);
         //todoSearch.setStartDate(LocalDateTime.of(2022, 4, 3, 12, 32,22,3333));
-        todoSearch.setEndDate(LocalDateTime.of(2022, 11, 12, 12, 32,22,3333));
+//        todoSearch.setEndDate(LocalDateTime.of(2022, 11, 12, 12, 32,22,3333));
 
         //then
         assertThrows(IllegalArgumentException.class, () -> {
@@ -131,8 +131,38 @@ class TodoServiceTest {
         Long todoId = todoService.saveTodo(memberId, names, descs);
 
         //then
-        Todo todaysTodo = todoRepository.findTodayByMemberId(memberId).get(0);
-        Assertions.assertThat(todaysTodo.getId()).isEqualTo(todoId);
+        List<Todo> todaysTodo = todoRepository.findTodayByMemberId(memberId);
+        Assertions.assertThat(todaysTodo.get(0).getId()).isEqualTo(todoId);
+    }
+    @Test
+    public void todo_삭제_테스트(){
+        //given
+        Member member = setMember("test", "test", "test123!");
+
+        String[] names= {"task1", "task2", "task3"};
+        String[] descs= {"tast1입니다.", "task22입니다.", "task333입니다."};
+        Long todoId = todoService.saveTodo(member.getId(), names, descs);
+
+        //when
+        todoService.delete(member.getId());
+
+        //then
+        Assertions.assertThat(todoRepository.findTodayByMemberId(member.getId()).size()).isEqualTo(0);
+    }
+
+    @Test
+    public void todoTask_하나_삭제(){
+        //given
+        Member member = setMember("test", "test", "test123!");
+
+        String[] names= {"task1", "task2", "task3"};
+        String[] descs= {"tast1입니다.", "task22입니다.", "task333입니다."};
+        Long todoId = todoService.saveTodo(member.getId(), names, descs);
+
+        //when
+
+
+        //then
     }
 
     private Member setMember(String name, String username, String password){

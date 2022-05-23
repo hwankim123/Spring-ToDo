@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
 <body>
-<script>
+<script th:inline="javascript">
     function setSelectBtn(){
         let taskList = document.getElementById("taskList");
         let selectBtn = document.getElementById("selectBtn");
@@ -31,6 +31,24 @@
         trInput.appendChild(tdDesc);
     }
 
+    async function changeStatus(todoTaskId, status){
+        console.log(this);
+        const response = fetch("http://localhost:8080/todo/todoTasks/changeStatus", {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json;charset=UTF8',
+            },
+            body: JSON.stringify({
+                todoId: [[${todaysTodo.getId()}]],
+                todoTaskId: todoTaskId,
+                status: status,
+            }),
+        });
+        response
+            .then(res => res.json())
+            .then(data => console.log(data));
+    }
+
     function newTodoTask(){
         let todoTable = document.getElementById("todoTable");
 
@@ -49,8 +67,9 @@
 </script>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
-    <h1>오늘의 할일 작성</h1>
+    <h1>오늘의 할일</h1>
     <div class="form-group">
+        <h3>작업 추가하기</h3>
         <label th:for="name">기존 작업에서 선택하기</label>
         <select name="taskId" id="taskList" class="form-control" onchange="setSelectBtn()">
             <option value="">작업 선택</option>
@@ -61,16 +80,22 @@
         <button id="selectBtn">선택한 작업으로 추가</button>
         <button id="newTodoTask" onclick="newTodoTask()">직접 추가</button>
     </div>
-    <form role="form" id="todoForm" th:object="${todoForm}" method="post">
+    <form role="form" id="todaysTodo" th:object="${todaysTodo}" method="post">
         <table class="table table-striped">
             <thead>
             <tr>
                 <th>작업 이름</th>
                 <th>작업 설명</th>
+                <th>완료/취소</th>
                 <th></th>
             </tr>
             </thead>
             <tbody id="todoTable">
+            <tr th:each="todoTask : ${todaysTodo.todoTasks}">
+                <th><span th:text="${todoTask.getName()}">Name</span></th>
+                <th><span th:text="${todoTask.getDesc()}">Desc</span></th>
+                <th><input type="checkbox" th:attr="onclick=|changeStatus('${todoTask.getId()}', '${todoTask.getStatus()}')|" ></th>
+            </tr>
             </tbody>
         </table>
         <button type="submit" class="btn btn-primary">Submit</button>

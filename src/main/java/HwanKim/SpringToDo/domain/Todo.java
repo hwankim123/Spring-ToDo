@@ -19,6 +19,9 @@ public class Todo {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    /**
+     * CascadeType.Persist : 엔티티의 생성 시에만 전파
+     */
     @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL)
     private List<TodoTask> todoTasks = new ArrayList<>();
 
@@ -31,6 +34,10 @@ public class Todo {
     public void addTodoTask(TodoTask todoTask) {
         this.todoTasks.add(todoTask);
         todoTask.setTodo(this);
+    }
+
+    public void removeTodoTask(TodoTask todoTask){
+        this.todoTasks.remove(todoTask);
     }
 
     //===생성 메서드===//
@@ -48,6 +55,18 @@ public class Todo {
     //===비즈니스 로직===//
     public void run() {
         this.status = TodoTaskStatus.RUNNING;
+    }
+
+    public void changeStatusOfTodoTask(Long todoTaskId, TodoTaskStatus status) {
+        for(TodoTask todoTask : this.todoTasks){
+            if(todoTask.getId().equals(todoTaskId)){
+                if(status.equals(TodoTaskStatus.RUNNING)){
+                    todoTask.finish();
+                } else{
+                    todoTask.run();
+                }
+            }
+        }
     }
 
     public boolean checkAllFinished() {

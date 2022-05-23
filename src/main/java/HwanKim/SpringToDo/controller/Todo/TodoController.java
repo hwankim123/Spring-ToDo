@@ -4,6 +4,8 @@ import HwanKim.SpringToDo.DTO.TaskDTO;
 import HwanKim.SpringToDo.auth.SessionStrings;
 import HwanKim.SpringToDo.controller.Task.TaskForm;
 import HwanKim.SpringToDo.domain.Todo;
+import HwanKim.SpringToDo.domain.TodoTask;
+import HwanKim.SpringToDo.domain.TodoTaskStatus;
 import HwanKim.SpringToDo.exception.SessionInvalidException;
 import HwanKim.SpringToDo.auth.AuthModules;
 import HwanKim.SpringToDo.exception.TodoAlreadyExistException;
@@ -15,8 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -82,6 +83,7 @@ public class TodoController {
             model.addAttribute(e.getMessage(), true);
             return "/exceptions";
         }
+        System.out.println("todo/today called!!!!!");
 
         Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
         List<TaskDTO> tasks = taskService.findAll(loginId);
@@ -93,5 +95,27 @@ public class TodoController {
         model.addAttribute("nlString", nlString);
 
         return "todo/today";
+    }
+
+    @ResponseBody
+    @PutMapping("/todo/todoTasks/changeStatus")
+    public TodoTaskStatusForm changeStatus(@RequestBody TodoTaskStatusForm todoTaskData, HttpServletRequest request) {
+
+        Todo todo = todoService.changeStatusOfTodoTask(
+                todoTaskData.getTodoId(),
+                todoTaskData.getTodoTaskId(),
+                todoTaskData.getStatus()
+        );
+
+        TodoTaskStatusForm todoTaskStatusForm = new TodoTaskStatusForm();
+        for (TodoTask todoTask : todo.getTodoTasks()) {
+            if (todoTask.getId().equals(todoTaskData.getTodoTaskId())) {
+                todoTaskStatusForm.setTodoId(todo.getId());
+                todoTaskStatusForm.setTodoTaskId(todoTask.getId());
+                todoTaskStatusForm.setStatus(todoTask.getStatus());
+                break;
+            }
+        }
+        return todoTaskStatusForm;
     }
 }

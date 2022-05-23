@@ -48,4 +48,8 @@ public class TodoRepository {
                 .setParameter("endDate", todoSearch.getEndDate())
                 .getResultList();
     }
+
+    public void delete(Todo todo) {
+        em.remove(todo);
+    }
 }
