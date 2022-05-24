@@ -83,7 +83,6 @@ public class TodoController {
             model.addAttribute(e.getMessage(), true);
             return "/exceptions";
         }
-        System.out.println("todo/today called!!!!!");
 
         Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
         List<TaskDTO> tasks = taskService.findAll(loginId);
@@ -91,6 +90,7 @@ public class TodoController {
         Todo todaysTodo = todoService.findTodaysTodo(loginId);
         model.addAttribute("todaysTodo", todaysTodo);
         model.addAttribute("todoForm", new TodoForm());
+        model.addAttribute("todoTaskStatus", TodoTaskStatus.values());
         String nlString = System.getProperty("line.separator");
         model.addAttribute("nlString", nlString);
 
@@ -117,5 +117,11 @@ public class TodoController {
             }
         }
         return todoTaskStatusForm;
+    }
+
+    @GetMapping("/todo/delete")
+    public String delete(HttpServletRequest request){
+        todoService.delete((Long)(request.getSession().getAttribute(SessionStrings.SESSION_ID)));
+        return "/home";
     }
 }

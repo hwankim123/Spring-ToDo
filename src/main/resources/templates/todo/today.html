@@ -31,24 +31,6 @@
         trInput.appendChild(tdDesc);
     }
 
-    async function changeStatus(todoTaskId, status){
-        console.log(this);
-        const response = fetch("http://localhost:8080/todo/todoTasks/changeStatus", {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json;charset=UTF8',
-            },
-            body: JSON.stringify({
-                todoId: [[${todaysTodo.getId()}]],
-                todoTaskId: todoTaskId,
-                status: status,
-            }),
-        });
-        response
-            .then(res => res.json())
-            .then(data => console.log(data));
-    }
-
     function newTodoTask(){
         let todoTable = document.getElementById("todoTable");
 
@@ -63,6 +45,29 @@
 
         trInput.appendChild(tdName);
         trInput.appendChild(tdDesc);
+    }
+
+    async function changeStatus(todoTaskId){
+        let checkBox = document.getElementById('status'+todoTaskId);
+        let checked = checkBox.getAttribute('checked');
+        let status = (checked === 'checked') ? [[${todoTaskStatus[1]}]] : [[${todoTaskStatus[0]}]]
+        const response = fetch("http://localhost:8080/todo/todoTasks/changeStatus", {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json;charset=UTF8',
+            },
+            body: JSON.stringify({
+                todoId: [[${todaysTodo.getId()}]],
+                todoTaskId: todoTaskId,
+                status: status,
+            }),
+        });
+        response
+            .then(res => res.json())
+            .then(data => {
+                let checked = (data['status'] == [[${todoTaskStatus[0]}]]) ? 'unchecked' : 'checked';
+                checkBox.setAttribute('checked', checked);
+            });
     }
 </script>
 <div class="container">
@@ -91,10 +96,12 @@
             </tr>
             </thead>
             <tbody id="todoTable">
-            <tr th:each="todoTask : ${todaysTodo.todoTasks}">
-                <th><span th:text="${todoTask.getName()}">Name</span></th>
-                <th><span th:text="${todoTask.getDesc()}">Desc</span></th>
-                <th><input type="checkbox" th:attr="onclick=|changeStatus('${todoTask.getId()}', '${todoTask.getStatus()}')|" ></th>
+            <tr th:each="todoTask : ${todaysTodo.todoTasks}" th:id="${todoTask.getId()}">
+                <td><span th:id="'name' + ${todoTask.getId()}" th:text="${todoTask.getName()}">Name</span></td>
+                <td><span th:id="'desc' + ${todoTask.getId()}"  th:text="${todoTask.getDesc()}">Desc</span></td>
+                <td><input th:id="'status' + ${todoTask.getId()}" type="checkbox"
+                           th:checked="${todoTask.getStatus().equals(todoTaskStatus[1])}"
+                           th:attr="onclick=|changeStatus('${todoTask.getId()}')|" ></td>
             </tr>
             </tbody>
         </table>
