@@ -20,6 +20,10 @@ public class Task {
     @Column(columnDefinition = "TEXT")
     String desc;
 
+    /**
+     * setter를 외부에서 사용하지 못하도록 하고, Task 모델의 생성 메서드로만 Task를 생성할 수 있도록 하기 위해
+     * default 생성자를 protected로 제한함
+     */
     protected Task(){}
 
     //===생성 메서드===//
@@ -31,6 +35,7 @@ public class Task {
         return task;
     }
 
+    // setter을 public으로 개방하지 않고 필요한 비즈니스 로직, 생성 메서드 내부에서만 쓰이도록 private로 선언
     private void setMember(Member member){
         this.member = member;
     }

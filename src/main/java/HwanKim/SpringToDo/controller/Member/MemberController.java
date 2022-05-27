@@ -26,12 +26,20 @@ public class MemberController {
     private final MemberService memberService;
     private final AuthModules authModules;
 
+    /**
+     * 회원 가입 form 화면을 return
+     */
     @GetMapping("/member/new")
     public String createForm(Model model){
         model.addAttribute("memberForm", new MemberForm());
         return "member/createMemberForm";
     }
 
+    /**
+     * View 계층에서의 validation : 사용자가 잘못된 형식의 정보를 입력했거나, 필수 입력 사항을 입력하지 않은 경우 회원 가입 재진행
+     * View 계층에서의 validation을 통과하면 회원가입 로직을 진행하며 Service 계층에서의 validation 진행
+     * Service 계층에서의 validation을 통과하면 index 페이지로 redirect
+     */
     @PostMapping("/member/new")
     public String create(@Valid MemberForm memberForm, BindingResult result){
 
@@ -54,19 +62,28 @@ public class MemberController {
         return "redirect:/";
     }
 
+    /**
+     * 로그인 form 화면을 return
+     */
     @GetMapping("/member/login")
     public String loginForm(Model model){
         model.addAttribute("loginForm", new LoginForm());
         return "member/loginForm";
     }
 
+    /**
+     * View 계층에서의 validation : 아이디 혹은 비밀번호를 입력하지 않은 경우 로그인 재진행
+     * View 계층에서의 validation을 통과했다면 로그인 로직을 진행하며 Service 계층에서의 validation 진행
+     */
     @PostMapping("/member/login")
     public String login(@Valid LoginForm loginForm, BindingResult result, HttpServletRequest request){
 
+        // View 계층에서의 validation
         if(result.hasErrors()){
             return "member/loginForm";
         }
 
+        // Service 계층에서의 validation
         MemberDTO loginMemberDTO;
         try{
             loginMemberDTO = memberService.login(loginForm.getUsername(), loginForm.getPassword());
@@ -86,6 +103,9 @@ public class MemberController {
         return "redirect:/";
     }
 
+    /**
+     * 세션의 전체 데이터를 삭제하며 로그아웃
+     */
     @GetMapping("/member/logout")
     public String logout(HttpServletRequest request){
         HttpSession session = request.getSession();
@@ -94,6 +114,10 @@ public class MemberController {
         return "redirect:/";
     }
 
+    /**
+     * 세션을 통해 로그인 정보를 확인한 후
+     * model에 사용자의 이름과 id 정보를 추가
+     */
     @GetMapping("/member/mypage")
     public String mypage(Model model, HttpServletRequest request){
         HttpSession session = request.getSession();

@@ -30,6 +30,10 @@ public class TaskController {
     private final TaskService taskService;
     private final AuthModules authModules;
 
+    /**
+     * 로그인 정보를 확인한 후
+     * 세션의 로그인한 사용자 id로 사용자가 생성한 작업 목록을 모두 조회
+     */
     @GetMapping("/tasks")
     public String getAll(Model model, HttpServletRequest request){
         HttpSession session = request.getSession();
@@ -42,11 +46,17 @@ public class TaskController {
         Long loginId = ((Long) session.getAttribute(SessionStrings.SESSION_ID));
         List<TaskDTO> tasks = taskService.findAll(loginId);
         model.addAttribute("tasks", tasks);
+
+        // 사용자가 입력한 개행 문자를 View 상에도 적용시키기 위해 java에서 제공하는 개행문자를 model에 추가
         String nlString = System.lineSeparator();
         model.addAttribute("nlString", nlString);
         return "/task/taskList";
     }
 
+    /**
+     * 로그인 정보를 확인한 후
+     * 새로운 task 생성을 위한 form 화면을 return
+     */
     @GetMapping("/tasks/new")
     public String newTaskForm(Model model, HttpServletRequest request){
         HttpSession session = request.getSession();
@@ -60,6 +70,11 @@ public class TaskController {
         return "/task/newTaskForm";
     }
 
+    /**
+     * 로그인 정보를 확인한 후
+     * View 계층에서의 validation : 작업 이름을 입력하지 않은 경우 작업 생성 재진행
+     * View 계층에서의 validation을 통과했다면 작업 생성 로직을 진행하며 Service 계층에서의 validation 진행
+     */
     @PostMapping("/tasks/new")
     public String create(Model model, @Valid TaskForm taskForm, BindingResult result, HttpServletRequest request){
         HttpSession session = request.getSession();
@@ -87,6 +102,11 @@ public class TaskController {
         return "redirect:/tasks";
     }
 
+    /**
+     * 로그인 정보를 확인한 후 로그인한 사용자가 해당 작업을 수정할 권한이 있는지 검증
+     * 검증한 후 수정할 작업의 기존 정보를 조회하여 model에 데이터를 추가
+     * 작업 수정을 위한 form 화면을 return
+     */
     @GetMapping("/tasks/{taskId}/update")
     public String updateTaskForm(@PathVariable("taskId") Long taskId, Model model, HttpServletRequest request){
         HttpSession session = request.getSession();
@@ -99,6 +119,7 @@ public class TaskController {
         }
         Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
         try{
+            // uri의 path variable로 넘어온 taskId가 현재 로그인한 사용자가 생성한 작업의 id인지 검증
             authModules.checkAuthofTask(loginId, taskId, CRUDStatus.UPDATE);
         } catch(WrongDataAccessException e){
             model.addAttribute("wrongDataAccess", e.getMessage());
@@ -110,6 +131,11 @@ public class TaskController {
         return "/task/updateTaskForm";
     }
 
+    /**
+     * 로그인 정보를 확인한 후 로그인한 사용자가 해당 작업을 수정할 권한이 있는지 검증
+     * 검증한 후 View 계층에서의 validation 진행 : 작업 이름을 작성하지 않은 경우 작업 수정 재진행
+     * View 계층에서의 validation을 통과했다면 작업 수정 로직을 진행하여 Service 계층에서의 validation 진행
+     */
     @PostMapping("/tasks/{taskId}/update")
     public String update(@PathVariable("taskId") Long taskId, Model model,
                          @Valid TaskForm taskForm, BindingResult result, HttpServletRequest request){
@@ -123,6 +149,7 @@ public class TaskController {
         }
         Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
         try{
+            // uri의 path variable로 넘어온 taskId가 현재 로그인한 사용자가 생성한 작업의 id인지 검증
             authModules.checkAuthofTask(loginId, taskId, CRUDStatus.UPDATE);
         } catch(WrongDataAccessException e){
             model.addAttribute("wrongDataAccess", e.getMessage());
@@ -149,6 +176,10 @@ public class TaskController {
         return "redirect:/tasks";
     }
 
+    /**
+     * 로그인 정보를 확인한 후 로그인한 사용자가 해당 작업을 수정할 권한이 있는지 검증
+     * 검증한 후 작업 삭제 진행
+     */
     @DeleteMapping("/tasks/{taskId}/delete")
     public String delete(@PathVariable("taskId") Long taskId, Model model, HttpServletRequest request){
         HttpSession session = request.getSession();
@@ -161,12 +192,12 @@ public class TaskController {
         }
         Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
         try{
+            // uri의 path variable로 넘어온 taskId가 현재 로그인한 사용자가 생성한 작업의 id인지 검증
             authModules.checkAuthofTask(loginId, taskId, CRUDStatus.DELETE);
         } catch(WrongDataAccessException e){
             model.addAttribute("wrongDataAccess", e.getMessage());
             return "/exceptions";
         }
-
 
         taskService.delete(loginId, taskId);
         return "redirect:/tasks";

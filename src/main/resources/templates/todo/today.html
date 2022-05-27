@@ -3,50 +3,6 @@
 <head th:replace="fragments/header :: header" />
 <body>
 <script th:inline="javascript">
-    function setSelectBtn(){
-        let taskList = document.getElementById("taskList");
-        let selectBtn = document.getElementById("selectBtn");
-        let name = taskList.options[taskList.selectedIndex].text;
-        let desc = taskList.options[taskList.selectedIndex].value;
-        selectBtn.setAttribute("onclick", "setNewInputGroup(" + "`" + name + "`, " + "`" + desc + "`)");
-    }
-
-    function setNewInputGroup(name, desc){
-        let todoTable = document.getElementById("todoTable");
-
-        let trInput = document.createElement("tr");
-        todoTable.appendChild(trInput);
-        let tdName = document.createElement("td");
-        tdName.innerHTML =
-            '<input type="text" id="inputName" class="form-control" ' +
-            'name="names" placeholder="작업 이름을 입력하세요">';
-        tdName.firstElementChild.setAttribute("value", name);
-        let tdDesc = document.createElement("td");
-        tdDesc.innerHTML =
-            '<input type="text" id="inputDesc" class="form-control" ' +
-            'name="descs" placeholder="작업 설명을 입력하세요">';
-        tdDesc.firstElementChild.setAttribute("value", desc);
-
-        trInput.appendChild(tdName);
-        trInput.appendChild(tdDesc);
-    }
-
-    function newTodoTask(){
-        let todoTable = document.getElementById("todoTable");
-
-        let trInput = document.createElement("tr");
-        todoTable.appendChild(trInput);
-        let tdName = document.createElement("td");
-        tdName.innerHTML = '<input type="text" id="inputName" class="form-control"' +
-            'name="names" placeholder="작업 이름을 입력하세요">';
-        let tdDesc = document.createElement("td");
-        tdDesc.innerHTML = '<input type="text" id="inputDesc" class="form-control" ' +
-            'name="descs" placeholder="작업 설명을 입력하세요">';
-
-        trInput.appendChild(tdName);
-        trInput.appendChild(tdDesc);
-    }
-
     async function changeStatus(todoTaskId){
         let checkBox = document.getElementById('status'+todoTaskId);
         let checked = checkBox.getAttribute('checked');
@@ -73,40 +29,26 @@
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
     <h1>오늘의 할일</h1>
-    <div class="form-group">
-        <h3>작업 추가하기</h3>
-        <label th:for="name">기존 작업에서 선택하기</label>
-        <select name="taskId" id="taskList" class="form-control" onchange="setSelectBtn()">
-            <option value="">작업 선택</option>
-            <option th:each="task: ${tasks}"
-                    th:text="${task.name}"
-                    th:value="${task.desc}" />
-        </select>
-        <button id="selectBtn">선택한 작업으로 추가</button>
-        <button id="newTodoTask" onclick="newTodoTask()">직접 추가</button>
-    </div>
-    <form role="form" id="todaysTodo" th:object="${todaysTodo}" method="post">
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>작업 이름</th>
-                <th>작업 설명</th>
-                <th>완료/취소</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody id="todoTable">
-            <tr th:each="todoTask : ${todaysTodo.todoTasks}" th:id="${todoTask.getId()}">
-                <td><span th:id="'name' + ${todoTask.getId()}" th:text="${todoTask.getName()}">Name</span></td>
-                <td><span th:id="'desc' + ${todoTask.getId()}"  th:text="${todoTask.getDesc()}">Desc</span></td>
-                <td><input th:id="'status' + ${todoTask.getId()}" type="checkbox"
-                           th:checked="${todoTask.getStatus().equals(todoTaskStatus[1])}"
-                           th:attr="onclick=|changeStatus('${todoTask.getId()}')|" ></td>
-            </tr>
-            </tbody>
-        </table>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>작업 이름</th>
+            <th>작업 설명</th>
+            <th>완료/취소</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody id="todoTable">
+        <tr th:each="todoTask : ${todaysTodo.todoTasks}" th:id="${todoTask.getId()}">
+            <td><span th:id="'name' + ${todoTask.getId()}" th:text="${todoTask.getName()}">Name</span></td>
+            <td><span th:id="'desc' + ${todoTask.getId()}"  th:text="${todoTask.getDesc()}">Desc</span></td>
+            <td><input type="checkbox" class="form-check-input" th:id="'status' + ${todoTask.getId()}"
+                       th:checked="${todoTask.getStatus().equals(todoTaskStatus[1])}"
+                       th:attr="onclick=|changeStatus('${todoTask.getId()}')|" ></td>
+        </tr>
+        </tbody>
+    </table>
+    <a class="btn btn-primary" href="/todo/today/update">수정</a>
     <br/>
     <div th:replace="fragments/footer :: footer" />
 </div> <!-- /container -->

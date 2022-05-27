@@ -19,9 +19,7 @@ public class Todo {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    /**
-     * CascadeType.Persist : 엔티티의 생성 시에만 전파
-     */
+    // Todo에서 TodoTask를 관리. cascade all 옵션 설정
     @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL)
     private List<TodoTask> todoTasks = new ArrayList<>();
 
@@ -30,14 +28,16 @@ public class Todo {
     @Column(unique = true)
     private LocalDate createdDate;
 
+    /**
+     * setter를 외부에서 사용하지 못하도록 하고, Todo 모델의 생성 메서드로만 Todo를 생성할 수 있도록 하기 위해
+     * default 생성자를 protected로 제한함
+     */
+    protected Todo(){}
+
     //===연관관계 메서드===//
     public void addTodoTask(TodoTask todoTask) {
         this.todoTasks.add(todoTask);
         todoTask.setTodo(this);
-    }
-
-    public void removeTodoTask(TodoTask todoTask){
-        this.todoTasks.remove(todoTask);
     }
 
     //===생성 메서드===//
@@ -53,10 +53,17 @@ public class Todo {
     }
 
     //===비즈니스 로직===//
+
+    /**
+     * 할일의 상태를 미완료(RUNNING) 상태로 설정
+     */
     public void run() {
         this.status = TodoTaskStatus.RUNNING;
     }
 
+    /**
+     * 할일에 등록된 작업의 상태를 변경(완료->미완료, 미완료->완료)
+     */
     public void changeStatusOfTodoTask(Long todoTaskId, TodoTaskStatus status) {
         for(TodoTask todoTask : this.todoTasks){
             if(todoTask.getId().equals(todoTaskId)){
@@ -69,6 +76,9 @@ public class Todo {
         }
     }
 
+    /**
+     * 할일에 등록된 모든 작업들이 완료되었는지 check. 하나라도 미완료 시 return false
+     */
     public boolean checkAllFinished() {
         for (TodoTask todoTask : this.todoTasks) {
             if (todoTask.getStatus().equals(TodoTaskStatus.RUNNING)) {
@@ -78,6 +88,9 @@ public class Todo {
         return true;
     }
 
+    /**
+     * 할일의 상태를 완료(FINISH) 상태로 설정
+     */
     public void finish() {
         this.status = TodoTaskStatus.FINISH;
     }

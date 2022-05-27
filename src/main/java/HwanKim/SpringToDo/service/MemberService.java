@@ -48,6 +48,7 @@ public class MemberService {
 
     /**
      * 로그인
+     * username과 password가 일치하는지 조회
      */
     public MemberDTO login(String username, String password){
         List<Member> findMembers = memberRepository.findByUsername(username);

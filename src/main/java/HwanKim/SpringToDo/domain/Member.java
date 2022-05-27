@@ -17,6 +17,10 @@ public class Member {
     private String username;
     private String password;
 
+    /**
+     * setter를 사용하지 않고, 파라미터가 있는 생성자로 최초 1회 생성하도록 제한하기 위해
+     * default 생성자를 protected로 제한함
+     */
     protected Member(){
     }
 

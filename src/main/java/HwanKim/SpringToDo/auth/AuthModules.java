@@ -19,7 +19,6 @@ public class AuthModules {
 
     /**
      * Session에 user id가 없으면 throw Exception.
-     * message에 담긴 string을 이름으로 하는 attribute를 model에 add
      */
     public void checkSession(HttpSession session){
         if(session.getAttribute(SessionStrings.SESSION_ID) == null){
@@ -28,12 +27,12 @@ public class AuthModules {
     }
 
     /**
-     * Task Entity에 대한 권한 검사
-     * url에 담겨온 id의 외래키인 memberId가 session에 저장된 memberId와 일치하는지 검사
+     * Task Entity에 대한 접근 권한 검사
+     * url에 담겨온 task id의 외래키인 memberId가 session에 저장된 memberId와 일치하는지 검사
      */
     public void checkAuthofTask(Long memberId, Long taskId, CRUDStatus curdStatus) {
         Optional<TaskDTO> task = taskService.findAll(memberId).stream()
-                .filter(t -> t.getId() == taskId)
+                .filter(t -> t.getId().equals(taskId))
                 .findFirst();
         if(task.isEmpty()){
             if(curdStatus.equals(CRUDStatus.UPDATE)){

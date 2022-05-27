@@ -32,6 +32,11 @@ public class TodoController {
     private final TaskService taskService;
     private final AuthModules authModules;
 
+    /**
+     * 로그인 정보를 확인한 후
+     * 화면 구성을 위해 로그인한 사용자의 모든 작업 목록과 할일 작성 form 클래스를 model에 추가
+     * 할일 작성 form 화면을 return
+     */
     @GetMapping("/todo/new")
     public String newTodo(Model model, HttpServletRequest request){
         HttpSession session = request.getSession();
@@ -45,11 +50,20 @@ public class TodoController {
         List<TaskDTO> tasks = taskService.findAll(loginId);
         model.addAttribute("tasks", tasks);
         model.addAttribute("todoForm", new TodoForm());
+
+        // 사용자가 입력한 개행 문자를 View 상에도 적용시키기 위해 java에서 제공하는 개행문자를 model에 추가
         String nlString = System.getProperty("line.separator");
         model.addAttribute("nlString", nlString);
         return "todo/newTodoForm";
     }
 
+    /**
+     * 로그인 정보를 확인한 후
+     * 할일 작성 로직을 실행하여 Service 계층에서의 validation 진행
+     * Service 계층에서의 validation 결과 할일의 작업 list중 작업 이름이 비어있는 경우 할일 재작성
+     * Service 계층에서의 validation 결과 이미 오늘의 할일이 작성되어있는 경우 오늘의 할일 페이지로 redirect
+     * validation을 마친 후 오늘의 할일 페이지로 redirect
+     */
     @PostMapping("/todo/new")
     public String create(Model model, @Valid TodoForm todoForm, HttpServletRequest request){
         HttpSession session = request.getSession();
@@ -74,6 +88,11 @@ public class TodoController {
         return "redirect:/todo/today";
     }
 
+    /**
+     * 로그인 정보를 확인한 후
+     * 작성한 할일과 작업의 완료 여부를 model에 추가
+     * 오늘의 할일 페이지를 return
+     */
     @GetMapping("/todo/today")
     public String todoPage(Model model, HttpServletRequest request){
         HttpSession session = request.getSession();
@@ -89,17 +108,23 @@ public class TodoController {
         model.addAttribute("tasks", tasks);
         Todo todaysTodo = todoService.findTodaysTodo(loginId);
         model.addAttribute("todaysTodo", todaysTodo);
-        model.addAttribute("todoForm", new TodoForm());
         model.addAttribute("todoTaskStatus", TodoTaskStatus.values());
+
+        // 사용자가 입력한 개행 문자를 View 상에도 적용시키기 위해 java에서 제공하는 개행문자를 model에 추가
         String nlString = System.getProperty("line.separator");
         model.addAttribute("nlString", nlString);
 
         return "todo/today";
     }
 
+    /**
+     * View 계층의 JavaScript fetch api 요청에 대한 응답
+     * 완료한 작업의 경우 작업의 상태를 미완료로 변경하여 변경된 데이터를 반환
+     * 미완료한 작업의 경우 작업의 상태를 완료로 변경하여 변경된 데이터를 반환
+     */
     @ResponseBody
     @PutMapping("/todo/todoTasks/changeStatus")
-    public TodoTaskStatusForm changeStatus(@RequestBody TodoTaskStatusForm todoTaskData, HttpServletRequest request) {
+    public TodoTaskStatusForm changeStatus(@RequestBody TodoTaskStatusForm todoTaskData) {
 
         Todo todo = todoService.changeStatusOfTodoTask(
                 todoTaskData.getTodoId(),
@@ -119,6 +144,9 @@ public class TodoController {
         return todoTaskStatusForm;
     }
 
+    /**
+     * 오늘의 할일 삭제
+     */
     @GetMapping("/todo/delete")
     public String delete(HttpServletRequest request){
         todoService.delete((Long)(request.getSession().getAttribute(SessionStrings.SESSION_ID)));

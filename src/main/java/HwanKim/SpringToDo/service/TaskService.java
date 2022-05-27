@@ -22,7 +22,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
 
     /**
-     * Task 전체 검색
+     * 사용자의 전체 Task를 조회한 후 return
      */
     public List<TaskDTO> findAll(Long memberId){
         List<Task> tasks = taskRepository.findByMemberId(memberId);
@@ -34,7 +34,7 @@ public class TaskService {
     }
 
     /**
-     * Task id 검색
+     * 사용자의 전체 Task중 task id가 일치하는 작업을 return
      */
     public TaskDTO findOneById(Long memberId, Long taskId){
 
@@ -43,7 +43,7 @@ public class TaskService {
     }
 
     /**
-     * Task 이름 검색
+     * 사용자의 전체 Task중 이름이 일치하는 작업을 return
      */
     public TaskDTO findOneByName(Long memberId, String name){
 
@@ -57,7 +57,7 @@ public class TaskService {
 
     /**
      * Task 저장
-     * task의 name은 member별로 unique
+     * 사용자의 작업 목록중 중복된 이름의 작업이 있는지 validate한 후 작업 생성
      */
     public Long saveTask(TaskDTO taskDTO){
         Member member = taskDTO.getMember();
@@ -68,7 +68,7 @@ public class TaskService {
     }
 
     /**
-     * Task 수정
+     * 요청을 보낸 사용자의 작업 목록 중 Task 수정
      */
     public void update(Long memberId, TaskDTO taskDTO, String nameBeforeUpdated){
         validateName(memberId, taskDTO.getName(), nameBeforeUpdated);
@@ -78,11 +78,15 @@ public class TaskService {
     }
 
     /**
-     * Member별로 생성한 Task의 중복 name validate
+     * Member별로 생성한 작업 이름은 unique하다.
+     * validate 결과 중복된 작업 이름이 조회된 경우 예외처리
+     * 작업 생성 시에는 중복된 작업 이름이 조회되지 않아야 하지만,
+     * 작업 수정 시에는 아직 수정되기 전 이름이 조회될 수 있으므로, 생성과 수정의 경우를 모두 고려하여 validate
      */
     private void validateName(Long memberId, String name, String nameBeforeUpdated) {
         List<Task> tasks = taskRepository.findByNameInMember(name, memberId);
         if(tasks.size() != 0){
+            // 수정 전 이름이 파라미터로 전달되지 않은 경우(생성 작업), 혹은 동일한 이름의 작업이 조회된 경우 예외처리
             if(nameBeforeUpdated == null || !nameBeforeUpdated.equals(tasks.get(0).getName())){
                 throw new TaskNameDuplicateException("작업 이름이 이미 존재합니다.");
             }
