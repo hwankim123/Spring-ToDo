@@ -11,6 +11,7 @@ import HwanKim.SpringToDo.service.TaskService;
 import HwanKim.SpringToDo.auth.AuthModules;
 import HwanKim.SpringToDo.auth.SessionStrings;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class TaskController {
@@ -36,6 +38,8 @@ public class TaskController {
      */
     @GetMapping("/tasks")
     public String getAll(Model model, HttpServletRequest request){
+        log.info("mapped url '{}'. {}.{}() method called.", "/tasks", "TaskController", "getAll");
+
         HttpSession session = request.getSession();
         try{
             authModules.checkSession(session);
@@ -59,6 +63,8 @@ public class TaskController {
      */
     @GetMapping("/tasks/new")
     public String newTaskForm(Model model, HttpServletRequest request){
+        log.info("mapped url '{}'. {}.{}() method called.", "/tasks/new", "TaskController", "newTaskForm");
+
         HttpSession session = request.getSession();
         try{
             authModules.checkSession(session);
@@ -77,6 +83,8 @@ public class TaskController {
      */
     @PostMapping("/tasks/new")
     public String create(Model model, @Valid TaskForm taskForm, BindingResult result, HttpServletRequest request){
+        log.info("mapped url '{}'. {}.{}() method called.", "/tasks/new", "TaskController", "create");
+
         HttpSession session = request.getSession();
         try{
             authModules.checkSession(session);
@@ -99,6 +107,8 @@ public class TaskController {
             return "/task/newTaskForm";
         }
 
+        log.info("TaskController.create() : all exceptions & create validation passed. redirect to '/tasks'");
+
         return "redirect:/tasks";
     }
 
@@ -109,6 +119,8 @@ public class TaskController {
      */
     @GetMapping("/tasks/{taskId}/update")
     public String updateTaskForm(@PathVariable("taskId") Long taskId, Model model, HttpServletRequest request){
+        log.info("mapped url '{}{}{}'. {}.{}() method called.", "/tasks/", taskId, "/update", "TaskController", "getAll");
+
         HttpSession session = request.getSession();
 
         try{
@@ -139,6 +151,8 @@ public class TaskController {
     @PostMapping("/tasks/{taskId}/update")
     public String update(@PathVariable("taskId") Long taskId, Model model,
                          @Valid TaskForm taskForm, BindingResult result, HttpServletRequest request){
+        log.info("mapped url '{}{}{}'. {}.{}() method called.", "/tasks/", taskId, "/update", "TaskController", "update");
+
         HttpSession session = request.getSession();
 
         try{
@@ -173,6 +187,9 @@ public class TaskController {
             result.addError(new FieldError("taskForm", "name", e.getMessage()));
             return "/task/updateTaskForm";
         }
+
+        log.info("TaskController.update() : all exceptions & update validations passed. redirect to '/tasks'");
+
         return "redirect:/tasks";
     }
 
@@ -182,6 +199,8 @@ public class TaskController {
      */
     @DeleteMapping("/tasks/{taskId}/delete")
     public String delete(@PathVariable("taskId") Long taskId, Model model, HttpServletRequest request){
+        log.info("mapped url '{}{}{}'. {}.{}() method called.", "/tasks/", taskId, "/delete", "TaskController", "delete");
+
         HttpSession session = request.getSession();
 
         try{
@@ -200,6 +219,9 @@ public class TaskController {
         }
 
         taskService.delete(loginId, taskId);
+
+        log.info("TaskController.delete() : all delete exceptions passed. redirect to '/tasks'");
+
         return "redirect:/tasks";
     }
 }

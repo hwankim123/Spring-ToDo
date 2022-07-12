@@ -14,6 +14,7 @@ import HwanKim.SpringToDo.repository.TodoSearch;
 import HwanKim.SpringToDo.service.TaskService;
 import HwanKim.SpringToDo.service.TodoService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class TodoController {
@@ -39,6 +41,8 @@ public class TodoController {
      */
     @GetMapping("/todo/new")
     public String newTodo(Model model, HttpServletRequest request){
+        log.info("mapped url '{}'. {}.{}() method called.", "/todo/new", "TodoController", "newTodo");
+
         HttpSession session = request.getSession();
         try{
             authModules.checkSession(session);
@@ -66,6 +70,8 @@ public class TodoController {
      */
     @PostMapping("/todo/new")
     public String create(Model model, @Valid TodoForm todoForm, HttpServletRequest request){
+        log.info("mapped url '{}'. {}.{}() method called.", "/todo/new", "TodoController", "create");
+
         HttpSession session = request.getSession();
         try{
             authModules.checkSession(session);
@@ -80,11 +86,14 @@ public class TodoController {
         try{
             todoService.saveTodo(loginId, names, descs);
         } catch(TodoTaskNameNullException e){
+            log.info("TodoTaskNameNullException occurred. redirect to '/todo/new'");
             return "redirect:/todo/new";
         } catch(TodoAlreadyExistException e){
             model.addAttribute(e.getMessage(), true);
+            log.info("TodoAlreadyExistException occurred. redirect to '/todo/today'");
             return "redirect:/todo/today";
         }
+        log.info("all exceptions passed. redirect to '/todo/today'");
         return "redirect:/todo/today";
     }
 
@@ -94,7 +103,9 @@ public class TodoController {
      * 오늘의 할일 페이지를 return
      */
     @GetMapping("/todo/today")
-    public String todoPage(Model model, HttpServletRequest request){
+    public String getTodaysTodo(Model model, HttpServletRequest request){
+        log.info("mapped url '{}'. {}.{}() method called.", "/todo/today", "TodoController", "getTodaysTodo");
+
         HttpSession session = request.getSession();
         try{
             authModules.checkSession(session);
@@ -125,6 +136,7 @@ public class TodoController {
     @ResponseBody
     @PutMapping("/todo/todoTasks/changeStatus")
     public TodoTaskStatusForm changeStatus(@RequestBody TodoTaskStatusForm todoTaskData) {
+        log.info("mapped url '{}'. {}.{}() method called.", "/todo/todoTasks/changeStatus", "TodoController", "changeStatus");
 
         Todo todo = todoService.changeStatusOfTodoTask(
                 todoTaskData.getTodoId(),
@@ -149,6 +161,7 @@ public class TodoController {
      */
     @GetMapping("/todo/delete")
     public String delete(HttpServletRequest request){
+        log.info("mapped url '{}'. {}.{}() method called.", "/todo/delete", "TodoController", "delete");
         todoService.delete((Long)(request.getSession().getAttribute(SessionStrings.SESSION_ID)));
         return "/home";
     }

@@ -9,13 +9,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-@Controller
 @Slf4j
+@Controller
 public class HomeController {
 
     @RequestMapping("/")
     public String home(Model model, HttpServletRequest request){
-        log.info("home controller");
+        log.info("mapped url '{}'. {}.{}() method called.", "/", "HomeController", "home");
+
         HttpSession session = request.getSession();
         model.addAttribute("loginId", session.getAttribute(SessionStrings.SESSION_ID));
         model.addAttribute("loginName", session.getAttribute(SessionStrings.SESSION_NAME));

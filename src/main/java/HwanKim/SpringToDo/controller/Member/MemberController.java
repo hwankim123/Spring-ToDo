@@ -8,6 +8,7 @@ import HwanKim.SpringToDo.service.MemberService;
 import HwanKim.SpringToDo.auth.AuthModules;
 import HwanKim.SpringToDo.auth.SessionStrings;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class MemberController {
@@ -31,6 +33,8 @@ public class MemberController {
      */
     @GetMapping("/member/new")
     public String createForm(Model model){
+        log.info("mapped url '{}'. {}.{}() method called.", "/member/new", "MemberController", "createForm");
+
         model.addAttribute("memberForm", new MemberForm());
         return "member/createMemberForm";
     }
@@ -41,7 +45,8 @@ public class MemberController {
      * Service 계층에서의 validation을 통과하면 index 페이지로 redirect
      */
     @PostMapping("/member/new")
-    public String create(@Valid MemberForm memberForm, BindingResult result){
+    public String signup(@Valid MemberForm memberForm, BindingResult result){
+        log.info("mapped url '{}'. {}.{}() method called.", "/member/new", "MemberController", "create");
 
         // View 계층에서의 validation
         if(result.hasErrors()){
@@ -59,6 +64,7 @@ public class MemberController {
             result.addError(new FieldError("memberForm", "password", e.getMessage()));
             return "member/createMemberForm";
         }
+        log.info("MemberController.signup() : all signup validation passed. redirect to '/'");
         return "redirect:/";
     }
 
@@ -67,6 +73,7 @@ public class MemberController {
      */
     @GetMapping("/member/login")
     public String loginForm(Model model){
+        log.info("mapped url '{}'. {}.{}() method called.", "/member/login", "MemberController", "loginForm");
         model.addAttribute("loginForm", new LoginForm());
         return "member/loginForm";
     }
@@ -77,6 +84,7 @@ public class MemberController {
      */
     @PostMapping("/member/login")
     public String login(@Valid LoginForm loginForm, BindingResult result, HttpServletRequest request){
+        log.info("mapped url '{}'. {}.{}() method called.", "/member/login", "MemberController", "login");
 
         // View 계층에서의 validation
         if(result.hasErrors()){
@@ -100,6 +108,7 @@ public class MemberController {
         session.setAttribute(SessionStrings.SESSION_NAME, loginMemberDTO.getName());
         session.setAttribute(SessionStrings.SESSION_USERNAME, loginMemberDTO.getUsername());
 
+        log.info("MemberController.login() : all login validation passed. redirect to '/'");
         return "redirect:/";
     }
 
@@ -108,9 +117,12 @@ public class MemberController {
      */
     @GetMapping("/member/logout")
     public String logout(HttpServletRequest request){
+        log.info("mapped url '{}'. {}.{}() method called.", "/member/logout", "MemberController", "logout");
+
         HttpSession session = request.getSession();
         session.invalidate();
 
+        log.info("MemberController.logout() : logout success. redirect to '/'");
         return "redirect:/";
     }
 
@@ -120,6 +132,8 @@ public class MemberController {
      */
     @GetMapping("/member/mypage")
     public String mypage(Model model, HttpServletRequest request){
+        log.info("mapped url '{}'. {}.{}() method called.", "/member/new", "MemberController", "mypage");
+
         HttpSession session = request.getSession();
         try{
             authModules.checkSession(session);
