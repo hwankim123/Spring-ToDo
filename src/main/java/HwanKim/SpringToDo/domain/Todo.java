@@ -68,8 +68,10 @@ public class Todo {
         for(TodoTask todoTask : this.todoTasks){
             if(todoTask.getId().equals(todoTaskId)){
                 if(status.equals(TodoTaskStatus.RUNNING)){
+                    // 요청을 보낸 todoTask.status가 RUNNING일 경우
                     todoTask.finish();
                 } else{
+                    // 요청을 보낸 todoTask.status가 FINISH일 경우
                     todoTask.run();
                 }
             }
