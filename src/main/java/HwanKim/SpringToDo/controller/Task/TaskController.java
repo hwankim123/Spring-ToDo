@@ -26,6 +26,7 @@ import java.util.List;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/tasks")
 public class TaskController {
 
     private final MemberService memberService;
@@ -36,7 +37,7 @@ public class TaskController {
      * 로그인 정보를 확인한 후
      * 세션의 로그인한 사용자 id로 사용자가 생성한 작업 목록을 모두 조회
      */
-    @GetMapping("/tasks")
+    @GetMapping
     public String getAll(Model model, HttpServletRequest request){
         log.info("mapped url '{}'. {}.{}() method called.", "/tasks", "TaskController", "getAll");
 
@@ -61,7 +62,7 @@ public class TaskController {
      * 로그인 정보를 확인한 후
      * 새로운 task 생성을 위한 form 화면을 return
      */
-    @GetMapping("/tasks/new")
+    @GetMapping("/new")
     public String newTaskForm(Model model, HttpServletRequest request){
         log.info("mapped url '{}'. {}.{}() method called.", "/tasks/new", "TaskController", "newTaskForm");
 
@@ -81,7 +82,7 @@ public class TaskController {
      * View 계층에서의 validation : 작업 이름을 입력하지 않은 경우 작업 생성 재진행
      * View 계층에서의 validation을 통과했다면 작업 생성 로직을 진행하며 Service 계층에서의 validation 진행
      */
-    @PostMapping("/tasks/new")
+    @PostMapping("/new")
     public String create(Model model, @Valid TaskForm taskForm, BindingResult result, HttpServletRequest request){
         log.info("mapped url '{}'. {}.{}() method called.", "/tasks/new", "TaskController", "create");
 
@@ -117,7 +118,7 @@ public class TaskController {
      * 검증한 후 수정할 작업의 기존 정보를 조회하여 model에 데이터를 추가
      * 작업 수정을 위한 form 화면을 return
      */
-    @GetMapping("/tasks/{taskId}/update")
+    @GetMapping("/{taskId}/update")
     public String updateTaskForm(@PathVariable("taskId") Long taskId, Model model, HttpServletRequest request){
         log.info("mapped url '{}{}{}'. {}.{}() method called.", "/tasks/", taskId, "/update", "TaskController", "getAll");
 
@@ -148,7 +149,7 @@ public class TaskController {
      * 검증한 후 View 계층에서의 validation 진행 : 작업 이름을 작성하지 않은 경우 작업 수정 재진행
      * View 계층에서의 validation을 통과했다면 작업 수정 로직을 진행하여 Service 계층에서의 validation 진행
      */
-    @PostMapping("/tasks/{taskId}/update")
+    @PostMapping("/{taskId}/update")
     public String update(@PathVariable("taskId") Long taskId, Model model,
                          @Valid TaskForm taskForm, BindingResult result, HttpServletRequest request){
         log.info("mapped url '{}{}{}'. {}.{}() method called.", "/tasks/", taskId, "/update", "TaskController", "update");
@@ -197,7 +198,7 @@ public class TaskController {
      * 로그인 정보를 확인한 후 로그인한 사용자가 해당 작업을 수정할 권한이 있는지 검증
      * 검증한 후 작업 삭제 진행
      */
-    @DeleteMapping("/tasks/{taskId}/delete")
+    @DeleteMapping("/{taskId}/delete")
     public String delete(@PathVariable("taskId") Long taskId, Model model, HttpServletRequest request){
         log.info("mapped url '{}{}{}'. {}.{}() method called.", "/tasks/", taskId, "/delete", "TaskController", "delete");
 

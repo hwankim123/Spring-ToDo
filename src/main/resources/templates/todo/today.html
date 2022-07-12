@@ -7,7 +7,7 @@
         let checkBox = document.getElementById('status'+todoTaskId);
         let checked = checkBox.getAttribute('checked');
         let status = (checked === 'checked') ? [[${todoTaskStatus[1]}]] : [[${todoTaskStatus[0]}]]
-        const response = fetch("http://localhost:8080/todo/todoTasks/changeStatus", {
+        const response = fetch("http://localhost:8080/todo/change-status", {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json;charset=UTF8',

@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -23,6 +24,7 @@ import javax.validation.Valid;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/member")
 public class MemberController {
 
     private final MemberService memberService;
@@ -31,7 +33,7 @@ public class MemberController {
     /**
      * 회원 가입 form 화면을 return
      */
-    @GetMapping("/member/new")
+    @GetMapping("/new")
     public String createForm(Model model){
         log.info("mapped url '{}'. {}.{}() method called.", "/member/new", "MemberController", "createForm");
 
@@ -44,7 +46,7 @@ public class MemberController {
      * View 계층에서의 validation을 통과하면 회원가입 로직을 진행하며 Service 계층에서의 validation 진행
      * Service 계층에서의 validation을 통과하면 index 페이지로 redirect
      */
-    @PostMapping("/member/new")
+    @PostMapping("/new")
     public String signup(@Valid MemberForm memberForm, BindingResult result){
         log.info("mapped url '{}'. {}.{}() method called.", "/member/new", "MemberController", "create");
 
@@ -71,7 +73,7 @@ public class MemberController {
     /**
      * 로그인 form 화면을 return
      */
-    @GetMapping("/member/login")
+    @GetMapping("/login")
     public String loginForm(Model model){
         log.info("mapped url '{}'. {}.{}() method called.", "/member/login", "MemberController", "loginForm");
         model.addAttribute("loginForm", new LoginForm());
@@ -82,7 +84,7 @@ public class MemberController {
      * View 계층에서의 validation : 아이디 혹은 비밀번호를 입력하지 않은 경우 로그인 재진행
      * View 계층에서의 validation을 통과했다면 로그인 로직을 진행하며 Service 계층에서의 validation 진행
      */
-    @PostMapping("/member/login")
+    @PostMapping("/login")
     public String login(@Valid LoginForm loginForm, BindingResult result, HttpServletRequest request){
         log.info("mapped url '{}'. {}.{}() method called.", "/member/login", "MemberController", "login");
 
@@ -115,7 +117,7 @@ public class MemberController {
     /**
      * 세션의 전체 데이터를 삭제하며 로그아웃
      */
-    @GetMapping("/member/logout")
+    @GetMapping("/logout")
     public String logout(HttpServletRequest request){
         log.info("mapped url '{}'. {}.{}() method called.", "/member/logout", "MemberController", "logout");
 
@@ -130,7 +132,7 @@ public class MemberController {
      * 세션을 통해 로그인 정보를 확인한 후
      * model에 사용자의 이름과 id 정보를 추가
      */
-    @GetMapping("/member/mypage")
+    @GetMapping("/mypage")
     public String mypage(Model model, HttpServletRequest request){
         log.info("mapped url '{}'. {}.{}() method called.", "/member/new", "MemberController", "mypage");
 

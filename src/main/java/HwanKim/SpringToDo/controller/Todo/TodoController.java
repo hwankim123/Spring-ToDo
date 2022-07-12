@@ -28,6 +28,7 @@ import java.util.List;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/todo")
 public class TodoController {
 
     private final TodoService todoService;
@@ -39,7 +40,7 @@ public class TodoController {
      * 화면 구성을 위해 로그인한 사용자의 모든 작업 목록과 할일 작성 form 클래스를 model에 추가
      * 할일 작성 form 화면을 return
      */
-    @GetMapping("/todo/new")
+    @GetMapping("new")
     public String newTodo(Model model, HttpServletRequest request){
         log.info("mapped url '{}'. {}.{}() method called.", "/todo/new", "TodoController", "newTodo");
 
@@ -68,7 +69,7 @@ public class TodoController {
      * Service 계층에서의 validation 결과 이미 오늘의 할일이 작성되어있는 경우 오늘의 할일 페이지로 redirect
      * validation을 마친 후 오늘의 할일 페이지로 redirect
      */
-    @PostMapping("/todo/new")
+    @PostMapping("/new")
     public String create(Model model, @Valid TodoForm todoForm, HttpServletRequest request){
         log.info("mapped url '{}'. {}.{}() method called.", "/todo/new", "TodoController", "create");
 
@@ -102,7 +103,7 @@ public class TodoController {
      * 작성한 할일과 작업의 완료 여부를 model에 추가
      * 오늘의 할일 페이지를 return
      */
-    @GetMapping("/todo/today")
+    @GetMapping("/today")
     public String getTodaysTodo(Model model, HttpServletRequest request){
         log.info("mapped url '{}'. {}.{}() method called.", "/todo/today", "TodoController", "getTodaysTodo");
 
@@ -134,9 +135,9 @@ public class TodoController {
      * 미완료한 작업의 경우 작업의 상태를 완료로 변경하여 변경된 데이터를 반환
      */
     @ResponseBody
-    @PutMapping("/todo/todoTasks/changeStatus")
+    @PutMapping("/change-status")
     public TodoTaskStatusForm changeStatus(@RequestBody TodoTaskStatusForm todoTaskData) {
-        log.info("mapped url '{}'. {}.{}() method called.", "/todo/todoTasks/changeStatus", "TodoController", "changeStatus");
+        log.info("mapped url '{}'. {}.{}() method called.", "/todo/change-status", "TodoController", "changeStatus");
 
         Todo todo = todoService.changeStatusOfTodoTask(
                 todoTaskData.getTodoId(),
@@ -159,7 +160,7 @@ public class TodoController {
     /**
      * 오늘의 할일 삭제
      */
-    @GetMapping("/todo/delete")
+    @GetMapping("/delete")
     public String delete(HttpServletRequest request){
         log.info("mapped url '{}'. {}.{}() method called.", "/todo/delete", "TodoController", "delete");
         todoService.delete((Long)(request.getSession().getAttribute(SessionStrings.SESSION_ID)));
