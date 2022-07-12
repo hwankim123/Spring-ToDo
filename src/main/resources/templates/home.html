@@ -34,7 +34,7 @@
         <h1 th:unless="${loginId == null}" th:text="${'Spring Todo - '+loginName + '님 안녕하세요!'}">Spring Todo - "이름"님 안녕하세요!</h1>
         <p class="lead">회원 기능</p>
         <p>
-            <a class="btn btn-lg btn-secondary" href="/member/new">회원 가입</a>
+            <a th:if="${loginId == null}" class="btn btn-lg btn-secondary" href="/member/new">회원 가입</a>
             <a th:if="${loginId == null}" class="btn btn-lg btn-secondary" href="/member/login">로그인</a>
             <a th:unless="${loginId == null}" class="btn btn-lg btn-secondary" href="/member/logout">로그아웃</a>
             <a th:if="${loginId != null}" class="btn btn-lg btn-secondary" href="/member/mypage">마이 페이지</a>
