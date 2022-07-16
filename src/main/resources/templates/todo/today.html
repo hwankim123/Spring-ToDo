@@ -1,8 +1,13 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
-<body>
+<body th:onload="|alertRedirected('${isTodoAlreadyExist}')|">
 <script th:inline="javascript">
+    function alertRedirected(isTodoAlreadyExist){
+        if(isTodoAlreadyExist === "true"){
+            alert("오늘의 할일이 이미 있습니다!");
+        }
+    }
     async function changeStatus(todoTaskId){
         let checkBox = document.getElementById('status'+todoTaskId);
         let checked = checkBox.getAttribute('checked');

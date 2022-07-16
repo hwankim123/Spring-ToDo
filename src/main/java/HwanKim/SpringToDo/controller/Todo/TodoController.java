@@ -19,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -40,8 +41,8 @@ public class TodoController {
      * 화면 구성을 위해 로그인한 사용자의 모든 작업 목록과 할일 작성 form 클래스를 model에 추가
      * 할일 작성 form 화면을 return
      */
-    @GetMapping("new")
-    public String newTodo(Model model, HttpServletRequest request){
+    @GetMapping("/new")
+    public String newTodo(Model model, HttpServletRequest request, RedirectAttributes redirectAttributes){
         log.info("mapped url '{}'. {}.{}() method called.", "/todo/new", "TodoController", "newTodo");
 
         HttpSession session = request.getSession();
@@ -52,6 +53,13 @@ public class TodoController {
             return "/exceptions";
         }
         Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
+        try{
+            todoService.validateTodoAlreadyExist(loginId);
+        } catch(TodoAlreadyExistException e){
+            log.info("TodoAlreadyExistException occurred. redirect to '/todo/today'");
+            redirectAttributes.addFlashAttribute("isTodoAlreadyExist", true);
+            return "redirect:/todo/today";
+        }
         List<TaskDTO> tasks = taskService.findAll(loginId);
         model.addAttribute("tasks", tasks);
         model.addAttribute("todoForm", new TodoForm());
@@ -89,10 +97,6 @@ public class TodoController {
         } catch(TodoTaskNameNullException e){
             log.info("TodoTaskNameNullException occurred. redirect to '/todo/new'");
             return "redirect:/todo/new";
-        } catch(TodoAlreadyExistException e){
-            model.addAttribute(e.getMessage(), true);
-            log.info("TodoAlreadyExistException occurred. redirect to '/todo/today'");
-            return "redirect:/todo/today";
         }
         log.info("all exceptions passed. redirect to '/todo/today'");
         return "redirect:/todo/today";
@@ -106,7 +110,6 @@ public class TodoController {
     @GetMapping("/today")
     public String getTodaysTodo(Model model, HttpServletRequest request){
         log.info("mapped url '{}'. {}.{}() method called.", "/todo/today", "TodoController", "getTodaysTodo");
-
         HttpSession session = request.getSession();
         try{
             authModules.checkSession(session);

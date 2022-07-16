@@ -28,7 +28,6 @@ public class TodoService {
         Member member = memberRepository.findById(memberId);
 
         validateName(names);
-        validateTodo(memberId);
 
         List<TodoTask> todoTasks = new ArrayList<>();
         for(int i = 0; i < names.length; i++){
@@ -57,7 +56,7 @@ public class TodoService {
     /**
      * 오늘의 할일이 이미 존재하는 경우 예외처리
      */
-    private void validateTodo(Long memberId){
+    public void validateTodoAlreadyExist(Long memberId){
         List<Todo> todo = todoRepository.findTodayByMemberId(memberId);
         if(todo.size() != 0){
             throw new TodoAlreadyExistException("오늘의 할일이 이미 존재합니다.");
