@@ -9,6 +9,7 @@ import HwanKim.SpringToDo.domain.TodoTaskStatus;
 import HwanKim.SpringToDo.exception.SessionInvalidException;
 import HwanKim.SpringToDo.auth.AuthModules;
 import HwanKim.SpringToDo.exception.TodoAlreadyExistException;
+import HwanKim.SpringToDo.exception.TodoNotExistException;
 import HwanKim.SpringToDo.exception.TodoTaskNameNullException;
 import HwanKim.SpringToDo.repository.TodoSearch;
 import HwanKim.SpringToDo.service.TaskService;
@@ -42,7 +43,7 @@ public class TodoController {
      * 할일 작성 form 화면을 return
      */
     @GetMapping("/new")
-    public String newTodo(Model model, HttpServletRequest request, RedirectAttributes redirectAttributes){
+    public String newTodo(Model model, HttpServletRequest request, RedirectAttributes rtt){
         log.info("mapped url '{}'. {}.{}() method called.", "/todo/new", "TodoController", "newTodo");
 
         HttpSession session = request.getSession();
@@ -57,7 +58,7 @@ public class TodoController {
             todoService.validateTodoAlreadyExist(loginId);
         } catch(TodoAlreadyExistException e){
             log.info("TodoAlreadyExistException occurred. redirect to '/todo/today'");
-            redirectAttributes.addFlashAttribute("isTodoAlreadyExist", true);
+            rtt.addFlashAttribute("isTodoAlreadyExist", true);
             return "redirect:/todo/today";
         }
         List<TaskDTO> tasks = taskService.findAll(loginId);
@@ -117,10 +118,15 @@ public class TodoController {
             model.addAttribute(e.getMessage(), true);
             return "/exceptions";
         }
-
         Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
-        List<TaskDTO> tasks = taskService.findAll(loginId);
-        model.addAttribute("tasks", tasks);
+        try{
+            todoService.validateTodoNotExist(loginId);
+        } catch(TodoNotExistException e){
+            log.info("TodoNotExistException occurred.");
+            model.addAttribute("isTodoNotExist", true);
+            return "todo/today";
+        }
+
         Todo todaysTodo = todoService.findTodaysTodo(loginId);
         model.addAttribute("todaysTodo", todaysTodo);
         model.addAttribute("todoTaskStatus", TodoTaskStatus.values());
@@ -130,6 +136,52 @@ public class TodoController {
         model.addAttribute("nlString", nlString);
 
         return "todo/today";
+    }
+
+    @GetMapping("/today/update")
+    public String updateForm(Model model, HttpServletRequest request){
+        log.info("mapped url '{}'. {}.{}() method called.", "/todo/today/update", "TodoController", "updateForm");
+        HttpSession session = request.getSession();
+        try{
+            authModules.checkSession(session);
+        } catch(SessionInvalidException e){
+            model.addAttribute(e.getMessage(), true);
+            return "/exceptions";
+        }
+        Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
+        try{
+            todoService.validateTodoNotExist(loginId);
+        } catch(TodoNotExistException e){
+            log.info("TodoNotExistException occurred.");
+            model.addAttribute("isTodoNotExist", true);
+            return "todo/updateForm";
+        }
+
+        List<TaskDTO> tasks = taskService.findAll(loginId);
+        model.addAttribute("tasks", tasks);
+        Todo todaysTodo = todoService.findTodaysTodo(loginId);
+        model.addAttribute("todaysTodo", todaysTodo);
+
+        model.addAttribute("todoForm", new TodoForm());
+
+        // 사용자가 입력한 개행 문자를 View 상에도 적용시키기 위해 java에서 제공하는 개행문자를 model에 추가
+        String nlString = System.getProperty("line.separator");
+        model.addAttribute("nlString", nlString);
+
+        return "todo/updateForm";
+    }
+
+    @PostMapping("/today/update")
+    public String update(Model model, @Valid TodoForm todoForm, HttpServletRequest request){
+        log.info("mapped url '{}'. {}.{}() method called.", "/todo/today/update", "TodoController", "updateForm");
+        HttpSession session = request.getSession();
+        try{
+            authModules.checkSession(session);
+        } catch(SessionInvalidException e){
+            model.addAttribute(e.getMessage(), true);
+            return "/exceptions";
+        }
+        return "ok";
     }
 
     /**

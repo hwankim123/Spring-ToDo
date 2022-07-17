@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<script th:fragment="todoFormJavaScript">
+    function setSelectBtn(){
+        let taskList = document.getElementById("taskList");
+        let selectBtn = document.getElementById("selectBtn");
+        let name = taskList.options[taskList.selectedIndex].text;
+        let desc = taskList.options[taskList.selectedIndex].value;
+        selectBtn.setAttribute("onclick", "setNewInputGroup(" + "`" + name + "`, " + "`" + desc + "`)");
+    }
+
+    function setNewInputGroup(name, desc){
+        let todoTable = document.getElementById("todoTable");
+
+        let trInput = document.createElement("tr");
+        todoTable.appendChild(trInput);
+        let tdName = document.createElement("td");
+        tdName.innerHTML =
+            '<input type="text" id="inputName" class="form-control" ' +
+            'name="names" placeholder="작업 이름을 입력하세요">';
+        tdName.firstElementChild.setAttribute("value", name);
+        let tdDesc = document.createElement("td");
+        tdDesc.innerHTML =
+            '<textarea id="inputDesc" class="form-control" rows="7"' +
+            'name="descs" placeholder="작업 설명을 입력하세요">'+desc+'</textarea>';
+        tdDesc.firstElementChild.setAttribute("value", desc);
+        trInput.appendChild(tdName);
+        trInput.appendChild(tdDesc);
+    }
+
+    function newTodoTask(){
+        let todoTable = document.getElementById("todoTable");
+
+        let trInput = document.createElement("tr");
+        todoTable.appendChild(trInput);
+        let tdName = document.createElement("td");
+        tdName.innerHTML =
+            '<input type="text" id="inputName" class="form-control"' +
+            'name="names" placeholder="작업 이름을 입력하세요">';
+        let tdDesc = document.createElement("td");
+        tdDesc.innerHTML =
+            '<textarea id="inputDesc" class="form-control" rows="7"' +
+            'name="descs" placeholder="작업 설명을 입력하세요">';
+
+        trInput.appendChild(tdName);
+        trInput.appendChild(tdDesc);
+    }
+</script>

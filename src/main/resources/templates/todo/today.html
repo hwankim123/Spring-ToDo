@@ -1,18 +1,28 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
-<body th:onload="|alertRedirected('${isTodoAlreadyExist}')|">
+<body onload="alertControl()">
 <script th:inline="javascript">
-    function alertRedirected(isTodoAlreadyExist){
-        if(isTodoAlreadyExist === "true"){
+    function alertControl(){
+        console.log("isTodoAlreadyExist : " + [[${isTodoAlreadyExist}]]);
+        console.log("isTodoNotExist : " + [[${isTodoNotExist}]]);
+        if([[${isTodoAlreadyExist}]] === true){
             alert("오늘의 할일이 이미 있습니다!");
+        } else if([[${isTodoNotExist}]] === true){
+            if(confirm("오늘의 할일이 존재하지 않습니다. 오늘의 할일 작성 페이지로 이동할까요?")){
+                window.location.href = "/todo/new";
+            } else{
+                window.location.href = "/";
+            }
         }
     }
+</script>
+<script th:inline="javascript" th:if="${isTodoNotExist} != true">
     async function changeStatus(todoTaskId){
         let checkBox = document.getElementById('status'+todoTaskId);
         let checked = checkBox.getAttribute('checked');
         let status = (checked === 'checked') ? [[${todoTaskStatus[1]}]] : [[${todoTaskStatus[0]}]]
-        const response = fetch("http://localhost:8080/todo/change-status", {
+        const response = fetch("/todo/change-status", {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json;charset=UTF8',
@@ -31,7 +41,7 @@
             });
     }
 </script>
-<div class="container">
+<div th:if="${isTodoNotExist} != true" class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
     <h1>오늘의 할일</h1>
     <table class="table table-striped">
@@ -46,7 +56,7 @@
         <tbody id="todoTable">
         <tr th:each="todoTask : ${todaysTodo.todoTasks}" th:id="${todoTask.getId()}">
             <td><span th:id="'name' + ${todoTask.getId()}" th:text="${todoTask.getName()}">Name</span></td>
-            <td><span th:id="'desc' + ${todoTask.getId()}"  th:text="${todoTask.getDesc()}">Desc</span></td>
+            <td><span th:id="'desc' + ${todoTask.getId()}"  th:utext="${#strings.replace(todoTask.getDesc(), nlString, '&lt;br /&gt;')}">Desc</span></td>
             <td><input type="checkbox" class="form-check-input" th:id="'status' + ${todoTask.getId()}"
                        th:checked="${todoTask.getStatus().equals(todoTaskStatus[1])}"
                        th:attr="onclick=|changeStatus('${todoTask.getId()}')|" ></td>

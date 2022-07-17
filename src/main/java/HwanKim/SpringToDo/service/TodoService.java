@@ -2,6 +2,7 @@ package HwanKim.SpringToDo.service;
 
 import HwanKim.SpringToDo.domain.*;
 import HwanKim.SpringToDo.exception.TodoAlreadyExistException;
+import HwanKim.SpringToDo.exception.TodoNotExistException;
 import HwanKim.SpringToDo.exception.TodoTaskNameNullException;
 import HwanKim.SpringToDo.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +61,16 @@ public class TodoService {
         List<Todo> todo = todoRepository.findTodayByMemberId(memberId);
         if(todo.size() != 0){
             throw new TodoAlreadyExistException("오늘의 할일이 이미 존재합니다.");
+        }
+    }
+
+    /**
+     * 오늘의 할일이 이미 존재하는 경우 예외처리
+     */
+    public void validateTodoNotExist(Long memberId){
+        List<Todo> todo = todoRepository.findTodayByMemberId(memberId);
+        if(todo.size() == 0){
+            throw new TodoNotExistException("오늘의 할일이 존재하지 않습니다.");
         }
     }
 

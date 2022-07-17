@@ -1,8 +1,20 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
-<body>
-<script th:replace="fragments/todoFormJavaScript :: todoFormJavaScript"/>
+<body onload="alertControl()">
+<script th:inline="javascript">
+    function alertControl(){
+        console.log("isTodoNotExist : " + [[${isTodoNotExist}]]);
+        if([[${isTodoNotExist}]] === true){
+            if(confirm("오늘의 할일이 존재하지 않습니다. 오늘의 할일 작성 페이지로 이동할까요?")){
+                window.location.href = "/todo/new";
+            } else{
+                window.location.href = "/";
+            }
+        }
+    }
+</script>
+<script th:if="${isTodoNotExist} != true" th:replace="fragments/todoFormJavaScript :: todoFormJavaScript"/>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
     <h1>오늘의 할일 작성</h1>
@@ -27,6 +39,10 @@
             </tr>
             </thead>
             <tbody id="todoTable">
+            <tr th:each="todoTask : ${todaysTodo.todoTasks}" th:id="${todoTask.getId()}">
+                <td><input type="text" class="form-control" name="names" th:id="'name' + ${todoTask.getId()}" th:value="${todoTask.getName()}"></td>
+                <td><textarea class="form-control" rows="7" name="descs" th:id="'desc' + ${todoTask.getId()}"  th:utext="${#strings.replace(todoTask.getDesc(), nlString, '&lt;br /&gt;')}">Desc</textarea></td>
+            </tr>
             </tbody>
         </table>
         <button type="submit" class="btn btn-primary">Submit</button>
@@ -34,6 +50,5 @@
     <br/>
     <div th:replace="fragments/footer :: footer" />
 </div> <!-- /container -->
-
 </body>
 </html>
