@@ -3,13 +3,9 @@ package HwanKim.SpringToDo.repository;
 import HwanKim.SpringToDo.domain.Todo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -31,12 +27,16 @@ public class TodoRepository {
                 .setParameter("memberId", memberId).getResultList();
     }
 
-    public List<Todo> findTodayByMemberId(Long memberId){
+    public Todo findTodayByMemberId(Long memberId){
         String jpql = "select t From Todo t where t.member.id = :memberId and t.createdDate = :today";
-        return em.createQuery(jpql, Todo.class)
-                .setParameter("memberId", memberId)
-                .setParameter("today", LocalDate.now())
-                .getResultList();
+        try{
+            return em.createQuery(jpql, Todo.class)
+                    .setParameter("memberId", memberId)
+                    .setParameter("today", LocalDate.now())
+                    .getSingleResult();
+        } catch(RuntimeException e){
+            return null;
+        }
     }
 
     public List<Todo> findAllByDate(TodoSearch todoSearch){

@@ -58,8 +58,8 @@ public class TodoService {
      * 오늘의 할일이 이미 존재하는 경우 예외처리
      */
     public void validateTodoAlreadyExist(Long memberId){
-        List<Todo> todo = todoRepository.findTodayByMemberId(memberId);
-        if(todo.size() != 0){
+        Todo todo = todoRepository.findTodayByMemberId(memberId);
+        if(todo == null){
             throw new TodoAlreadyExistException("오늘의 할일이 이미 존재합니다.");
         }
     }
@@ -68,8 +68,8 @@ public class TodoService {
      * 오늘의 할일이 이미 존재하는 경우 예외처리
      */
     public void validateTodoNotExist(Long memberId){
-        List<Todo> todo = todoRepository.findTodayByMemberId(memberId);
-        if(todo.size() == 0){
+        Todo todo = todoRepository.findTodayByMemberId(memberId);
+        if(todo == null){
             throw new TodoNotExistException("오늘의 할일이 존재하지 않습니다.");
         }
     }
@@ -93,7 +93,7 @@ public class TodoService {
      * 오늘의 할일 조회
      */
     public Todo findTodaysTodo(Long memberId) {
-        return todoRepository.findTodayByMemberId(memberId).get(0);
+        return todoRepository.findTodayByMemberId(memberId);
     }
 
 
@@ -110,9 +110,18 @@ public class TodoService {
     /**
      * 오늘의 할일 삭제
      */
+    public void update(Long memberId){
+        Todo todaysTodo = todoRepository.findTodayByMemberId(memberId);
+        todaysTodo.getTodoTasks();
+
+    }
+
+    /**
+     * 오늘의 할일 삭제
+     */
     public void delete(Long memberId) {
-        List<Todo> todaysTodo = todoRepository.findTodayByMemberId(memberId);
-        todoRepository.delete(todaysTodo.get(0));
+        Todo todaysTodo = todoRepository.findTodayByMemberId(memberId);
+        todoRepository.delete(todaysTodo);
     }
 
     /**

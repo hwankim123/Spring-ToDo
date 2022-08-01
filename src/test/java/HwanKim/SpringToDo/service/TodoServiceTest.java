@@ -131,9 +131,29 @@ class TodoServiceTest {
         Long todoId = todoService.saveTodo(memberId, names, descs);
 
         //then
-        List<Todo> todaysTodo = todoRepository.findTodayByMemberId(memberId);
-        Assertions.assertThat(todaysTodo.get(0).getId()).isEqualTo(todoId);
+        Todo todaysTodo = todoRepository.findTodayByMemberId(memberId);
+        Assertions.assertThat(todaysTodo.getId()).isEqualTo(todoId);
     }
+
+    @Test
+    public void 생성후_삭제후_조회_todo_조회(){
+        //given
+        Member member = setMember("테스트", "test123", "aefewfws");
+        Long memberId = member.getId();
+
+        //when
+
+        String[] names= {"백준", "Spring", "캡디"};
+        String[] descs= {"백준 1문제", "Spring 프로젝트 개발", "캡스톤"};
+        Long todoId = todoService.saveTodo(memberId, names, descs);
+
+        todoService.delete(memberId);
+        Todo afterDeleteTodo = todoRepository.findTodayByMemberId(member.getId());
+
+        //then
+        Assertions.assertThat(afterDeleteTodo).isEqualTo(null);
+    }
+
     @Test
     public void todo_삭제_테스트(){
         //given
@@ -147,7 +167,7 @@ class TodoServiceTest {
         todoService.delete(member.getId());
 
         //then
-        Assertions.assertThat(todoRepository.findTodayByMemberId(member.getId()).size()).isEqualTo(0);
+        Assertions.assertThat(todoRepository.findTodayByMemberId(member.getId())).isEqualTo(null);
     }
 
     @Test
