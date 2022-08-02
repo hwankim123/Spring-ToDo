@@ -25,7 +25,6 @@ public class Todo {
 
     @Enumerated(EnumType.STRING)
     private TodoTaskStatus status;
-    @Column(unique = true)
     private LocalDate createdDate;
 
     /**
