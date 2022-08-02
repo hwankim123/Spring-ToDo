@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <script th:fragment="todoFormJavaScript">
+
     function setSelectBtn(){
         let taskList = document.getElementById("taskList");
         let selectBtn = document.getElementById("selectBtn");
@@ -9,8 +10,9 @@
         selectBtn.setAttribute("onclick", "setNewInputGroup(" + "`" + name + "`, " + "`" + desc + "`)");
     }
 
+    // 선택한 작업으로 추가
     function setNewInputGroup(name, desc){
-        let todoTable = document.getElementById("todoTable");
+        let todoTable = document.getElementById("todoTableBody");
 
         let id = document.createElement("input");
         id.setAttribute("type", "hidden");
@@ -30,13 +32,19 @@
             'name="descs" placeholder="작업 설명을 입력하세요">'+desc+'</textarea>';
         tdDesc.firstElementChild.setAttribute("value", desc);
 
+        let tdButton = document.createElement("td");
+        tdButton.innerHTML = '<button type="button" class="btn btn-secondary" onclick="deleteRow(this)">삭제</button>';
+
+
         trInput.appendChild(id);
         trInput.appendChild(tdName);
         trInput.appendChild(tdDesc);
+        trInput.appendChild(tdButton);
     }
 
+    // 직접 추가
     function newTodoTask(){
-        let todoTable = document.getElementById("todoTable");
+        let todoTable = document.getElementById("todoTableBody");
 
         let id = document.createElement("input");
         id.setAttribute("type", "hidden");
@@ -54,8 +62,27 @@
             '<textarea id="inputDesc" class="form-control" rows="7"' +
             'name="descs" placeholder="작업 설명을 입력하세요">';
 
+        let tdButton = document.createElement("td");
+        tdButton.innerHTML = '<button type="button" class="btn btn-secondary" onclick="deleteRow(this)">삭제</button>';
+
         trInput.appendChild(id);
         trInput.appendChild(tdName);
         trInput.appendChild(tdDesc);
+        trInput.appendChild(tdButton);
+    }
+    function deleteRow(button){
+        setTablesId();
+        let tr = button.parentElement.parentElement;
+        const table = document.getElementById("todoTable");
+        table.deleteRow(tr.id);
+    }
+    function setTablesId(){
+        const table = document.getElementById("todoTable");
+        let rows = table.rows;
+        for(let i = 1; i < rows.length; i++){
+            rows[i].setAttribute("id", i);
+        }
+
+
     }
 </script>

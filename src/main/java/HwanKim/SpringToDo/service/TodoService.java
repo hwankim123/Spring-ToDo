@@ -121,14 +121,16 @@ public class TodoService {
     }
 
     /**
-     * 오늘의 할일 삭제
+     * 오늘의 할일 수정
      */
     public void update(Long memberId, TodoForm todoForm){
         List<Todo> todaysTodo = todoRepository.findTodayByMemberId(memberId);
         List<TodoTask> todoTasks = todaysTodo.get(0).getTodoTasks();
+        boolean[] isUpdated = new boolean[todoTasks.size()];
         Long[] idList = todoForm.getIds();
         String[] names = todoForm.getNames();
         String[] descs = todoForm.getDescs();
+
 
         validateName(names);
 
@@ -136,14 +138,23 @@ public class TodoService {
             if(idList[i] == -1){
                 todoTasks.add(TodoTask.createTodoTask(names[i], descs[i]));
             } else{
-                for(TodoTask todoTask : todoTasks){
+                for(int j = 0; j < todoTasks.size(); j++){
+                    TodoTask todoTask = todoTasks.get(j);
                     if(todoTask.getId().equals(idList[i])){
                         todoTask.update(names[i], descs[i]);
+                        isUpdated[j] = true;
                     }
                 }
             }
         }
-        todaysTodo.get(0).update();
+        for(int i = 0; i < isUpdated.length; i++){
+            if(!isUpdated[i]){
+                TodoTask todoTask = todoTasks.get(i);
+                todoTasks.remove(todoTask);
+            }
+        }
+
+        todaysTodo.get(0).mappingTodoTasks();
 
     }
 

@@ -13,14 +13,12 @@
             }
         }
     }
-    function delete_td(){
-
-    }
 </script>
 <script th:if="${isTodoNotExist} != true" th:replace="fragments/todoFormJavaScript :: todoFormJavaScript"/>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
-    <h1>오늘의 할일 작성</h1>
+    <h1>오늘의 할일 수정</h1>
+    <button type="button" onclick="setTablesId()">qweqe</button>
     <div class="form-group">
         <label th:for="name">기존 작업에서 선택하기</label>
         <select name="taskId" id="taskList" class="form-control" onchange="setSelectBtn()">
@@ -29,11 +27,11 @@
                     th:text="${task.name}"
                     th:value="${task.desc}" />
         </select>
-        <button id="selectBtn">선택한 작업으로 추가</button>
-        <button id="newTodoTask" onclick="newTodoTask()">직접 추가</button>
+        <button id="selectBtn" class="btn btn-outline-primary">선택한 작업으로 추가</button>
+        <button id="newTodoTask" class="btn btn-outline-secondary" onclick="newTodoTask()">직접 추가</button>
     </div>
     <form role="form" id="todoForm" th:object="${todoForm}" method="post">
-        <table class="table table-striped">
+        <table id="todoTable" class="table table-striped">
             <thead>
             <tr>
                 <th>작업 이름</th>
@@ -41,11 +39,12 @@
                 <th></th>
             </tr>
             </thead>
-            <tbody id="todoTable">
-            <tr th:each="todoTask : ${todaysTodo.todoTasks}" th:id="${todoTask.getId()}">
+            <tbody id="todoTableBody">
+            <tr th:each="todoTask,index : ${todaysTodo.todoTasks}" th:id="${todoTask.getId()}">
                 <input type="hidden" name="ids" th:value="${todoTask.getId()}">
                 <td><input type="text" class="form-control" name="names" th:id="'name' + ${todoTask.getId()}" th:value="${todoTask.getName()}"></td>
                 <td><textarea class="form-control" rows="7" name="descs" th:id="'desc' + ${todoTask.getId()}"  th:utext="${todoTask.getDesc()}"></textarea></td>
+                <td><button type="button" class="btn btn-secondary" onclick="deleteRow(this)">삭제</button></td>
             </tr>
             </tbody>
         </table>

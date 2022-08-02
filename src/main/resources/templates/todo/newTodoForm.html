@@ -18,7 +18,7 @@
         <button id="newTodoTask" onclick="newTodoTask()">직접 추가</button>
     </div>
     <form role="form" id="todoForm" th:object="${todoForm}" method="post">
-        <table class="table table-striped">
+        <table id="todoTable" class="table table-striped">
             <thead>
             <tr>
                 <th>작업 이름</th>
@@ -26,7 +26,7 @@
                 <th></th>
             </tr>
             </thead>
-            <tbody id="todoTable">
+            <tbody id="todoTableBody">
             </tbody>
         </table>
         <button type="submit" class="btn btn-primary">Submit</button>

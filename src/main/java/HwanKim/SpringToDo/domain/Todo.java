@@ -20,7 +20,7 @@ public class Todo {
     private Member member;
 
     // Todo에서 TodoTask를 관리. cascade all 옵션 설정
-    @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TodoTask> todoTasks = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
@@ -52,7 +52,7 @@ public class Todo {
     }
 
     //===비즈니스 로직===//
-    public void update() {
+    public void mappingTodoTasks() {
         for(TodoTask todoTask : todoTasks){
             if(todoTask.getTodo() == null){
                 todoTask.setTodo(this);
