@@ -2,6 +2,7 @@ package HwanKim.SpringToDo.service;
 
 import HwanKim.SpringToDo.DTO.MemberDTO;
 import HwanKim.SpringToDo.DTO.TaskDTO;
+import HwanKim.SpringToDo.DTO.TodoDTO;
 import HwanKim.SpringToDo.domain.Member;
 import HwanKim.SpringToDo.domain.Task;
 import HwanKim.SpringToDo.domain.Todo;
@@ -9,12 +10,14 @@ import HwanKim.SpringToDo.domain.TodoTask;
 import HwanKim.SpringToDo.repository.MemberRepository;
 import HwanKim.SpringToDo.repository.TodoRepository;
 import HwanKim.SpringToDo.repository.TodoSearch;
+import org.apache.tomcat.jni.Local;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -131,8 +134,8 @@ class TodoServiceTest {
         Long todoId = todoService.saveTodo(memberId, names, descs);
 
         //then
-        Todo todaysTodo = todoRepository.findTodayByMemberId(memberId);
-        Assertions.assertThat(todaysTodo.getId()).isEqualTo(todoId);
+        List<Todo> todaysTodo = todoRepository.findTodayByMemberId(memberId);
+        Assertions.assertThat(todaysTodo.get(0).getId()).isEqualTo(todoId);
     }
 
     @Test
@@ -148,10 +151,10 @@ class TodoServiceTest {
         Long todoId = todoService.saveTodo(memberId, names, descs);
 
         todoService.delete(memberId);
-        Todo afterDeleteTodo = todoRepository.findTodayByMemberId(member.getId());
+        List<Todo> afterDeleteTodo = todoRepository.findTodayByMemberId(member.getId());
 
         //then
-        Assertions.assertThat(afterDeleteTodo).isEqualTo(null);
+        Assertions.assertThat(afterDeleteTodo.size()).isEqualTo(0);
     }
 
     @Test
@@ -171,18 +174,19 @@ class TodoServiceTest {
     }
 
     @Test
-    public void todoTask_하나_삭제(){
-        //given
+    public void search(){
         Member member = setMember("test", "test", "test123!");
 
         String[] names= {"task1", "task2", "task3"};
         String[] descs= {"tast1입니다.", "task22입니다.", "task333입니다."};
         Long todoId = todoService.saveTodo(member.getId(), names, descs);
 
-        //when
+        TodoSearch todoSearch = new TodoSearch();
+        todoSearch.setMemberId(member.getId());
+        todoSearch.setStartDate(LocalDate.of(2020, 10, 10));
+        todoSearch.setEndDate(LocalDate.now());
+        List<TodoDTO> todoDTOS = todoService.searchTodo(todoSearch);
 
-
-        //then
     }
 
     private Member setMember(String name, String username, String password){

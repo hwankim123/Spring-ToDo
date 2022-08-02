@@ -1,5 +1,7 @@
 package HwanKim.SpringToDo.service;
 
+import HwanKim.SpringToDo.DTO.TodoDTO;
+import HwanKim.SpringToDo.controller.Todo.TodoForm;
 import HwanKim.SpringToDo.domain.*;
 import HwanKim.SpringToDo.exception.TodoAlreadyExistException;
 import HwanKim.SpringToDo.exception.TodoNotExistException;
@@ -10,7 +12,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 @Service
 @Transactional
@@ -58,42 +65,48 @@ public class TodoService {
      * 오늘의 할일이 이미 존재하는 경우 예외처리
      */
     public void validateTodoAlreadyExist(Long memberId){
-        Todo todo = todoRepository.findTodayByMemberId(memberId);
-        if(todo == null){
+        List<Todo> todo = todoRepository.findTodayByMemberId(memberId);
+        if(todo.size() != 0){
             throw new TodoAlreadyExistException("오늘의 할일이 이미 존재합니다.");
         }
     }
 
     /**
-     * 오늘의 할일이 이미 존재하는 경우 예외처리
+     * 오늘의 할일이 없는 경우 예외처리
      */
     public void validateTodoNotExist(Long memberId){
-        Todo todo = todoRepository.findTodayByMemberId(memberId);
-        if(todo == null){
-            throw new TodoNotExistException("오늘의 할일이 존재하지 않습니다.");
+        List<Todo> todo = todoRepository.findTodayByMemberId(memberId);
+        if(todo.size() == 0){
+            throw new TodoNotExistException("오늘의 할일이 없습니다.");
         }
     }
 
     /**
      * todo id로 할일 조회
      */
-    public Todo findById(Long todoId) {
-        return todoRepository.findById(todoId);
+    public TodoDTO findById(Long todoId) {
+        return new TodoDTO(todoRepository.findById(todoId));
     }
 
     /**
      * todoSearch 객체에 담겨져 온 기간 조건으로 할일을 조회
      */
-    public List<Todo> searchTodo(TodoSearch todoSearch){
+    public List<TodoDTO> searchTodo(TodoSearch todoSearch){
         validateTodoSearch(todoSearch);
-        return todoRepository.findAllByDate(todoSearch);
+        List<TodoDTO> collect = todoRepository.findAllByDate(todoSearch).stream()
+                .map(TodoDTO::new)
+                .collect(toList());
+        for(TodoDTO todoDTO : collect){
+            System.out.println("todoDTO.getId() = " + todoDTO.getId());
+        }
+        return collect;
     }
 
     /**
      * 오늘의 할일 조회
      */
-    public Todo findTodaysTodo(Long memberId) {
-        return todoRepository.findTodayByMemberId(memberId);
+    public TodoDTO findTodaysTodo(Long memberId) {
+        return new TodoDTO(todoRepository.findTodayByMemberId(memberId).get(0));
     }
 
 
@@ -101,18 +114,36 @@ public class TodoService {
      * 할일의 작업 상태를 변경(완료 -> 미완료, 미완료 -> 완료)
      * 변경된 후의 할일을 return
      */
-    public Todo changeStatusOfTodoTask(Long todoId, Long todoTaskId, TodoTaskStatus status) {
+    public TodoDTO changeStatusOfTodoTask(Long todoId, Long todoTaskId, TodoTaskStatus status) {
         Todo todo = todoRepository.findById(todoId);
         todo.changeStatusOfTodoTask(todoTaskId, status);
-        return todoRepository.findById(todoId);
+        return new TodoDTO(todoRepository.findById(todoId));
     }
 
     /**
      * 오늘의 할일 삭제
      */
-    public void update(Long memberId){
-        Todo todaysTodo = todoRepository.findTodayByMemberId(memberId);
-        todaysTodo.getTodoTasks();
+    public void update(Long memberId, TodoForm todoForm){
+        List<Todo> todaysTodo = todoRepository.findTodayByMemberId(memberId);
+        List<TodoTask> todoTasks = todaysTodo.get(0).getTodoTasks();
+        Long[] idList = todoForm.getIds();
+        String[] names = todoForm.getNames();
+        String[] descs = todoForm.getDescs();
+
+        validateName(names);
+
+        for(int i = 0; i < idList.length; i++){
+            if(idList[i] == -1){
+                todoTasks.add(TodoTask.createTodoTask(names[i], descs[i]));
+            } else{
+                for(TodoTask todoTask : todoTasks){
+                    if(todoTask.getId().equals(idList[i])){
+                        todoTask.update(names[i], descs[i]);
+                    }
+                }
+            }
+        }
+        todaysTodo.get(0).update();
 
     }
 
@@ -120,8 +151,8 @@ public class TodoService {
      * 오늘의 할일 삭제
      */
     public void delete(Long memberId) {
-        Todo todaysTodo = todoRepository.findTodayByMemberId(memberId);
-        todoRepository.delete(todaysTodo);
+        List<Todo> todaysTodo = todoRepository.findTodayByMemberId(memberId);
+        todoRepository.delete(todaysTodo.get(0));
     }
 
     /**

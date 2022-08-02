@@ -1,6 +1,7 @@
 package HwanKim.SpringToDo.controller.Todo;
 
 import HwanKim.SpringToDo.DTO.TaskDTO;
+import HwanKim.SpringToDo.DTO.TodoDTO;
 import HwanKim.SpringToDo.auth.SessionStrings;
 import HwanKim.SpringToDo.controller.Task.TaskForm;
 import HwanKim.SpringToDo.domain.Todo;
@@ -127,7 +128,7 @@ public class TodoController {
             return "todo/today";
         }
 
-        Todo todaysTodo = todoService.findTodaysTodo(loginId);
+        TodoDTO todaysTodo = todoService.findTodaysTodo(loginId);
         model.addAttribute("todaysTodo", todaysTodo);
         model.addAttribute("todoTaskStatus", TodoTaskStatus.values());
 
@@ -159,7 +160,7 @@ public class TodoController {
 
         List<TaskDTO> tasks = taskService.findAll(loginId);
         model.addAttribute("tasks", tasks);
-        Todo todaysTodo = todoService.findTodaysTodo(loginId);
+        TodoDTO todaysTodo = todoService.findTodaysTodo(loginId);
         model.addAttribute("todaysTodo", todaysTodo);
 
         model.addAttribute("todoForm", new TodoForm());
@@ -181,7 +182,16 @@ public class TodoController {
             model.addAttribute(e.getMessage(), true);
             return "/exceptions";
         }
-        return "ok";
+        Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
+
+        try{
+            todoService.update(loginId, todoForm);
+        } catch(TodoTaskNameNullException e){
+            log.info("TodoTaskNameNullException occurred. redirect to '/todo/update'");
+            return "redirect:/todo/update";
+        }
+        log.info("all exceptions passed. redirect to '/todo/today'");
+        return "redirect:/todo/today";
     }
 
     /**
@@ -194,7 +204,7 @@ public class TodoController {
     public TodoTaskStatusForm changeStatus(@RequestBody TodoTaskStatusForm todoTaskData) {
         log.info("mapped url '{}'. {}.{}() method called.", "/todo/change-status", "TodoController", "changeStatus");
 
-        Todo todo = todoService.changeStatusOfTodoTask(
+        TodoDTO todo = todoService.changeStatusOfTodoTask(
                 todoTaskData.getTodoId(),
                 todoTaskData.getTodoTaskId(),
                 todoTaskData.getStatus()

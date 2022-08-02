@@ -40,6 +40,11 @@ public class TodoTask {
 
     //==비즈니스 로직==//
 
+    public void update(String name, String desc){
+        this.name = name;
+        this.desc = desc;
+    }
+
     /**
      * 할일에 등록된 작업을 미완료(RUNNING) 상태로 변경
      */

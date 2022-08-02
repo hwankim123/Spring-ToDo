@@ -53,6 +53,13 @@ public class Todo {
     }
 
     //===비즈니스 로직===//
+    public void update() {
+        for(TodoTask todoTask : todoTasks){
+            if(todoTask.getTodo() == null){
+                todoTask.setTodo(this);
+            }
+        }
+    }
 
     /**
      * 할일의 상태를 미완료(RUNNING) 상태로 설정
@@ -105,4 +112,5 @@ public class Todo {
     private void setCreatedDate() {
         this.createdDate = LocalDate.now();
     }
+
 }

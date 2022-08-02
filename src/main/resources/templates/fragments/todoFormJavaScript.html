@@ -12,6 +12,11 @@
     function setNewInputGroup(name, desc){
         let todoTable = document.getElementById("todoTable");
 
+        let id = document.createElement("input");
+        id.setAttribute("type", "hidden");
+        id.setAttribute("name", "ids");
+        id.setAttribute("value", "-1");
+
         let trInput = document.createElement("tr");
         todoTable.appendChild(trInput);
         let tdName = document.createElement("td");
@@ -24,12 +29,19 @@
             '<textarea id="inputDesc" class="form-control" rows="7"' +
             'name="descs" placeholder="작업 설명을 입력하세요">'+desc+'</textarea>';
         tdDesc.firstElementChild.setAttribute("value", desc);
+
+        trInput.appendChild(id);
         trInput.appendChild(tdName);
         trInput.appendChild(tdDesc);
     }
 
     function newTodoTask(){
         let todoTable = document.getElementById("todoTable");
+
+        let id = document.createElement("input");
+        id.setAttribute("type", "hidden");
+        id.setAttribute("name", "ids");
+        id.setAttribute("value", "-1");
 
         let trInput = document.createElement("tr");
         todoTable.appendChild(trInput);
@@ -42,6 +54,7 @@
             '<textarea id="inputDesc" class="form-control" rows="7"' +
             'name="descs" placeholder="작업 설명을 입력하세요">';
 
+        trInput.appendChild(id);
         trInput.appendChild(tdName);
         trInput.appendChild(tdDesc);
     }
