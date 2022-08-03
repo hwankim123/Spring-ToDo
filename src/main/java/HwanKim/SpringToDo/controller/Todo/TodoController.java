@@ -2,17 +2,14 @@ package HwanKim.SpringToDo.controller.Todo;
 
 import HwanKim.SpringToDo.DTO.TaskDTO;
 import HwanKim.SpringToDo.DTO.TodoDTO;
+import HwanKim.SpringToDo.DTO.TodoTaskDTO;
 import HwanKim.SpringToDo.auth.SessionStrings;
-import HwanKim.SpringToDo.controller.Task.TaskForm;
-import HwanKim.SpringToDo.domain.Todo;
-import HwanKim.SpringToDo.domain.TodoTask;
 import HwanKim.SpringToDo.domain.TodoTaskStatus;
 import HwanKim.SpringToDo.exception.SessionInvalidException;
 import HwanKim.SpringToDo.auth.AuthModules;
 import HwanKim.SpringToDo.exception.TodoAlreadyExistException;
 import HwanKim.SpringToDo.exception.TodoNotExistException;
 import HwanKim.SpringToDo.exception.TodoTaskNameNullException;
-import HwanKim.SpringToDo.repository.TodoSearch;
 import HwanKim.SpringToDo.service.TaskService;
 import HwanKim.SpringToDo.service.TodoService;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +17,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -80,7 +80,7 @@ public class TodoController {
      * validation을 마친 후 오늘의 할일 페이지로 redirect
      */
     @PostMapping("/new")
-    public String create(Model model, @Valid TodoForm todoForm, HttpServletRequest request){
+    public String create(Model model, @Valid TodoForm todoForm, BindingResult result, HttpServletRequest request){
         log.info("mapped url '{}'. {}.{}() method called.", "/todo/new", "TodoController", "create");
 
         HttpSession session = request.getSession();
@@ -92,13 +92,21 @@ public class TodoController {
         }
 
         Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
+
+        if(result.hasErrors()){
+            result.addError(new ObjectError("table", "작업을 하나 이상 등록해주세요."));
+            return "todo/newTodoForm";
+        }
+
         String[] names = todoForm.getNames();
         String[] descs = todoForm.getDescs();
         try{
             todoService.saveTodo(loginId, names, descs);
         } catch(TodoTaskNameNullException e){
             log.info("TodoTaskNameNullException occurred. redirect to '/todo/new'");
-            return "redirect:/todo/new";
+            result.addError(new ObjectError("table", e.getMessage()));
+
+            return "todo/newTodoForm";
         }
         log.info("all exceptions passed. redirect to '/todo/today'");
         return "redirect:/todo/today";
@@ -160,10 +168,19 @@ public class TodoController {
 
         List<TaskDTO> tasks = taskService.findAll(loginId);
         model.addAttribute("tasks", tasks);
-        TodoDTO todaysTodo = todoService.findTodaysTodo(loginId);
-        model.addAttribute("todaysTodo", todaysTodo);
 
-        model.addAttribute("todoForm", new TodoForm());
+        TodoDTO todaysTodo = todoService.findTodaysTodo(loginId);
+        List<TodoTaskDTO> todoTasks = todaysTodo.getTodoTasks();
+        TodoForm todoForm = new TodoForm();
+
+        todoForm.setIds(todoTasks.stream()
+                .map(TodoTaskDTO::getId).toArray(Long[]::new));
+        todoForm.setNames(todoTasks.stream()
+                .map(TodoTaskDTO::getName).toArray(String[]::new));
+        todoForm.setDescs(todoTasks.stream()
+                .map(TodoTaskDTO::getDesc).toArray(String[]::new));
+
+        model.addAttribute("todoForm", todoForm);
 
         // 사용자가 입력한 개행 문자를 View 상에도 적용시키기 위해 java에서 제공하는 개행문자를 model에 추가
         String nlString = System.getProperty("line.separator");
@@ -173,7 +190,7 @@ public class TodoController {
     }
 
     @PostMapping("/today/update")
-    public String update(Model model, @Valid TodoForm todoForm, HttpServletRequest request){
+    public String update(Model model, @Valid TodoForm todoForm, BindingResult result, HttpServletRequest request){
         log.info("mapped url '{}'. {}.{}() method called.", "/todo/today/update", "TodoController", "updateForm");
         HttpSession session = request.getSession();
         try{
@@ -184,11 +201,21 @@ public class TodoController {
         }
         Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
 
+        System.out.println(todoForm.getIds() == null);
+
+
+        if(result.hasErrors()){
+            result.addError(new ObjectError("table", "작업을 하나 이상 등록해주세요."));
+            return "todo/updateForm";
+        }
+
         try{
             todoService.update(loginId, todoForm);
         } catch(TodoTaskNameNullException e){
             log.info("TodoTaskNameNullException occurred. redirect to '/todo/update'");
-            return "redirect:/todo/update";
+            result.addError(new ObjectError("table", e.getMessage()));
+
+            return "/todo/updateForm";
         }
         log.info("all exceptions passed. redirect to '/todo/today'");
         return "redirect:/todo/today";
@@ -211,7 +238,7 @@ public class TodoController {
         );
 
         TodoTaskStatusForm todoTaskStatusForm = new TodoTaskStatusForm();
-        for (TodoTask todoTask : todo.getTodoTasks()) {
+        for (TodoTaskDTO todoTask : todo.getTodoTasks()) {
             if (todoTask.getId().equals(todoTaskData.getTodoTaskId())) {
                 todoTaskStatusForm.setTodoId(todo.getId());
                 todoTaskStatusForm.setTodoTaskId(todoTask.getId());

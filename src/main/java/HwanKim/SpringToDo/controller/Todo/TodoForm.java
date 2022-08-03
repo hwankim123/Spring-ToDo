@@ -3,12 +3,11 @@ package HwanKim.SpringToDo.controller.Todo;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
-
+import javax.validation.constraints.NotEmpty;
 @Getter @Setter
 public class TodoForm {
     private Long[] ids;
-    @NotNull(message="작업을 최소 한개 이상 등록해주세요.")
+    @NotEmpty
     private String[] names;
     private String[] descs;
 }

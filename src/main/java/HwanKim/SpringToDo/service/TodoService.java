@@ -52,11 +52,11 @@ public class TodoService {
      */
     private void validateName(String[] names){
         if(names.length == 0){
-            throw new TodoTaskNameNullException("작업 이름 값은 필수입니다.");
+            throw new TodoTaskNameNullException("작업 이름이 비어있는 항목이 존재합니다.");
         }
         for(String name : names){
             if(name.length() == 0){
-                throw new TodoTaskNameNullException("작업 이름 값은 필수입니다.");
+                throw new TodoTaskNameNullException("작업 이름이 비어있는 항목이 존재합니다.");
             }
         }
     }
