@@ -70,11 +70,13 @@ public class TaskService {
     /**
      * 요청을 보낸 사용자의 작업 목록 중 Task 수정
      */
-    public void update(Long memberId, TaskDTO taskDTO, String nameBeforeUpdated){
-        validateName(memberId, taskDTO.getName(), nameBeforeUpdated);
+    public void update(Long memberId, TaskDTO updatedTask){
+        TaskDTO pastTask = findOneById(memberId, updatedTask.getId());
 
-        Task task = taskRepository.findById(memberId, taskDTO.getId());
-        task.update(taskDTO.getName(), taskDTO.getDesc());
+        validateName(memberId, updatedTask.getName(), pastTask.getName());
+
+        Task task = taskRepository.findById(memberId, updatedTask.getId());
+        task.update(updatedTask.getName(), updatedTask.getDesc());
     }
 
     /**

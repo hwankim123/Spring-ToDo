@@ -105,6 +105,8 @@ public class TaskController {
         try{
             taskService.saveTask(newTaskDTO);
         } catch(TaskNameDuplicateException e){
+            log.info("TaskNameDuplicatedException occurred.");
+            result.addError(new FieldError("taskForm", "name", e.getMessage()));
             return "/task/newTaskForm";
         }
 
@@ -171,7 +173,6 @@ public class TaskController {
             return "/exceptions";
         }
 
-        TaskDTO taskBeforeUpdated = taskService.findOneById(loginId, taskId);
         if(result.hasErrors()){
             model.addAttribute("taskForm", taskForm);
             return "/task/updateTaskForm";
@@ -179,12 +180,12 @@ public class TaskController {
 
         try{
             TaskDTO updatedTask = new TaskDTO(
-                    taskBeforeUpdated.getId(),
-                    taskBeforeUpdated.getMember(),
+                    taskId,
                     taskForm.getName(),
                     taskForm.getDesc());
-            taskService.update(loginId, updatedTask, taskBeforeUpdated.getName());
+            taskService.update(loginId, updatedTask);
         } catch(TaskNameDuplicateException e){
+            log.info("TaskNameDuplicatedException occurred.");
             result.addError(new FieldError("taskForm", "name", e.getMessage()));
             return "/task/updateTaskForm";
         }
