@@ -1,5 +1,6 @@
 package HwanKim.SpringToDo.domain;
 
+import HwanKim.SpringToDo.controller.Todo.TodoForm;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -19,7 +20,7 @@ public class Todo {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    // Todo에서 TodoTask를 관리. cascade all 옵션 설정
+    // Todo에서 TodoTask를 관리. cascade all 옵션과 orphanRemoval=true로 설정함. 이래야 Todo.todoTasks에서 삭제했을 때 삭제 쿼리가 나감
     @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TodoTask> todoTasks = new ArrayList<>();
 
@@ -49,6 +50,35 @@ public class Todo {
         todo.setCreatedDate();
         todo.run();
         return todo;
+    }
+
+    public static void update(Todo todo, TodoForm todoForm){
+        List<TodoTask> todoTasks = todo.getTodoTasks();
+        boolean[] isUpdated = new boolean[todoTasks.size()];
+        Long[] idList = todoForm.getIds();
+        String[] names = todoForm.getNames();
+        String[] descs = todoForm.getDescs();
+
+        for(int i = 0; i < idList.length; i++){
+            if(idList[i] == -1){
+                todoTasks.add(TodoTask.createTodoTask(names[i], descs[i]));
+            } else{
+                for(int j = 0; j < todoTasks.size(); j++){
+                    TodoTask todoTask = todoTasks.get(j);
+                    if(todoTask.getId().equals(idList[i])){
+                        todoTask.update(names[i], descs[i]);
+                        isUpdated[j] = true;
+                    }
+                }
+            }
+        }
+        for(int i = 0; i < isUpdated.length; i++){
+            if(!isUpdated[i]){
+                todoTasks.remove(todoTasks.get(i));
+            }
+        }
+
+        todo.mappingTodoTasks();
     }
 
     //===비즈니스 로직===//

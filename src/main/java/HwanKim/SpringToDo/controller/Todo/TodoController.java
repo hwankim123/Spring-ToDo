@@ -41,6 +41,7 @@ public class TodoController {
     /**
      * 로그인 정보를 확인한 후
      * 화면 구성을 위해 로그인한 사용자의 모든 작업 목록과 할일 작성 form 클래스를 model에 추가
+     * Service 계층에서의 validation 결과 이미 오늘의 할일이 작성되어있는 경우 오늘의 할일 페이지로 redirect
      * 할일 작성 form 화면을 return
      */
     @GetMapping("/new")
@@ -76,7 +77,6 @@ public class TodoController {
      * 로그인 정보를 확인한 후
      * 할일 작성 로직을 실행하여 Service 계층에서의 validation 진행
      * Service 계층에서의 validation 결과 할일의 작업 list중 작업 이름이 비어있는 경우 할일 재작성
-     * Service 계층에서의 validation 결과 이미 오늘의 할일이 작성되어있는 경우 오늘의 할일 페이지로 redirect
      * validation을 마친 후 오늘의 할일 페이지로 redirect
      */
     @PostMapping("/new")
@@ -171,8 +171,8 @@ public class TodoController {
 
         TodoDTO todaysTodo = todoService.findTodaysTodo(loginId);
         List<TodoTaskDTO> todoTasks = todaysTodo.getTodoTasks();
-        TodoForm todoForm = new TodoForm();
 
+        TodoForm todoForm = new TodoForm();
         todoForm.setIds(todoTasks.stream()
                 .map(TodoTaskDTO::getId).toArray(Long[]::new));
         todoForm.setNames(todoTasks.stream()
@@ -200,9 +200,6 @@ public class TodoController {
             return "/exceptions";
         }
         Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
-
-        System.out.println(todoForm.getIds() == null);
-
 
         if(result.hasErrors()){
             result.addError(new ObjectError("table", "작업을 하나 이상 등록해주세요."));

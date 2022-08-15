@@ -125,36 +125,37 @@ public class TodoService {
      */
     public void update(Long memberId, TodoForm todoForm){
         List<Todo> todaysTodo = todoRepository.findTodayByMemberId(memberId);
-        List<TodoTask> todoTasks = todaysTodo.get(0).getTodoTasks();
-        boolean[] isUpdated = new boolean[todoTasks.size()];
-        Long[] idList = todoForm.getIds();
-        String[] names = todoForm.getNames();
-        String[] descs = todoForm.getDescs();
+        Todo.update(todaysTodo.get(0), todoForm);
 
-
-        validateName(names);
-
-        for(int i = 0; i < idList.length; i++){
-            if(idList[i] == -1){
-                todoTasks.add(TodoTask.createTodoTask(names[i], descs[i]));
-            } else{
-                for(int j = 0; j < todoTasks.size(); j++){
-                    TodoTask todoTask = todoTasks.get(j);
-                    if(todoTask.getId().equals(idList[i])){
-                        todoTask.update(names[i], descs[i]);
-                        isUpdated[j] = true;
-                    }
-                }
-            }
-        }
-        for(int i = 0; i < isUpdated.length; i++){
-            if(!isUpdated[i]){
-                TodoTask todoTask = todoTasks.get(i);
-                todoTasks.remove(todoTask);
-            }
-        }
-
-        todaysTodo.get(0).mappingTodoTasks();
+        //Todo 수정 이전버전
+//        List<TodoTask> todoTasks = todaysTodo.get(0).getTodoTasks();
+//        boolean[] isUpdated = new boolean[todoTasks.size()];
+//        Long[] idList = todoForm.getIds();
+//        String[] names = todoForm.getNames();
+//        String[] descs = todoForm.getDescs();
+//
+//        validateName(todoForm.getNames());
+//
+//        for(int i = 0; i < idList.length; i++){
+//            if(idList[i] == -1){
+//                todoTasks.add(TodoTask.createTodoTask(names[i], descs[i]));
+//            } else{
+//                for(int j = 0; j < todoTasks.size(); j++){
+//                    TodoTask todoTask = todoTasks.get(j);
+//                    if(todoTask.getId().equals(idList[i])){
+//                        todoTask.update(names[i], descs[i]);
+//                        isUpdated[j] = true;
+//                    }
+//                }
+//            }
+//        }
+//        for(int i = 0; i < isUpdated.length; i++){
+//            if(!isUpdated[i]){
+//                todoTasks.remove(todoTasks.get(i));
+//            }
+//        }
+//
+//        todaysTodo.get(0).mappingTodoTasks();
 
     }
 
