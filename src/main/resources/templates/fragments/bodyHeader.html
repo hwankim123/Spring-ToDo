@@ -7,4 +7,5 @@
         </li>
     </ul>
     <a href="/"><h3 class="text-muted">SPRING TODO</h3></a>
+    <a th:unless="${loginName == null}" class="btn btn-lg btn-secondary" href="/logout">로그아웃</a>
 </div>

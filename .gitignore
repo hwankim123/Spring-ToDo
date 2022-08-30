@@ -36,3 +36,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### OAuth Client keys ###
+src/main/resources/application-oauth.properties

@@ -67,13 +67,13 @@ public class TaskController {
     public String newTaskForm(Model model, HttpServletRequest request){
         log.info("mapped url '{}'. {}.{}() method called.", "/tasks/new", "TaskController", "newTaskForm");
 
-        HttpSession session = request.getSession();
-        try{
-            authModules.checkSession(session);
-        } catch(SessionInvalidException e){
-            model.addAttribute("sessionInvalid", e.getMessage());
-            return "/exceptions";
-        }
+//        HttpSession session = request.getSession();
+//        try{
+//            authModules.checkSession(session);
+//        } catch(SessionInvalidException e){
+//            model.addAttribute("sessionInvalid", e.getMessage());
+//            return "/exceptions";
+//        }
         model.addAttribute("taskForm", new TaskForm());
         return "/task/newTaskForm";
     }
