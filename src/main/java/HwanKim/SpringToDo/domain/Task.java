@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-public class Task {
+public class Task extends BaseTimeEntity{
 
     @Id @GeneratedValue
     @Column(name = "task_id")

@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-public class TodoTask {
+public class TodoTask extends BaseTimeEntity{
 
     @Id @GeneratedValue
     @Column(name = "todo_task_id")

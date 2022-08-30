@@ -8,7 +8,7 @@ import java.util.List;
 
 @Entity
 @Getter
-public class Member {
+public class Member extends BaseTimeEntity{
     @Id @GeneratedValue
     @Column(name = "member_id")
     Long id;

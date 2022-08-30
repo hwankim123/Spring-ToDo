@@ -10,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Getter
-public class Todo {
+public class Todo extends BaseTimeEntity{
     @Id
     @GeneratedValue
     @Column(name = "todo_id")
