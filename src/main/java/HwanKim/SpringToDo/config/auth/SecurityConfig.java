@@ -1,5 +1,6 @@
 package HwanKim.SpringToDo.config.auth;
 
+import HwanKim.SpringToDo.domain.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,8 +14,10 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception{
         http
+                .csrf().disable()
                     .authorizeRequests()
                     .antMatchers("/", "/css/**", "/js/**").permitAll()
+                    .antMatchers("/tasks/**").hasRole(Role.USER.name())
                     .anyRequest().authenticated() //로그인된 유저만 사용 가능
                 .and()
                     .logout() //로그아웃 기능에 대한 여러 설정의 진입점

@@ -1,7 +1,7 @@
 package HwanKim.SpringToDo.service;
 
 import HwanKim.SpringToDo.DTO.MemberDTO;
-import HwanKim.SpringToDo.DTO.TaskDTO;
+import HwanKim.SpringToDo.DTO.TaskDto;
 import HwanKim.SpringToDo.domain.Member;
 import HwanKim.SpringToDo.domain.Task;
 import HwanKim.SpringToDo.exception.TaskNameDuplicateException;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -39,9 +38,10 @@ class TaskServiceTest {
         Long memberId = memberService.signUp(memberDTO);
 
         //when
-        TaskDTO taskDTO = new TaskDTO(member, "백준", "DP");
+        TaskDto taskDTO = new TaskDto(member, "백준", "DP");
         Long taskId = taskService.saveTask(taskDTO);
-        Task task = taskRepository.findById(memberId, taskId);
+        Task task = taskRepository.findById(memberId, taskId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 Task가 존재하지 않습니다."));
         //then
         System.out.println("taskId = " + taskId + " task.getId() = " + task.getId());
         assertThat(taskId).isEqualTo(task.getId());
@@ -55,15 +55,16 @@ class TaskServiceTest {
 
 
         //when
-        TaskDTO taskDTO = new TaskDTO(memberRepository.findById(memberId), "백준", "DP");
+        TaskDto taskDTO = new TaskDto(memberRepository.findById(memberId), "백준", "DP");
         Long task1_id = taskService.saveTask(taskDTO);
-        Task foundTask1 = taskRepository.findById(memberId, task1_id);
+        Task foundTask1 = taskRepository.findById(memberId, task1_id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 Task가 존재하지 않습니다."));
         System.out.println("foundTask1 = " + foundTask1.getMember().getName());
 
         //then
         assertThrows(TaskNameDuplicateException.class, () -> {
-            TaskDTO taskDTO2 = new TaskDTO(memberRepository.findById(memberId), "백준", "오잉");
-            taskService.saveTask(taskDTO2);
+            TaskDto taskDto2 = new TaskDto(memberRepository.findById(memberId), "백준", "오잉");
+            taskService.saveTask(taskDto2);
         });
     }
 
@@ -74,18 +75,18 @@ class TaskServiceTest {
         Long memberId = memberService.signUp(memberDTO);
 
         Member member = memberRepository.findById(memberId);
-        TaskDTO taskDTO1 = new TaskDTO(member, "백준1", "DP");
-        TaskDTO taskDTO2 = new TaskDTO(member, "백준2", "DP");
-        TaskDTO taskDTO3 = new TaskDTO(member, "백준3", "DP");
-        Long task1_id = taskService.saveTask(taskDTO1);
-        Long task2_id = taskService.saveTask(taskDTO2);
-        Long task3_id = taskService.saveTask(taskDTO3);
+        TaskDto taskDto1 = new TaskDto(member, "백준1", "DP");
+        TaskDto taskDto2 = new TaskDto(member, "백준2", "DP");
+        TaskDto taskDto3 = new TaskDto(member, "백준3", "DP");
+        Long task1_id = taskService.saveTask(taskDto1);
+        Long task2_id = taskService.saveTask(taskDto2);
+        Long task3_id = taskService.saveTask(taskDto3);
 
         //when
-        List<TaskDTO> tasks = taskService.findAll(memberId);
+        List<TaskDto> tasks = taskService.findAll(memberId);
 
         //then
-        for(TaskDTO task : tasks) {
+        for(TaskDto task : tasks) {
             System.out.println("tasks = " + task);
         }
         assertThat(tasks.size()).isEqualTo(3);
@@ -100,17 +101,18 @@ class TaskServiceTest {
 
         Member member = memberRepository.findById(memberId);
         System.out.println("member.getName() = " + member.getName());
-        TaskDTO taskDTO1 = new TaskDTO(member, "백준1", "DP");
-        TaskDTO taskDTO2 = new TaskDTO(member, "백준2", "DP");
-        TaskDTO taskDTO3 = new TaskDTO(member, "백준3", "DP");
-        Long task1Id = taskService.saveTask(taskDTO1);
-        Long task2Id = taskService.saveTask(taskDTO2);
-        Long task3Id = taskService.saveTask(taskDTO3);
-        Task task1 = taskRepository.findById(memberId, task1Id);
+        TaskDto taskDto1 = new TaskDto(member, "백준1", "DP");
+        TaskDto taskDto2 = new TaskDto(member, "백준2", "DP");
+        TaskDto taskDto3 = new TaskDto(member, "백준3", "DP");
+        Long task1Id = taskService.saveTask(taskDto1);
+        Long task2Id = taskService.saveTask(taskDto2);
+        Long task3Id = taskService.saveTask(taskDto3);
+        Task task1 = taskRepository.findById(memberId, task1Id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 Task가 존재하지 않습니다."));
         System.out.println("task1.getId() = " + task1.getId());
 
         //when
-        TaskDTO findTasks = taskService.findOneByName(memberId, "백준1");
+        TaskDto findTasks = taskService.findOneByName(memberId, "백준1");
 
         //then
         assertThat(findTasks.getId()).isEqualTo(task1.getId());
@@ -125,17 +127,17 @@ class TaskServiceTest {
         Long memberId = memberService.signUp(memberDTO);
 
         Member member = memberRepository.findById(memberId);
-        TaskDTO taskDTO1 = new TaskDTO(member, "task1", "task1입니다.");
-        TaskDTO taskDTO2 = new TaskDTO(member, "task2", "task2입니다.");
-        Long task1Id = taskService.saveTask(taskDTO1);
-        Long task2Id = taskService.saveTask(taskDTO2);
+        TaskDto taskDto1 = new TaskDto(member, "task1", "task1입니다.");
+        TaskDto taskDto2 = new TaskDto(member, "task2", "task2입니다.");
+        Long task1Id = taskService.saveTask(taskDto1);
+        Long task2Id = taskService.saveTask(taskDto2);
 
         //when
-        TaskDTO updatedTaskDTO = new TaskDTO(task1Id, "task2", "task2로 바꿔볼까?");
+        TaskDto updatedTaskDto = new TaskDto(task1Id, "task2", "task2로 바꿔볼까?");
 
         //then
         assertThrows(TaskNameDuplicateException.class, () -> {
-            taskService.update(memberId, updatedTaskDTO);
+            taskService.update(memberId, updatedTaskDto);
         });
     }
 
@@ -146,22 +148,22 @@ class TaskServiceTest {
         Long memberId = memberService.signUp(memberDTO);
 
         Member member = memberRepository.findById(memberId);
-        TaskDTO taskDTO1 = new TaskDTO(member, "task1", "task1입니다.");
-        TaskDTO taskDTO2 = new TaskDTO(member, "task2", "task2입니다.");
-        Long task1Id = taskService.saveTask(taskDTO1);
-        Long task2Id = taskService.saveTask(taskDTO2);
+        TaskDto taskDto1 = new TaskDto(member, "task1", "task1입니다.");
+        TaskDto taskDto2 = new TaskDto(member, "task2", "task2입니다.");
+        Long task1Id = taskService.saveTask(taskDto1);
+        Long task2Id = taskService.saveTask(taskDto2);
 
         //when
-        TaskDTO updatedTaskDTO = new TaskDTO(
+        TaskDto updatedTaskDto = new TaskDto(
                 task1Id,
                 "task1",
                 "이름은 그대로 냅둬볼까?");
-        taskService.update(memberId, updatedTaskDTO);
+        taskService.update(memberId, updatedTaskDto);
 
         //then
-        assertThat(task1Id).isEqualTo(taskRepository.findByName(updatedTaskDTO.getName()).get(0).getId());
-        assertThat(taskDTO1.getName()).isEqualTo(updatedTaskDTO.getName());
-        assertThat(taskDTO1.getDesc()).isNotEqualTo(updatedTaskDTO.getDesc());
+        assertThat(task1Id).isEqualTo(taskRepository.findByName(updatedTaskDto.getName()).get(0).getId());
+        assertThat(taskDto1.getName()).isEqualTo(updatedTaskDto.getName());
+        assertThat(taskDto1.getDesc()).isNotEqualTo(updatedTaskDto.getDesc());
     }
 
     // delete
@@ -172,11 +174,11 @@ class TaskServiceTest {
         Long memberId = memberService.signUp(memberDTO);
 
         Member member = memberRepository.findById(memberId);
-        TaskDTO taskDTO = new TaskDTO(member, "task1", "task1입니다.");
+        TaskDto taskDTO = new TaskDto(member, "task1", "task1입니다.");
         Long task1Id = taskService.saveTask(taskDTO);
         //when
         taskService.delete(memberId, task1Id);
-        List<TaskDTO> tasks = taskService.findAll(memberId);
+        List<TaskDto> tasks = taskService.findAll(memberId);
 
         //then
         assertThat(tasks.size()).isEqualTo(0);

@@ -1,7 +1,7 @@
 package HwanKim.SpringToDo.controller.Todo;
 
-import HwanKim.SpringToDo.DTO.TaskDTO;
-import HwanKim.SpringToDo.DTO.TodoDTO;
+import HwanKim.SpringToDo.DTO.TaskDto;
+import HwanKim.SpringToDo.DTO.TodoDto;
 import HwanKim.SpringToDo.DTO.TodoTaskDTO;
 import HwanKim.SpringToDo.auth.SessionStrings;
 import HwanKim.SpringToDo.domain.TodoTaskStatus;
@@ -24,9 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -63,7 +61,7 @@ public class TodoController {
             rtt.addFlashAttribute("isTodoAlreadyExist", true);
             return "redirect:/todo/today";
         }
-        List<TaskDTO> tasks = taskService.findAll(loginId);
+        List<TaskDto> tasks = taskService.findAll(loginId);
         model.addAttribute("tasks", tasks);
         model.addAttribute("todoForm", new TodoForm());
 
@@ -136,7 +134,7 @@ public class TodoController {
             return "todo/today";
         }
 
-        TodoDTO todaysTodo = todoService.findTodaysTodo(loginId);
+        TodoDto todaysTodo = todoService.findTodaysTodo(loginId);
         model.addAttribute("todaysTodo", todaysTodo);
         model.addAttribute("todoTaskStatus", TodoTaskStatus.values());
 
@@ -166,10 +164,10 @@ public class TodoController {
             return "todo/updateForm";
         }
 
-        List<TaskDTO> tasks = taskService.findAll(loginId);
+        List<TaskDto> tasks = taskService.findAll(loginId);
         model.addAttribute("tasks", tasks);
 
-        TodoDTO todaysTodo = todoService.findTodaysTodo(loginId);
+        TodoDto todaysTodo = todoService.findTodaysTodo(loginId);
         List<TodoTaskDTO> todoTasks = todaysTodo.getTodoTasks();
 
         TodoForm todoForm = new TodoForm();
@@ -228,7 +226,7 @@ public class TodoController {
     public TodoTaskStatusForm changeStatus(@RequestBody TodoTaskStatusForm todoTaskData) {
         log.info("mapped url '{}'. {}.{}() method called.", "/todo/change-status", "TodoController", "changeStatus");
 
-        TodoDTO todo = todoService.changeStatusOfTodoTask(
+        TodoDto todo = todoService.changeStatusOfTodoTask(
                 todoTaskData.getTodoId(),
                 todoTaskData.getTodoTaskId(),
                 todoTaskData.getStatus()

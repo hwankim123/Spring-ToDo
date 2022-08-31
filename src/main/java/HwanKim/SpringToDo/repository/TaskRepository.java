@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,16 +23,23 @@ public class TaskRepository {
         }
     }
 
-    public Task findById(Long memberId, Long id){
-        return em.createQuery("select t from Task t where t.member.id = :memberId and t.id = :id", Task.class)
-                .setParameter("memberId", memberId)
+    public Optional<Task> findById(Long userId, Long id){ // memberID -> userId 수정
+        return em.createQuery("select t from Task t where t.user.id = :userId and t.id = :id", Task.class)
+                .setParameter("userId", userId)
                 .setParameter("id", id)
-                .getSingleResult();
+                .getResultList()
+                .stream().findFirst();
     }
 
     public List<Task> findByMemberId(Long memberId){
         return em.createQuery("select t from Task t where t.member.id = :memberId", Task.class)
                 .setParameter("memberId", memberId)
+                .getResultList();
+    }
+
+    public List<Task> findByUserId(Long userId){
+        return em.createQuery("select t from Task t where t.user.id = :userId", Task.class)
+                .setParameter("userId", userId)
                 .getResultList();
     }
 
@@ -44,6 +52,13 @@ public class TaskRepository {
     public List<Task> findByNameInMember(String name, Long memberId){
         return em.createQuery("select t from Task t where t.member.id = :memberId and t.name = :name", Task.class)
                 .setParameter("memberId", memberId)
+                .setParameter("name", name)
+                .getResultList();
+    }
+
+    public List<Task> findByNameInUser(String name, Long userId){
+        return em.createQuery("select t from Task t where t.user.id = :userId and t.name = :name", Task.class)
+                .setParameter("userId", userId)
                 .setParameter("name", name)
                 .getResultList();
     }

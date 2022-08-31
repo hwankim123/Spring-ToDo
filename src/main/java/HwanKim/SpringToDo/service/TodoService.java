@@ -1,6 +1,6 @@
 package HwanKim.SpringToDo.service;
 
-import HwanKim.SpringToDo.DTO.TodoDTO;
+import HwanKim.SpringToDo.DTO.TodoDto;
 import HwanKim.SpringToDo.controller.Todo.TodoForm;
 import HwanKim.SpringToDo.domain.*;
 import HwanKim.SpringToDo.exception.TodoAlreadyExistException;
@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 
@@ -84,19 +81,19 @@ public class TodoService {
     /**
      * todo id로 할일 조회
      */
-    public TodoDTO findById(Long todoId) {
-        return new TodoDTO(todoRepository.findById(todoId));
+    public TodoDto findById(Long todoId) {
+        return new TodoDto(todoRepository.findById(todoId));
     }
 
     /**
      * todoSearch 객체에 담겨져 온 기간 조건으로 할일을 조회
      */
-    public List<TodoDTO> searchTodo(TodoSearch todoSearch){
+    public List<TodoDto> searchTodo(TodoSearch todoSearch){
         validateTodoSearch(todoSearch);
-        List<TodoDTO> collect = todoRepository.findAllByDate(todoSearch).stream()
-                .map(TodoDTO::new)
+        List<TodoDto> collect = todoRepository.findAllByDate(todoSearch).stream()
+                .map(TodoDto::new)
                 .collect(toList());
-        for(TodoDTO todoDTO : collect){
+        for(TodoDto todoDTO : collect){
             System.out.println("todoDTO.getId() = " + todoDTO.getId());
         }
         return collect;
@@ -105,8 +102,8 @@ public class TodoService {
     /**
      * 오늘의 할일 조회
      */
-    public TodoDTO findTodaysTodo(Long memberId) {
-        return new TodoDTO(todoRepository.findTodayByMemberId(memberId).get(0));
+    public TodoDto findTodaysTodo(Long memberId) {
+        return new TodoDto(todoRepository.findTodayByMemberId(memberId).get(0));
     }
 
 
@@ -114,10 +111,10 @@ public class TodoService {
      * 할일의 작업 상태를 변경(완료 -> 미완료, 미완료 -> 완료)
      * 변경된 후의 할일을 return
      */
-    public TodoDTO changeStatusOfTodoTask(Long todoId, Long todoTaskId, TodoTaskStatus status) {
+    public TodoDto changeStatusOfTodoTask(Long todoId, Long todoTaskId, TodoTaskStatus status) {
         Todo todo = todoRepository.findById(todoId);
         todo.changeStatusOfTodoTask(todoTaskId, status);
-        return new TodoDTO(todoRepository.findById(todoId));
+        return new TodoDto(todoRepository.findById(todoId));
     }
 
     /**

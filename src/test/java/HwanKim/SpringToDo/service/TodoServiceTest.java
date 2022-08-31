@@ -1,16 +1,13 @@
 package HwanKim.SpringToDo.service;
 
 import HwanKim.SpringToDo.DTO.MemberDTO;
-import HwanKim.SpringToDo.DTO.TaskDTO;
-import HwanKim.SpringToDo.DTO.TodoDTO;
+import HwanKim.SpringToDo.DTO.TaskDto;
+import HwanKim.SpringToDo.DTO.TodoDto;
 import HwanKim.SpringToDo.domain.Member;
-import HwanKim.SpringToDo.domain.Task;
 import HwanKim.SpringToDo.domain.Todo;
-import HwanKim.SpringToDo.domain.TodoTask;
 import HwanKim.SpringToDo.repository.MemberRepository;
 import HwanKim.SpringToDo.repository.TodoRepository;
 import HwanKim.SpringToDo.repository.TodoSearch;
-import org.apache.tomcat.jni.Local;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -185,7 +181,7 @@ class TodoServiceTest {
         todoSearch.setMemberId(member.getId());
         todoSearch.setStartDate(LocalDate.of(2020, 10, 10));
         todoSearch.setEndDate(LocalDate.now());
-        List<TodoDTO> todoDTOS = todoService.searchTodo(todoSearch);
+        List<TodoDto> todoDTOS = todoService.searchTodo(todoSearch);
 
     }
 
@@ -197,12 +193,12 @@ class TodoServiceTest {
     }
 
     private List<Long> setTaskId123(Member member){
-        TaskDTO taskDTO1 = new TaskDTO(member, "task1", "task1입니다");
-        TaskDTO taskDTO2 = new TaskDTO(member, "task2", "task2입니다");
-        TaskDTO taskDTO3 = new TaskDTO(member, "task3", "task3입니다");
-        Long task1Id = taskService.saveTask(taskDTO1);
-        Long task2Id = taskService.saveTask(taskDTO2);
-        Long task3Id = taskService.saveTask(taskDTO3);
+        TaskDto taskDto1 = new TaskDto(member, "task1", "task1입니다");
+        TaskDto taskDto2 = new TaskDto(member, "task2", "task2입니다");
+        TaskDto taskDto3 = new TaskDto(member, "task3", "task3입니다");
+        Long task1Id = taskService.saveTask(taskDto1);
+        Long task2Id = taskService.saveTask(taskDto2);
+        Long task3Id = taskService.saveTask(taskDto3);
 
         List<Long> taskIdList = new ArrayList<>();
         taskIdList.add(task1Id);
@@ -212,10 +208,10 @@ class TodoServiceTest {
     }
 
     private List<Long> setTaskId23(Member member) {
-        TaskDTO taskDTO2 = new TaskDTO(member, "task2", "task2입니다");
-        TaskDTO taskDTO3 = new TaskDTO(member, "task3", "task3입니다");
-        Long task2Id = taskService.saveTask(taskDTO2);
-        Long task3Id = taskService.saveTask(taskDTO3);
+        TaskDto taskDto2 = new TaskDto(member, "task2", "task2입니다");
+        TaskDto taskDto3 = new TaskDto(member, "task3", "task3입니다");
+        Long task2Id = taskService.saveTask(taskDto2);
+        Long task3Id = taskService.saveTask(taskDto3);
 
         List<Long> taskIdList = new ArrayList<>();
         taskIdList.add(task2Id);
@@ -224,10 +220,10 @@ class TodoServiceTest {
     }
 
     private List<Long> setTaskId12(Member member) {
-        TaskDTO taskDTO1 = new TaskDTO(member, "task1", "task1입니다");
-        TaskDTO taskDTO2 = new TaskDTO(member, "task2", "task2입니다");
-        Long task1Id = taskService.saveTask(taskDTO1);
-        Long task2Id = taskService.saveTask(taskDTO2);
+        TaskDto taskDto1 = new TaskDto(member, "task1", "task1입니다");
+        TaskDto taskDto2 = new TaskDto(member, "task2", "task2입니다");
+        Long task1Id = taskService.saveTask(taskDto1);
+        Long task2Id = taskService.saveTask(taskDto2);
 
         List<Long> taskIdList = new ArrayList<>();
         taskIdList.add(task1Id);

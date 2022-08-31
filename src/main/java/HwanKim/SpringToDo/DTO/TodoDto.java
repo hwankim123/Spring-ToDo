@@ -16,14 +16,14 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TodoDTO {
+public class TodoDto {
     private Long id;
     private Member member;
     private List<TodoTaskDTO> todoTasks;
     private TodoTaskStatus status;
     private LocalDate createDate;
 
-    public TodoDTO(Todo todo){
+    public TodoDto(Todo todo){
         this.id = todo.getId();
         this.member = todo.getMember();
         this.todoTasks = todo.getTodoTasks().stream()
