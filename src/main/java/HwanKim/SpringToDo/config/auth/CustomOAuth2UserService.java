@@ -1,5 +1,6 @@
 package HwanKim.SpringToDo.config.auth;
 
+import HwanKim.SpringToDo.DTO.UserDto;
 import HwanKim.SpringToDo.config.auth.dto.OAuthAttributes;
 import HwanKim.SpringToDo.config.auth.dto.SessionUser;
 import HwanKim.SpringToDo.domain.User;
@@ -14,6 +15,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.util.Collections;
@@ -60,5 +62,13 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 .orElse(attributes.toEntity());
 
         return userRepository.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public UserDto findUser(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다."));
+
+        return new UserDto(user);
     }
 }
