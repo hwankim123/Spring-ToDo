@@ -2,17 +2,11 @@ package HwanKim.SpringToDo.controller.Task;
 
 import HwanKim.SpringToDo.DTO.TaskDto;
 import HwanKim.SpringToDo.DTO.UserDto;
-import HwanKim.SpringToDo.auth.CRUDStatus;
+import HwanKim.SpringToDo.config.auth.CustomOAuth2UserService;
 import HwanKim.SpringToDo.config.auth.LoginUser;
 import HwanKim.SpringToDo.config.auth.dto.SessionUser;
-import HwanKim.SpringToDo.exception.SessionInvalidException;
 import HwanKim.SpringToDo.exception.TaskNameDuplicateException;
-import HwanKim.SpringToDo.exception.WrongDataAccessException;
-import HwanKim.SpringToDo.service.MemberService;
 import HwanKim.SpringToDo.service.TaskService;
-import HwanKim.SpringToDo.auth.AuthModules;
-import HwanKim.SpringToDo.auth.SessionStrings;
-import HwanKim.SpringToDo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -22,7 +16,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -32,28 +25,17 @@ import java.util.List;
 @RequestMapping("/tasks")
 public class TaskController {
 
-    private final MemberService memberService;
-    private final UserService userService;
+    private final CustomOAuth2UserService userService;
     private final TaskService taskService;
-    private final AuthModules authModules;
 
     /**
      * 로그인 정보를 확인한 후
      * 세션의 로그인한 사용자 id로 사용자가 생성한 작업 목록을 모두 조회
      */
     @GetMapping
-    public String getAll(Model model, HttpServletRequest request, @LoginUser SessionUser user){
+    public String getAll(Model model, @LoginUser SessionUser user){
         log.info("mapped url '{}'. {}.{}() method called.", "/tasks", "TaskController", "getAll");
 
-//        HttpSession session = request.getSession();
-//        try{
-//            authModules.checkSession(session);
-//        } catch(SessionInvalidException e){
-//            model.addAttribute("sessionInvalid", e.getMessage());
-//            return "/exceptions";
-//        }
-//        Long loginId = ((Long) session.getAttribute(SessionStrings.SESSION_ID));
-//        List<TaskDto> tasks = taskService.findAll(user.getId());
         List<TaskDto> tasks = taskService.findAllByUserId(user.getId());
         model.addAttribute("tasks", tasks);
 
@@ -68,16 +50,9 @@ public class TaskController {
      * 새로운 task 생성을 위한 form 화면을 return
      */
     @GetMapping("/new")
-    public String newTaskForm(Model model, HttpServletRequest request){
+    public String newTaskForm(Model model){
         log.info("mapped url '{}'. {}.{}() method called.", "/tasks/new", "TaskController", "newTaskForm");
 
-//        HttpSession session = request.getSession();
-//        try{
-//            authModules.checkSession(session);
-//        } catch(SessionInvalidException e){
-//            model.addAttribute("sessionInvalid", e.getMessage());
-//            return "/exceptions";
-//        }
         model.addAttribute("taskForm", new TaskForm());
         return "/task/newTaskForm";
     }
@@ -88,23 +63,13 @@ public class TaskController {
      * View 계층에서의 validation을 통과했다면 작업 생성 로직을 진행하며 Service 계층에서의 validation 진행
      */
     @PostMapping("/new")
-    public String create(Model model, @Valid TaskForm taskForm, BindingResult result, HttpServletRequest request, @LoginUser SessionUser user){
+    public String create(Model model, @Valid TaskForm taskForm, BindingResult result, @LoginUser SessionUser user){
         log.info("mapped url '{}'. {}.{}() method called.", "/tasks/new", "TaskController", "create");
-
-//        HttpSession session = request.getSession();
-//        try{
-//            authModules.checkSession(session);
-//        } catch(SessionInvalidException e){
-//            model.addAttribute("sessionInvalid", e.getMessage());
-//            return "/exceptions";
-//        }
 
         if(result.hasErrors()){
             return "/task/newTaskForm";
         }
 
-//        Long loginId = ((Long) session.getAttribute(SessionStrings.SESSION_ID));
-//        Member member = memberService.findMember(loginId); // 리팩토링 필요 : DTO를 반환하도록
         UserDto userDto = userService.findUser(user.getId());
         TaskDto newTaskDto = TaskDto.builder()
                 .userDto(userDto)
@@ -130,27 +95,8 @@ public class TaskController {
      * 작업 수정을 위한 form 화면을 return
      */
     @GetMapping("/{taskId}/update")
-    public String updateTaskForm(@PathVariable("taskId") Long taskId, Model model, HttpServletRequest request, @LoginUser SessionUser user){
+    public String updateTaskForm(@PathVariable("taskId") Long taskId, Model model, @LoginUser SessionUser user){
         log.info("mapped url '{}{}{}'. {}.{}() method called.", "/tasks/", taskId, "/update", "TaskController", "getAll");
-
-//        HttpSession session = request.getSession();
-//
-//        try{
-//            authModules.checkSession(session);
-//        } catch(SessionInvalidException e){
-//            model.addAttribute("sessionInvalid", e.getMessage());
-//            return "/exceptions";
-//        }
-//        Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
-
-//        try{
-//            taskService.findOneById(user.getId(), taskId);
-//            // uri의 path variable로 넘어온 taskId가 현재 로그인한 사용자가 생성한 작업의 id인지 검증
-////            authModules.checkAuthofTask(loginId, taskId, CRUDStatus.UPDATE);
-//        } catch(WrongDataAccessException e){
-//            model.addAttribute("wrongDataAccess", e.getMessage());
-//            return "/exceptions";
-//        }
 
         TaskDto task = taskService.findOneById(user.getId(), taskId);
         model.addAttribute("taskForm", task);
@@ -167,34 +113,17 @@ public class TaskController {
                          @Valid TaskForm taskForm, BindingResult result, HttpServletRequest request, @LoginUser SessionUser user){
         log.info("mapped url '{}{}{}'. {}.{}() method called.", "/tasks/", taskId, "/update", "TaskController", "update");
 
-//        HttpSession session = request.getSession();
-//
-//        try{
-//            authModules.checkSession(session);
-//        } catch(SessionInvalidException e){
-//            model.addAttribute("sessionInvalid", e.getMessage());
-//            return "/exceptions";
-//        }
-//        Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
-//        try{
-//            // uri의 path variable로 넘어온 taskId가 현재 로그인한 사용자가 생성한 작업의 id인지 검증
-//            authModules.checkAuthofTask(loginId, taskId, CRUDStatus.UPDATE);
-//        } catch(WrongDataAccessException e){
-//            model.addAttribute("wrongDataAccess", e.getMessage());
-//            return "/exceptions";
-//        }
-
         if(result.hasErrors()){
             model.addAttribute("taskForm", taskForm);
             return "/task/updateTaskForm";
         }
 
         try{
-            TaskDto updatedTask = new TaskDto(
-                    taskId,
-                    taskForm.getName(),
-                    taskForm.getDesc());
-//            taskService.update(loginId, updatedTask);
+            TaskDto updatedTask = TaskDto.builder()
+                    .id(taskId)
+                    .name(taskForm.getName())
+                    .desc(taskForm.getDesc())
+                    .build();
             taskService.update(user.getId(), updatedTask);
         } catch(TaskNameDuplicateException e){
             log.info("TaskNameDuplicatedException occurred.");
@@ -215,24 +144,6 @@ public class TaskController {
     public String delete(@PathVariable("taskId") Long taskId, Model model, HttpServletRequest request, @LoginUser SessionUser user){
         log.info("mapped url '{}{}{}'. {}.{}() method called.", "/tasks/", taskId, "/delete", "TaskController", "delete");
 
-//        HttpSession session = request.getSession();
-//
-//        try{
-//            authModules.checkSession(session);
-//        } catch(SessionInvalidException e){
-//            model.addAttribute("sessionInvalid", e.getMessage());
-//            return "/exceptions";
-//        }
-//        Long loginId = (Long) session.getAttribute(SessionStrings.SESSION_ID);
-//        try{
-//            // uri의 path variable로 넘어온 taskId가 현재 로그인한 사용자가 생성한 작업의 id인지 검증
-//            authModules.checkAuthofTask(loginId, taskId, CRUDStatus.DELETE);
-//        } catch(WrongDataAccessException e){
-//            model.addAttribute("wrongDataAccess", e.getMessage());
-//            return "/exceptions";
-//        }
-
-//        taskService.delete(loginId, taskId);
         taskService.delete(user.getId(), taskId);
 
         log.info("TaskController.delete() : all delete exceptions passed. redirect to '/tasks'");

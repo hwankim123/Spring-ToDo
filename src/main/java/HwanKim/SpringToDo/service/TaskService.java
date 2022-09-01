@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
-@Transactional
 @RequiredArgsConstructor
+@Transactional
+@Service
 public class TaskService {
 
     private final TaskRepository taskRepository;
@@ -36,6 +36,9 @@ public class TaskService {
         return taskDtos;
     }
 
+    /**
+     * 사용자의 전체 Task를 조회한 후 return
+     */
     @Transactional(readOnly = true)
     public List<TaskDto> findAllByUserId(Long userId){
         return taskRepository.findByUserId(userId).stream()
@@ -47,11 +50,10 @@ public class TaskService {
      * 사용자의 전체 Task중 task id가 일치하는 작업을 return
      */
     @Transactional(readOnly = true)
-    public TaskDto findOneById(Long userId, Long taskId){ // memberId -> userId 수정
-
-//        Task task = taskRepository.findById(memberId, taskId);
+    public TaskDto findOneById(Long userId, Long taskId){
         Task task = taskRepository.findById(userId, taskId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 Task가 존재하지 않습니다."));
+
         return new TaskDto(task);
     }
 
@@ -59,14 +61,12 @@ public class TaskService {
      * 사용자의 전체 Task중 이름이 일치하는 작업을 return
      */
     @Transactional(readOnly = true)
-    public TaskDto findOneByName(Long memberId, String name){
+    public TaskDto findOneByName(Long userId, String name){
 
-        List<Task> tasks = taskRepository.findByNameInMember(name, memberId);
-        List<TaskDto> taskDtos = new ArrayList<>();
-        for(Task t : tasks){
-            taskDtos.add(new TaskDto(t));
-        }
-        return taskDtos.get(0);
+        return taskRepository.findByNameInUser(name, userId).stream()
+                .findFirst()
+                .map(TaskDto::new)
+                .orElseThrow(() -> new IllegalArgumentException("해당 Task가 존재하지 않습니다."));
     }
 
     /**
@@ -74,13 +74,14 @@ public class TaskService {
      * 사용자의 작업 목록중 중복된 이름의 작업이 있는지 validate한 후 작업 생성
      */
     public Long saveTask(TaskDto taskDto){
-//        Member member = taskDTO.getMember();
         UserDto userDto = taskDto.getUserDto();
         validateName(userDto.getId(), taskDto.getName(), null);
+
         User user = userRepository.findById(userDto.getId())
                 .orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
         Task task = Task.create(user, taskDto.getName(), taskDto.getDesc());
         taskRepository.save(task);
+
         return task.getId();
     }
 
@@ -88,13 +89,10 @@ public class TaskService {
      * 요청을 보낸 사용자의 작업 목록 중 Task 수정
      */
     public void update(Long userId, TaskDto updatedTask){
-//        TaskDto pastTask = findOneById(userId, updatedTask.getId()); // Repository 메서드 바로 호출하는게 나을듯
-
         Task pastTask = taskRepository.findById(userId, updatedTask.getId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 Task가 존재하지 않습니다."));
         validateName(userId, updatedTask.getName(), pastTask.getName());
 
-        //Task task = taskRepository.findById(memberId, updatedTask.getId());
         pastTask.update(updatedTask.getName(), updatedTask.getDesc());
     }
 
@@ -118,7 +116,6 @@ public class TaskService {
      * Task 삭제
      */
     public void delete(Long userId, Long taskId){
-//        Task task = taskRepository.findById(memberId, taskId);
         Task task = taskRepository.findById(userId, taskId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 Task가 존재하지 않습니다."));
         taskRepository.remove(task);

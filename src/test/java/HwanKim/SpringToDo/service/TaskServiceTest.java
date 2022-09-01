@@ -133,8 +133,11 @@ class TaskServiceTest {
         Long task2Id = taskService.saveTask(taskDto2);
 
         //when
-        TaskDto updatedTaskDto = new TaskDto(task1Id, "task2", "task2로 바꿔볼까?");
-
+        TaskDto updatedTaskDto = TaskDto.builder()
+                .id(task1Id)
+                .name("task2")
+                .desc("task2로 바꿔볼까?")
+                .build();
         //then
         assertThrows(TaskNameDuplicateException.class, () -> {
             taskService.update(memberId, updatedTaskDto);
@@ -154,10 +157,11 @@ class TaskServiceTest {
         Long task2Id = taskService.saveTask(taskDto2);
 
         //when
-        TaskDto updatedTaskDto = new TaskDto(
-                task1Id,
-                "task1",
-                "이름은 그대로 냅둬볼까?");
+        TaskDto updatedTaskDto = TaskDto.builder()
+                .id(task1Id)
+                .name("task1")
+                .desc("이름은 그대로 냅둬볼까?")
+                .build();
         taskService.update(memberId, updatedTaskDto);
 
         //then

@@ -12,9 +12,9 @@ public class Task extends BaseTimeEntity{
     @Column(name = "task_id")
     Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "member_id")
+//    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -31,13 +31,13 @@ public class Task extends BaseTimeEntity{
     protected Task(){}
 
     //===생성 메서드===//
-    public static Task create(Member member, String name, String desc){
-        Task task = new Task();
-        task.setMember(member);
-        task.setName(name);
-        task.setDesc(desc);
-        return task;
-    }
+//    public static Task create(Member member, String name, String desc){
+//        Task task = new Task();
+//        task.setMember(member);
+//        task.setName(name);
+//        task.setDesc(desc);
+//        return task;
+//    }
 
     public static Task create(User user, String name, String desc){
         Task task = new Task();
@@ -48,9 +48,9 @@ public class Task extends BaseTimeEntity{
     }
 
     // setter을 public으로 개방하지 않고 필요한 비즈니스 로직, 생성 메서드 내부에서만 쓰이도록 private로 선언
-    private void setMember(Member member){
-        this.member = member;
-    }
+//    private void setMember(Member member){
+//        this.member = member;
+//    }
     private void setUser(User user) {
         this.user = user;
     }

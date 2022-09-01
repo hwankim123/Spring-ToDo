@@ -23,7 +23,7 @@ public class TaskRepository {
         }
     }
 
-    public Optional<Task> findById(Long userId, Long id){ // memberID -> userId 수정
+    public Optional<Task> findById(Long userId, Long id){
         return em.createQuery("select t from Task t where t.user.id = :userId and t.id = :id", Task.class)
                 .setParameter("userId", userId)
                 .setParameter("id", id)
@@ -49,12 +49,12 @@ public class TaskRepository {
                 .getResultList();
     }
 
-    public List<Task> findByNameInMember(String name, Long memberId){
-        return em.createQuery("select t from Task t where t.member.id = :memberId and t.name = :name", Task.class)
-                .setParameter("memberId", memberId)
-                .setParameter("name", name)
-                .getResultList();
-    }
+//    public List<Task> findByNameInMember(String name, Long memberId){
+//        return em.createQuery("select t from Task t where t.member.id = :memberId and t.name = :name", Task.class)
+//                .setParameter("memberId", memberId)
+//                .setParameter("name", name)
+//                .getResultList();
+//    }
 
     public List<Task> findByNameInUser(String name, Long userId){
         return em.createQuery("select t from Task t where t.user.id = :userId and t.name = :name", Task.class)
