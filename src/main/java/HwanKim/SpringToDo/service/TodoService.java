@@ -22,15 +22,17 @@ import static java.util.stream.Collectors.*;
 public class TodoService {
 
     private final TodoRepository todoRepository;
-    private final MemberRepository memberRepository;
+    private final UserRepository userRepository;
+
 
     /**
      * 할일의 작업 list의 이름을 validate
      * 오늘의 할일이 이미 존재하는지 validate
      * validate 완료 후 오늘의 할일 생성
      */
-    public Long saveTodo(Long memberId, String[] names, String[] descs){
-        Member member = memberRepository.findById(memberId);
+    public Long saveTodo(Long userId, String[] names, String[] descs){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
 
         validateName(names);
 
@@ -38,7 +40,7 @@ public class TodoService {
         for(int i = 0; i < names.length; i++){
             todoTasks.add(TodoTask.createTodoTask(names[i], descs[i]));
         }
-        Todo todo = Todo.create(member, todoTasks);
+        Todo todo = Todo.create(user, todoTasks);
         todoRepository.save(todo);
 
         return todo.getId();
@@ -61,8 +63,8 @@ public class TodoService {
     /**
      * 오늘의 할일이 이미 존재하는 경우 예외처리
      */
-    public void validateTodoAlreadyExist(Long memberId){
-        List<Todo> todo = todoRepository.findTodayByMemberId(memberId);
+    public void validateTodoAlreadyExist(Long userId){
+        List<Todo> todo = todoRepository.findTodayByUserId(userId);
         if(todo.size() != 0){
             throw new TodoAlreadyExistException("오늘의 할일이 이미 존재합니다.");
         }
@@ -71,8 +73,8 @@ public class TodoService {
     /**
      * 오늘의 할일이 없는 경우 예외처리
      */
-    public void validateTodoNotExist(Long memberId){
-        List<Todo> todo = todoRepository.findTodayByMemberId(memberId);
+    public void validateTodoNotExist(Long userId){
+        List<Todo> todo = todoRepository.findTodayByUserId(userId);
         if(todo.size() == 0){
             throw new TodoNotExistException("오늘의 할일이 없습니다.");
         }
@@ -102,8 +104,8 @@ public class TodoService {
     /**
      * 오늘의 할일 조회
      */
-    public TodoDto findTodaysTodo(Long memberId) {
-        return new TodoDto(todoRepository.findTodayByMemberId(memberId).get(0));
+    public TodoDto findTodaysTodo(Long userId) {
+        return new TodoDto(todoRepository.findTodayByUserId(userId).get(0));
     }
 
 
@@ -120,47 +122,16 @@ public class TodoService {
     /**
      * 오늘의 할일 수정
      */
-    public void update(Long memberId, TodoForm todoForm){
-        List<Todo> todaysTodo = todoRepository.findTodayByMemberId(memberId);
+    public void update(Long userId, TodoForm todoForm){
+        List<Todo> todaysTodo = todoRepository.findTodayByUserId(userId);
         Todo.update(todaysTodo.get(0), todoForm);
-
-        //Todo 수정 이전버전
-//        List<TodoTask> todoTasks = todaysTodo.get(0).getTodoTasks();
-//        boolean[] isUpdated = new boolean[todoTasks.size()];
-//        Long[] idList = todoForm.getIds();
-//        String[] names = todoForm.getNames();
-//        String[] descs = todoForm.getDescs();
-//
-//        validateName(todoForm.getNames());
-//
-//        for(int i = 0; i < idList.length; i++){
-//            if(idList[i] == -1){
-//                todoTasks.add(TodoTask.createTodoTask(names[i], descs[i]));
-//            } else{
-//                for(int j = 0; j < todoTasks.size(); j++){
-//                    TodoTask todoTask = todoTasks.get(j);
-//                    if(todoTask.getId().equals(idList[i])){
-//                        todoTask.update(names[i], descs[i]);
-//                        isUpdated[j] = true;
-//                    }
-//                }
-//            }
-//        }
-//        for(int i = 0; i < isUpdated.length; i++){
-//            if(!isUpdated[i]){
-//                todoTasks.remove(todoTasks.get(i));
-//            }
-//        }
-//
-//        todaysTodo.get(0).mappingTodoTasks();
-
     }
 
     /**
      * 오늘의 할일 삭제
      */
-    public void delete(Long memberId) {
-        List<Todo> todaysTodo = todoRepository.findTodayByMemberId(memberId);
+    public void delete(Long userId) {
+        List<Todo> todaysTodo = todoRepository.findTodayByUserId(userId);
         todoRepository.delete(todaysTodo.get(0));
     }
 

@@ -20,6 +20,10 @@ public class Todo extends BaseTimeEntity{
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     // Todo에서 TodoTask를 관리. cascade all 옵션과 orphanRemoval=true로 설정함. 이래야 Todo.todoTasks에서 삭제했을 때 삭제 쿼리가 나감
     @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TodoTask> todoTasks = new ArrayList<>();
@@ -41,9 +45,10 @@ public class Todo extends BaseTimeEntity{
     }
 
     //===생성 메서드===//
-    public static Todo create(Member member, List<TodoTask> todoTasks) {
+    public static Todo create(User user, List<TodoTask> todoTasks) { // member -> User로 수정
         Todo todo = new Todo();
-        todo.setMember(member);
+//        todo.setMember(member);
+        todo.setUser(user);
         for (TodoTask todoTask : todoTasks) {
             todo.addTodoTask(todoTask);
         }
@@ -134,8 +139,12 @@ public class Todo extends BaseTimeEntity{
     }
 
     //=== Setter ===//
-    private void setMember(Member member) {
-        this.member = member;
+//    private void setMember(Member member) {
+//        this.member = member;
+//    }
+
+    private void setUser(User user){
+        this.user = user;
     }
 
     private void setCreatedDate() {

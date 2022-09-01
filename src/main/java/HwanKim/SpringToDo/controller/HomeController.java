@@ -21,14 +21,12 @@ public class HomeController {
     private final HttpSession httpSession;
 
     @RequestMapping("/")
-    public String home(Model model, HttpServletRequest request, @LoginUser SessionUser user){
+    public String home(Model model, @LoginUser SessionUser user){
         log.info("mapped url '{}'. {}.{}() method called.", "/", "HomeController", "home");
 
         if(user != null){
             model.addAttribute("loginName", user.getName());
         }
-//        model.addAttribute("loginId", session.getAttribute(SessionStrings.SESSION_ID));
-//        model.addAttribute("loginName", session.getAttribute(SessionStrings.SESSION_NAME));
         return "home";
     }
 }

@@ -22,7 +22,7 @@ public class TodoRepository {
         return em.find(Todo.class, todoId);
     }
 
-    public List<Todo> findAllByMemberId(Long memberId ){
+    public List<Todo> findAllByMemberId(Long memberId){
         return em.createQuery("select t From Todo t where t.member.id = :memberId")
                 .setParameter("memberId", memberId).getResultList();
     }
@@ -33,6 +33,14 @@ public class TodoRepository {
                     .setParameter("memberId", memberId)
                     .setParameter("today", LocalDate.now())
                     .getResultList();
+    }
+
+    public List<Todo> findTodayByUserId(Long userId) throws RuntimeException{
+        String jpql = "select t From Todo t where t.user.id = :userId and t.createdDate = :today";
+        return em.createQuery(jpql, Todo.class)
+                .setParameter("userId", userId)
+                .setParameter("today", LocalDate.now())
+                .getResultList();
     }
 
     public List<Todo> findAllByDate(TodoSearch todoSearch){
