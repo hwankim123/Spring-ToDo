@@ -21,7 +21,7 @@ public class Task extends BaseTimeEntity{
     private User user;
 
     String name;
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", name = "description")
     String desc;
 
     /**

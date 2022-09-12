@@ -18,7 +18,7 @@ public class TodoTask extends BaseTimeEntity{
 
     @Column(columnDefinition = "TEXT")
     private String name;
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", name = "description")
     private String desc;
     @Enumerated(EnumType.STRING)
     private TodoTaskStatus status;

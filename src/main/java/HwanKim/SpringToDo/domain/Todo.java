@@ -17,10 +17,6 @@ public class Todo extends BaseTimeEntity{
     Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -137,11 +133,6 @@ public class Todo extends BaseTimeEntity{
     public void finish() {
         this.status = TodoTaskStatus.FINISH;
     }
-
-    //=== Setter ===//
-//    private void setMember(Member member) {
-//        this.member = member;
-//    }
 
     private void setUser(User user){
         this.user = user;
