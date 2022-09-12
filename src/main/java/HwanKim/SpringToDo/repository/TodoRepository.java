@@ -22,19 +22,6 @@ public class TodoRepository {
         return em.find(Todo.class, todoId);
     }
 
-    public List<Todo> findAllByMemberId(Long memberId){
-        return em.createQuery("select t From Todo t where t.member.id = :memberId")
-                .setParameter("memberId", memberId).getResultList();
-    }
-
-    public List<Todo> findTodayByMemberId(Long memberId) throws RuntimeException{
-        String jpql = "select t From Todo t where t.member.id = :memberId and t.createdDate = :today";
-        return em.createQuery(jpql, Todo.class)
-                    .setParameter("memberId", memberId)
-                    .setParameter("today", LocalDate.now())
-                    .getResultList();
-    }
-
     public List<Todo> findTodayByUserId(Long userId) throws RuntimeException{
         String jpql = "select t From Todo t where t.user.id = :userId and t.createdDate = :today";
         return em.createQuery(jpql, Todo.class)
@@ -44,10 +31,10 @@ public class TodoRepository {
     }
 
     public List<Todo> findAllByDate(TodoSearch todoSearch){
-        String jpql = "select t From Todo t where t.member.id = :memberId and t.createdDate between :startDate and :endDate";
+        String jpql = "select t From Todo t where t.user.id = :userId and t.createdDate between :startDate and :endDate";
 
         return em.createQuery(jpql, Todo.class)
-                .setParameter("memberId", todoSearch.getMemberId())
+                .setParameter("userId", todoSearch.getUserId())
                 .setParameter("startDate", todoSearch.getStartDate())
                 .setParameter("endDate", todoSearch.getEndDate())
                 .getResultList();

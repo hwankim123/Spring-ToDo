@@ -9,7 +9,6 @@ import lombok.Setter;
 @Getter @Setter
 public class TaskDto {
     private Long id;
-    private Member member;
     private UserDto userDto;
     private String name;
     private String desc;
@@ -21,8 +20,7 @@ public class TaskDto {
         this.desc = task.getDesc();
     }
 
-    public TaskDto(Member member, String name, String desc){
-        this.member = member;
+    public TaskDto(String name, String desc){
         this.name = name;
         this.desc = desc;
     }

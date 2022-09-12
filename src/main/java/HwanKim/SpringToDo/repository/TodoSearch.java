@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter @Setter
 public class TodoSearch {
-    private Long memberId;
+    private Long userId;
     private LocalDate startDate;
     private LocalDate endDate;
 }

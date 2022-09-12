@@ -18,14 +18,12 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class TodoDto {
     private Long id;
-    private Member member;
     private List<TodoTaskDTO> todoTasks;
     private TodoTaskStatus status;
     private LocalDate createDate;
 
     public TodoDto(Todo todo){
         this.id = todo.getId();
-        this.member = todo.getMember();
         this.todoTasks = todo.getTodoTasks().stream()
                 .map(TodoTaskDTO::new)
                 .collect(Collectors.toList());

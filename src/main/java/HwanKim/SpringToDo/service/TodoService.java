@@ -140,7 +140,7 @@ public class TodoService {
      * 시작 날짜 혹은 끝 날짜가 null인 경우 예외처리
      */
     private void validateTodoSearch(TodoSearch todoSearch) {
-        if (todoSearch.getMemberId() == null) {
+        if (todoSearch.getUserId() == null) {
             throw new IllegalArgumentException("회원 id 값은 필수입니다.");
         }
         if(todoSearch.getStartDate() == null && todoSearch.getEndDate() != null){
