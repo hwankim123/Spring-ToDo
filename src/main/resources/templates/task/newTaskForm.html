@@ -11,7 +11,8 @@
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
     <h1>작업 생성</h1>
-
+    <h3>자주 하는 작업을 작성해주세요!</h3>
+    <br><br>
     <form role="form" action="/tasks/new" th:object="${taskForm}" method="post">
         <div class="form-group">
             <label th:for="name">작업 이름</label>
