@@ -15,6 +15,9 @@ cache:
     - '$HOME/.m2/repository'
     - '$HOME/.gradle'
 
+before_install:
+  - chomod +x gradlew
+
 script: "./gradlew clean build" # master branch가 푸시되었을 때 수행하는 명령어
 
 #CI 실행 완료 시 메일로 알람
