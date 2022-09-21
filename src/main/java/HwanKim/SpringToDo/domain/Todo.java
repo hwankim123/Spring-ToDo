@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 public class Todo extends BaseTimeEntity{
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "todo_id")
     Long id;
 
