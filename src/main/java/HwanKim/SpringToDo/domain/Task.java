@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Getter
 public class Task extends BaseTimeEntity{
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "task_id")
     Long id;
 
