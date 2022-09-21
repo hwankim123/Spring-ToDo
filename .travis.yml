@@ -22,9 +22,13 @@ script: "./gradlew clean build" # master branch가 푸시되었을 때 수행하
 
 # deploy 명령어가 실행되기 전
 before_deploy:
- - zip -r Spring-ToDo * # CodeDeploy는 jar 파일을 인식하지 못하므로 jar 파일과 기타 설정 파일들을 .zip으로 압축
- - mkdir -p deploy
- - mv Spring-ToDo.zip deploy/Spring-ToDo.zip # 생성된 zip 파일을 deploy 폴더로 이동
+  - mkdir -p before-deploy #zip에 포함시킬 파일들을 담을 디렉토리 생성
+  - cp scripts/*.sh before-deploy/
+  - cp appscep.yml before-deploy/
+  - cp build/libs/*.jar before-deploy/
+  - cd before-deploy && zip -r before-deploy * # before-deploy로 이동 후 before-deploy폴더를 전체 압축
+  - cd ../ && mkdir -p deploy
+  - mv before-deploy/before-deploy.zip deploy/Spring-ToDo.zip
 
 # S3로 파일 업로드 혹은 CodeDeploy로 배포 등 외부 서비스와 연동될 행위들을 선언
 deploy:
