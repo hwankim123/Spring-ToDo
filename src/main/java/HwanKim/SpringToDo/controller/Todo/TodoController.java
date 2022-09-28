@@ -172,7 +172,8 @@ public class TodoController {
             log.info("TodoTaskNameNullException occurred. redirect to '/todo/update'");
             result.addError(new ObjectError("table", e.getMessage()));
 
-            return "/todo/updateForm";
+//            return "/todo/updateForm";
+            return "todo/updateForm";
         }
         log.info("all exceptions passed. redirect to '/todo/today'");
         return "redirect:/todo/today";

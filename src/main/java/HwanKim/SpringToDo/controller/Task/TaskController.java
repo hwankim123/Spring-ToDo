@@ -42,7 +42,8 @@ public class TaskController {
         // 사용자가 입력한 개행 문자를 View 상에도 적용시키기 위해 java에서 제공하는 개행문자를 model에 추가
         String nlString = System.lineSeparator();
         model.addAttribute("nlString", nlString);
-        return "/task/taskList";
+//        return "/task/taskList"; // AWS 배포 시 .html파일을 제대로 찾아가지 못하는 에러
+        return "task/taskList";
     }
 
     /**
@@ -67,7 +68,8 @@ public class TaskController {
         log.info("mapped url '{}'. {}.{}() method called.", "/tasks/new", "TaskController", "create");
 
         if(result.hasErrors()){
-            return "/task/newTaskForm";
+//            return "/task/newTaskForm";
+            return "task/newTaskForm";
         }
 
         UserDto userDto = userService.findUser(user.getId());
@@ -81,7 +83,8 @@ public class TaskController {
         } catch(TaskNameDuplicateException e){
             log.info("TaskNameDuplicatedException occurred.");
             result.addError(new FieldError("taskForm", "name", e.getMessage()));
-            return "/task/newTaskForm";
+//            return "/task/newTaskForm";
+            return "task/newTaskForm";
         }
 
         log.info("TaskController.create() : all exceptions & create validation passed. redirect to '/tasks'");
@@ -100,7 +103,8 @@ public class TaskController {
 
         TaskDto task = taskService.findOneById(user.getId(), taskId);
         model.addAttribute("taskForm", task);
-        return "/task/updateTaskForm";
+//        return "/task/updateTaskForm";
+        return "task/updateTaskForm";
     }
 
     /**
@@ -115,7 +119,8 @@ public class TaskController {
 
         if(result.hasErrors()){
             model.addAttribute("taskForm", taskForm);
-            return "/task/updateTaskForm";
+//            return "/task/updateTaskForm";
+            return "task/updateTaskForm";
         }
 
         try{
@@ -128,7 +133,8 @@ public class TaskController {
         } catch(TaskNameDuplicateException e){
             log.info("TaskNameDuplicatedException occurred.");
             result.addError(new FieldError("taskForm", "name", e.getMessage()));
-            return "/task/updateTaskForm";
+//            return "/task/updateTaskForm";
+            return "task/updateTaskForm";
         }
 
         log.info("TaskController.update() : all exceptions & update validations passed. redirect to '/tasks'");
