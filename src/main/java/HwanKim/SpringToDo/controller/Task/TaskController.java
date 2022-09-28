@@ -55,7 +55,8 @@ public class TaskController {
         log.info("mapped url '{}'. {}.{}() method called.", "/tasks/new", "TaskController", "newTaskForm");
 
         model.addAttribute("taskForm", new TaskForm());
-        return "/task/newTaskForm";
+//        return "/task/newTaskForm";
+        return "task/newTaskForm";
     }
 
     /**
