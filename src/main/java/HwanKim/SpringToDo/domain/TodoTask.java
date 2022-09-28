@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Getter
 public class TodoTask extends BaseTimeEntity{
 
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "todo_task_id")
     Long id;
 
