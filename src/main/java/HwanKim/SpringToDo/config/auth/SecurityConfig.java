@@ -16,8 +16,9 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                     .authorizeRequests()
-                    .antMatchers("/", "/css/**", "/js/**").permitAll()
-                    .antMatchers("/tasks/**").hasRole(Role.USER.name())
+                    .antMatchers("/", "/css/**", "/js/**", "/profile").permitAll()
+//                .antMatchers("/tasks/**").hasRole(Role.USER.name())
+//                .antMatchers("/tasks/**", "/todo/**").hasRole(Role.USER.name())
                     .anyRequest().authenticated() //로그인된 유저만 사용 가능
                 .and()
                     .logout() //로그아웃 기능에 대한 여러 설정의 진입점
