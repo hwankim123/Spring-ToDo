@@ -2,7 +2,7 @@
 
 ABSPATH=$(readlink -f $0)
 ABSDIR=$(dirname $ABSPATH)
-soruce ${ABSDIR}/profile.sh
+source ${ABSDIR}/profile.sh
 
 REPOSITORY=/home/ec2-user/spring-todo/repo
 
