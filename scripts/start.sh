@@ -4,9 +4,9 @@ ABSPATH=$(readlink -f $0)
 ABSDIR=$(dirname $ABSPATH)
 soruce ${ABSDIR}/profile.sh
 
-REPOSITORY=/home/ec2-user/app/repo
+REPOSITORY=/home/ec2-user/spring-todo/repo
 
-PROJECT_NAME=freelec-springboot2-webservice
+PROJECT_NAME=Spring-ToDo
 
 echo "> Build 파일 복사"
 echo "> cp $REPOSITORY/zip/*.jar $REPOSITORY/"
